@@ -1,3 +1,5 @@
+import org.gradle.api.GradleException
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
@@ -65,12 +67,11 @@ android {
         getByName("release") {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "../composeApp/proguard-rules.pro")
-            signingConfig =
-                if (System.getenv("KEYSTORE_FILE") != null) {
-                    signingConfigs.getByName("release")
-                } else {
-                    signingConfigs.getByName("debug")
-                }
+            val ksFile = System.getenv("KEYSTORE_FILE")
+            if (ksFile == null) {
+                throw GradleException("Release builds require KEYSTORE_FILE, KEYSTORE_PASSWORD, and KEY_ALIAS environment variables for release signing. Use release.yml workflow or provide signing credentials.")
+            }
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 

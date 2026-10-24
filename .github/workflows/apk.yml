@@ -1,7 +1,9 @@
-name: Build APK
+name: Build APK (Debug/Test Only)
 
 # On-demand Foss APK build via the Actions tab (Run workflow).
-# Separate from release.yml so it can run without tag pushes or signing secrets.
+# WARNING: This builds a DEBUG-SIGNED APK for testing only.
+# DO NOT use for updates over release-signed installations.
+# For release builds, use the release.yml workflow with signing secrets.
 on:
   workflow_dispatch:
   workflow_call:
@@ -11,7 +13,7 @@ permissions:
 
 jobs:
   apk:
-    name: Generate Foss APK
+    name: Generate Foss Debug/Test APK
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -29,10 +31,10 @@ jobs:
           packages: platform-tools
       - name: Install Android Build Tools
         run: sdkmanager "build-tools;36.0.0"
-      - name: Build Foss APK
-        run: bash ./gradlew :androidApp:assembleFossRelease --stacktrace
+      - name: Build Foss Debug APK (NOT FOR UPDATES)
+        run: bash ./gradlew :androidApp:assembleFossDebug --stacktrace
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: brox-kai-foss-apk
-          path: androidApp/build/outputs/apk/foss/release/*.apk
+          name: brox-kai-foss-debug-test-apk
+          path: androidApp/build/outputs/apk/foss/debug/*.apk
