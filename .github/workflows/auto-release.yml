@@ -90,7 +90,7 @@ jobs:
           ls "$ANDROID_HOME/ndk/" 2>/dev/null || true
           ./gradlew --version --no-daemon
       - name: Build Foss APK
-        run: bash -o pipefail -c './gradlew :androidApp:assembleFossRelease --console=plain 2>&1 | tee /tmp/gradle-apk-build.log'
+        run: bash -o pipefail -c './gradlew :androidApp:assembleFossRelease --console=plain -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.daemon.jvmargs=-Xmx2g 2>&1 | tee /tmp/gradle-apk-build.log'
       - name: Upload APK Build Log
         if: always()
         uses: actions/upload-artifact@v4
@@ -133,7 +133,7 @@ jobs:
           echo "ANDROID_HOME=$env:ANDROID_HOME"
           ./gradlew --version --no-daemon
       - name: Build MSI
-        run: ./gradlew packageReleaseMsi --console=plain > $env:TEMP/gradle-msi-build.log 2>&1
+        run: ./gradlew packageReleaseMsi --console=plain -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.daemon.jvmargs=-Xmx2g > $env:TEMP/gradle-msi-build.log 2>&1
       - name: Upload MSI Build Log
         if: always()
         uses: actions/upload-artifact@v4
@@ -141,7 +141,7 @@ jobs:
           name: gradle-msi-build-log
           path: $env:TEMP/gradle-msi-build.log
       - name: Build distributable
-        run: ./gradlew createReleaseDistributable --console=plain > $env:TEMP/gradle-dist-build.log 2>&1
+        run: ./gradlew createReleaseDistributable --console=plain -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.daemon.jvmargs=-Xmx2g > $env:TEMP/gradle-dist-build.log 2>&1
       - name: Upload Distributable Build Log
         if: always()
         uses: actions/upload-artifact@v4
