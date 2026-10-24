@@ -81,22 +81,8 @@ jobs:
           yes | sdkmanager "build-tools;37.0.0"
           yes | sdkmanager "build-tools;36.0.0"
           yes | sdkmanager "ndk;29.0.14206865"
-      - name: Diagnostics
-        run: |
-          java -version
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
-          ls "$ANDROID_HOME/build-tools/" 2>/dev/null || true
-          ls "$ANDROID_HOME/ndk/" 2>/dev/null || true
-          ./gradlew --version --no-daemon
       - name: Build Foss APK
-        run: bash -o pipefail -c './gradlew :androidApp:assembleFossRelease --console=plain -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.daemon.jvmargs=-Xmx2g 2>&1 | tee /tmp/gradle-apk-build.log'
-      - name: Upload APK Build Log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: gradle-apk-build-log
-          path: /tmp/gradle-apk-build.log
+        run: ./gradlew :androidApp:assembleFossRelease --stacktrace
       - name: Sign APK
         uses: r0adkll/sign-android-release@v1
         with:
@@ -127,27 +113,10 @@ jobs:
           java-version: "21"
       - name: Install WiX Toolset
         run: choco install wixtoolset -y --no-progress
-      - name: Diagnostics
-        run: |
-          java -version
-          echo "ANDROID_HOME=$env:ANDROID_HOME"
-          ./gradlew --version --no-daemon
       - name: Build MSI
-        run: ./gradlew packageReleaseMsi --console=plain -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.daemon.jvmargs=-Xmx2g > $env:TEMP/gradle-msi-build.log 2>&1
-      - name: Upload MSI Build Log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: gradle-msi-build-log
-          path: $env:TEMP/gradle-msi-build.log
+        run: ./gradlew packageReleaseMsi --stacktrace
       - name: Build distributable
-        run: ./gradlew createReleaseDistributable --console=plain -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.daemon.jvmargs=-Xmx2g > $env:TEMP/gradle-dist-build.log 2>&1
-      - name: Upload Distributable Build Log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: gradle-dist-build-log
-          path: $env:TEMP/gradle-dist-build.log
+        run: ./gradlew createReleaseDistributable --stacktrace
       - name: Create zip
         run: |
           Compress-Archive -Path "composeApp/build/compose/binaries/main-release/app/Kai/*" -DestinationPath "Brox-Kai-2.0-v${{ needs.bump.outputs.version }}-Windows-x64.zip"
