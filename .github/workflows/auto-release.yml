@@ -90,7 +90,7 @@ jobs:
           ls "$ANDROID_HOME/ndk/" 2>/dev/null || true
           ./gradlew --version --no-daemon
       - name: Build Foss APK
-        run: bash -o pipefail -c './gradlew :androidApp:assembleFossRelease --stacktrace --info --no-daemon --refresh-dependencies --no-build-cache --no-configuration-cache 2>&1 | tee /tmp/gradle-apk-build.log'
+        run: bash -o pipefail -c './gradlew :androidApp:assembleFossRelease --console=plain 2>&1 | tee /tmp/gradle-apk-build.log'
       - name: Upload APK Build Log
         if: always()
         uses: actions/upload-artifact@v4
@@ -133,21 +133,21 @@ jobs:
           echo "ANDROID_HOME=$env:ANDROID_HOME"
           ./gradlew --version --no-daemon
       - name: Build MSI
-        run: ./gradlew packageReleaseMsi --stacktrace --info --no-daemon --refresh-dependencies --no-build-cache --no-configuration-cache > /tmp/gradle-msi-build.log 2>&1
+        run: ./gradlew packageReleaseMsi --console=plain > $env:TEMP/gradle-msi-build.log 2>&1
       - name: Upload MSI Build Log
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: gradle-msi-build-log
-          path: /tmp/gradle-msi-build.log
+          path: $env:TEMP/gradle-msi-build.log
       - name: Build distributable
-        run: ./gradlew createReleaseDistributable --stacktrace --info --no-daemon --refresh-dependencies --no-build-cache --no-configuration-cache > /tmp/gradle-dist-build.log 2>&1
+        run: ./gradlew createReleaseDistributable --console=plain > $env:TEMP/gradle-dist-build.log 2>&1
       - name: Upload Distributable Build Log
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: gradle-dist-build-log
-          path: /tmp/gradle-dist-build.log
+          path: $env:TEMP/gradle-dist-build.log
       - name: Create zip
         run: |
           Compress-Archive -Path "composeApp/build/compose/binaries/main-release/app/Kai/*" -DestinationPath "Brox-Kai-2.0-v${{ needs.bump.outputs.version }}-Windows-x64.zip"
