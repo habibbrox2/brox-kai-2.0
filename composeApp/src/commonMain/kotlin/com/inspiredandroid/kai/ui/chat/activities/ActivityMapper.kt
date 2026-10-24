@@ -19,6 +19,7 @@ object ActivityMapper {
                     // User messages aren't "agent activities" in the same sense
                     // Skip or could add as context
                 }
+
                 History.Role.ASSISTANT -> {
                     if (entry.toolCalls != null && entry.toolCalls.isNotEmpty()) {
                         // Assistant is making tool calls
@@ -50,6 +51,7 @@ object ActivityMapper {
                         // Regular assistant response - could be treated as completion/progress
                     }
                 }
+
                 History.Role.TOOL_EXECUTING -> {
                     val toolName = entry.content
                     val activity = AgentActivity(
@@ -61,7 +63,7 @@ object ActivityMapper {
                         title = if (toolName == "execute_shell_command") {
                             "Executing shell command"
                         } else {
-                            "Calling tool: ${toolName}"
+                            "Calling tool: $toolName"
                         },
                         status = ActivityStatus.RUNNING,
                         details = if (toolName == "execute_shell_command") {
@@ -73,14 +75,17 @@ object ActivityMapper {
                     toolExecutingMap[entry.id] = activity
                     activities.add(activity)
                 }
+
                 History.Role.TOOL -> {
                     // Find matching running activity and mark as completed
                     val toolName = entry.toolName ?: ""
                     // Try to find and update existing activity
                     val existingIndex = activities.indexOfLast {
                         it.status == ActivityStatus.RUNNING &&
-                        ((it.details is ActivityDetails.ToolCall && it.details.toolName == toolName) ||
-                         (it.details is ActivityDetails.ShellCommand && toolName == "execute_shell_command"))
+                            (
+                                (it.details is ActivityDetails.ToolCall && it.details.toolName == toolName) ||
+                                    (it.details is ActivityDetails.ShellCommand && toolName == "execute_shell_command")
+                                )
                     }
                     if (existingIndex >= 0) {
                         val existing = activities[existingIndex]
@@ -132,32 +137,28 @@ object ActivityMapper {
         return activities
     }
 
-    private fun parseShellCommand(argsJson: String): ActivityDetails.ShellCommand {
-        return try {
-            // Simple parsing - in real implementation would use proper JSON parsing
-            val commandMatch = Regex("\"command\"\\s*:\\s*\"([^\"]+)\"").find(argsJson)
-            val cwdMatch = Regex("\"working_dir\"\\s*:\\s*\"([^\"]+)\"").find(argsJson)
-            ActivityDetails.ShellCommand(
-                command = commandMatch?.groupValues?.get(1) ?: argsJson,
-                workingDirectory = cwdMatch?.groupValues?.get(1),
-            )
-        } catch (e: Exception) {
-            ActivityDetails.ShellCommand(command = argsJson)
-        }
+    private fun parseShellCommand(argsJson: String): ActivityDetails.ShellCommand = try {
+        // Simple parsing - in real implementation would use proper JSON parsing
+        val commandMatch = Regex("\"command\"\\s*:\\s*\"([^\"]+)\"").find(argsJson)
+        val cwdMatch = Regex("\"working_dir\"\\s*:\\s*\"([^\"]+)\"").find(argsJson)
+        ActivityDetails.ShellCommand(
+            command = commandMatch?.groupValues?.get(1) ?: argsJson,
+            workingDirectory = cwdMatch?.groupValues?.get(1),
+        )
+    } catch (e: Exception) {
+        ActivityDetails.ShellCommand(command = argsJson)
     }
 
-    private fun parseShellResult(details: ActivityDetails.ShellCommand, resultJson: String): ActivityDetails.ShellCommand {
-        return try {
-            val stdoutMatch = Regex("\"stdout\"\\s*:\\s*\"([^\"]*)\"").find(resultJson)
-            val stderrMatch = Regex("\"stderr\"\\s*:\\s*\"([^\"]*)\"").find(resultJson)
-            val exitCodeMatch = Regex("\"exitCode\"\\s*:\\s*(-?\\d+)").find(resultJson)
-            details.copy(
-                stdout = stdoutMatch?.groupValues?.get(1)?.replace("\\n", "\n"),
-                stderr = stderrMatch?.groupValues?.get(1)?.replace("\\n", "\n"),
-                exitCode = exitCodeMatch?.groupValues?.get(1)?.toIntOrNull(),
-            )
-        } catch (e: Exception) {
-            details.copy(stdout = resultJson)
-        }
+    private fun parseShellResult(details: ActivityDetails.ShellCommand, resultJson: String): ActivityDetails.ShellCommand = try {
+        val stdoutMatch = Regex("\"stdout\"\\s*:\\s*\"([^\"]*)\"").find(resultJson)
+        val stderrMatch = Regex("\"stderr\"\\s*:\\s*\"([^\"]*)\"").find(resultJson)
+        val exitCodeMatch = Regex("\"exitCode\"\\s*:\\s*(-?\\d+)").find(resultJson)
+        details.copy(
+            stdout = stdoutMatch?.groupValues?.get(1)?.replace("\\n", "\n"),
+            stderr = stderrMatch?.groupValues?.get(1)?.replace("\\n", "\n"),
+            exitCode = exitCodeMatch?.groupValues?.get(1)?.toIntOrNull(),
+        )
+    } catch (e: Exception) {
+        details.copy(stdout = resultJson)
     }
 }

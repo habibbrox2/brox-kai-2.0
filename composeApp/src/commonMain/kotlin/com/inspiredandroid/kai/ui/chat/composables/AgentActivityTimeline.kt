@@ -235,6 +235,7 @@ private fun ActivityDetailsView(
                 }
             }
         }
+
         is ActivityDetails.ShellCommand -> {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
@@ -298,6 +299,7 @@ private fun ActivityDetailsView(
                 }
             }
         }
+
         is ActivityDetails.Skill -> {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
@@ -321,6 +323,7 @@ private fun ActivityDetailsView(
                 }
             }
         }
+
         is ActivityDetails.FileOperation -> {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
@@ -337,6 +340,7 @@ private fun ActivityDetailsView(
                 }
             }
         }
+
         is ActivityDetails.Permission -> {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
@@ -358,6 +362,7 @@ private fun ActivityDetailsView(
                 }
             }
         }
+
         is ActivityDetails.Generic -> {
             details.content?.let { content ->
                 Text(
