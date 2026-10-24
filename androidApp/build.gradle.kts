@@ -54,11 +54,13 @@ android {
     signingConfigs {
         create("release") {
             val ksFile = System.getenv("KEYSTORE_FILE")
-            if (ksFile != null) {
+            val ksPassword = System.getenv("KEYSTORE_PASSWORD")
+            val ksAlias = System.getenv("KEY_ALIAS")
+            if (ksFile != null && ksPassword != null && ksAlias != null) {
                 storeFile = file(ksFile)
-                storePassword = System.getenv("KEYSTORE_PASSWORD")
-                keyAlias = System.getenv("KEY_ALIAS")
-                keyPassword = System.getenv("KEYSTORE_PASSWORD")
+                storePassword = ksPassword
+                keyAlias = ksAlias
+                keyPassword = ksPassword
             }
         }
     }
@@ -68,10 +70,19 @@ android {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "../composeApp/proguard-rules.pro")
             val ksFile = System.getenv("KEYSTORE_FILE")
-            if (ksFile == null) {
-                throw GradleException("Release builds require KEYSTORE_FILE, KEYSTORE_PASSWORD, and KEY_ALIAS environment variables for release signing. Use release.yml workflow or provide signing credentials.")
+            val ksPassword = System.getenv("KEYSTORE_PASSWORD")
+            val ksAlias = System.getenv("KEY_ALIAS")
+            if (ksFile == null || ksPassword == null || ksAlias == null) {
+                // Only enforce for CI/release workflows or when explicitly requested
+                val enforceSigning = System.getenv("ENFORCE_RELEASE_SIGNING") == "true"
+                if (enforceSigning) {
+                    throw GradleException(
+                        "Release builds require KEYSTORE_FILE, KEYSTORE_PASSWORD, and KEY_ALIAS environment variables for release signing. Use release.yml workflow or provide signing credentials.",
+                    )
+                }
+            } else {
+                signingConfig = signingConfigs.getByName("release")
             }
-            signingConfig = signingConfigs.getByName("release")
         }
     }
 
