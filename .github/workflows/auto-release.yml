@@ -9,6 +9,7 @@ name: Auto Release
 #      is the fixed brand name, only the 2.0.x version changes per release.
 # The bump commit is pushed with the workflow GITHUB_TOKEN, which does not
 # retrigger workflows, so there is no release loop.
+# APK signing is optional — if keystore secrets are not set, an unsigned APK is produced.
 
 on:
   push:
