@@ -2,5 +2,6 @@
     "claudeCode.spinnerVerbs": {
         "mode": "append",
         "verbs": []
-    }
+    },
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

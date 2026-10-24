@@ -11,9 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -76,34 +73,19 @@ fun SettingsDetailPane(
                             }
 
                             SettingsTab.Agent -> {
-                                // Use LazyColumn for Agent tab which can have many items
-                                LazyColumn(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                                ) {
-                                    item { AgentContent(uiState = uiState, actions = actions) }
-                                }
+                                AgentContent(uiState = uiState, actions = actions)
                             }
 
                             SettingsTab.Services -> {
-                                // ServicesContent already handles its own virtualization
                                 ServicesContent(uiState = uiState, actions = actions)
                             }
 
                             SettingsTab.Tools -> {
-                                // Use LazyColumn for Tools tab which can have many items
-                                LazyColumn(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                                ) {
-                                    item {
-                                        ToolsTabContent(
-                                            uiState = uiState,
-                                            actions = actions,
-                                            sandboxState = sandboxState,
-                                        )
-                                    }
-                                }
+                                ToolsTabContent(
+                                    uiState = uiState,
+                                    actions = actions,
+                                    sandboxState = sandboxState,
+                                )
                             }
 
                             SettingsTab.Integrations -> {

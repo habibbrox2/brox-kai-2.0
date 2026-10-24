@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -637,75 +638,60 @@ internal fun ServicesContent(uiState: SettingsUiState, actions: SettingsActions)
         Spacer(Modifier.height(12.dp))
     }
 
-    // LazyColumn with reordering support for better performance with many services
-    val listState = rememberLazyListState()
-    val reorderableState = rememberReorderableLazyListState(listState) { from, to ->
-        val ids = entries.map { it.instanceId }.toMutableList()
-        ids.add(to.index, ids.removeAt(from.index))
-        actions.onReorderServices(ids)
-    }
-    LazyColumn(
-        state = listState,
+    Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.fillMaxWidth(),
     ) {
-        items(entries, key = { it.instanceId }) { entry ->
-            ReorderableItem(reorderableState, key = entry.instanceId) { isDragging ->
-                val dragHandle = if (entries.size >= 2) Modifier.draggableHandle() else Modifier
-                ConfiguredServiceCardContent(
-                    entry = entry,
-                    isExpanded = uiState.expandedServiceId == entry.instanceId,
-                    onExpand = { actions.onExpandService(if (uiState.expandedServiceId == entry.instanceId) null else entry.instanceId) },
-                    onChangeApiKey = { apiKey -> actions.onChangeApiKey(entry.instanceId, apiKey) },
-                    onChangeBaseUrl = { baseUrl -> actions.onChangeBaseUrl(entry.instanceId, baseUrl) },
-                    onSelectModel = { modelId -> actions.onSelectModel(entry.instanceId, modelId) },
-                    onToggleUseCustomModel = { use -> actions.onToggleUseCustomModel(entry.instanceId, use) },
-                    onChangeCustomModelId = { id -> actions.onChangeCustomModelId(entry.instanceId, id) },
-                    onRemove = { actions.onRemoveService(entry.instanceId) },
-                    isDragging = isDragging,
-                    dragHandleModifier = dragHandle,
-                    localAvailableModels = uiState.localAvailableModels,
-                    localImportedModels = uiState.localImportedModels,
-                    totalDeviceMemoryBytes = uiState.totalDeviceMemoryBytes,
-                    localFreeSpaceBytes = uiState.localFreeSpaceBytes,
-                    localDownloadingModelId = uiState.localDownloadingModelId,
-                    localDownloadProgress = uiState.localDownloadProgress,
-                    localDownloadError = uiState.localDownloadError,
-                    localImportingFileName = uiState.localImportingFileName,
-                    localImportProgress = uiState.localImportProgress,
-                    localImportError = uiState.localImportError,
-                    onDownloadLocalModel = actions.onDownloadLocalModel,
-                    onCancelLocalModelDownload = actions.onCancelLocalModelDownload,
-                    onImportLocalModel = actions.onImportLocalModel,
-                    onCancelLocalModelImport = actions.onCancelLocalModelImport,
-                    onDeleteLocalModel = actions.onDeleteLocalModel,
-                    onChangeModelContextTokens = actions.onChangeModelContextTokens,
-                    modelContextTokens = uiState.modelContextTokens,
-                    onOpenAppPermissionSettings = actions.onOpenAppPermissionSettings,
-                    onRecheckLocalNetworkPermission = { actions.onRecheckLocalNetworkPermission(entry.instanceId) },
-                )
+        entries.forEach { entry ->
+            ConfiguredServiceCardContent(
+                entry = entry,
+                isExpanded = uiState.expandedServiceId == entry.instanceId,
+                onExpand = { actions.onExpandService(if (uiState.expandedServiceId == entry.instanceId) null else entry.instanceId) },
+                onChangeApiKey = { apiKey -> actions.onChangeApiKey(entry.instanceId, apiKey) },
+                onChangeBaseUrl = { baseUrl -> actions.onChangeBaseUrl(entry.instanceId, baseUrl) },
+                onSelectModel = { modelId -> actions.onSelectModel(entry.instanceId, modelId) },
+                onToggleUseCustomModel = { use -> actions.onToggleUseCustomModel(entry.instanceId, use) },
+                onChangeCustomModelId = { id -> actions.onChangeCustomModelId(entry.instanceId, id) },
+                onRemove = { actions.onRemoveService(entry.instanceId) },
+                isDragging = false,
+                dragHandleModifier = null,
+                localAvailableModels = uiState.localAvailableModels,
+                localImportedModels = uiState.localImportedModels,
+                totalDeviceMemoryBytes = uiState.totalDeviceMemoryBytes,
+                localFreeSpaceBytes = uiState.localFreeSpaceBytes,
+                localDownloadingModelId = uiState.localDownloadingModelId,
+                localDownloadProgress = uiState.localDownloadProgress,
+                localDownloadError = uiState.localDownloadError,
+                localImportingFileName = uiState.localImportingFileName,
+                localImportProgress = uiState.localImportProgress,
+                localImportError = uiState.localImportError,
+                onDownloadLocalModel = actions.onDownloadLocalModel,
+                onCancelLocalModelDownload = actions.onCancelLocalModelDownload,
+                onImportLocalModel = actions.onImportLocalModel,
+                onCancelLocalModelImport = actions.onCancelLocalModelImport,
+                onDeleteLocalModel = actions.onDeleteLocalModel,
+                onChangeModelContextTokens = actions.onChangeModelContextTokens,
+                modelContextTokens = uiState.modelContextTokens,
+                onOpenAppPermissionSettings = actions.onOpenAppPermissionSettings,
+                onRecheckLocalNetworkPermission = { actions.onRecheckLocalNetworkPermission(entry.instanceId) },
+            )
+        }
+
+        if (uiState.availableServicesToAdd.isNotEmpty()) {
+            Spacer(Modifier.height(12.dp))
+            OutlinedButton(onClick = { showAddServiceSheet = true }, modifier = Modifier.handCursor()) {
+                Text(stringResource(Res.string.settings_add_service))
             }
         }
 
-        // Add service button and free tier as footer items
-        item {
-            if (uiState.availableServicesToAdd.isNotEmpty()) {
-                Spacer(Modifier.height(12.dp))
-                OutlinedButton(onClick = { showAddServiceSheet = true }, modifier = Modifier.handCursor()) {
-                    Text(stringResource(Res.string.settings_add_service))
-                }
-            }
-        }
-        item {
-            // Free tier card (always at bottom)
-            Spacer(Modifier.height(16.dp))
-            FreeSettings(
-                showFallbackToggle = entries.isNotEmpty(),
-                isFreeFallbackEnabled = uiState.isFreeFallbackEnabled,
-                onToggleFreeFallback = actions.onToggleFreeFallback,
-                currentSponsors = uiState.currentSponsors,
-                pastSponsors = uiState.pastSponsors,
-            )
-        }
+        Spacer(Modifier.height(16.dp))
+        FreeSettings(
+            showFallbackToggle = entries.isNotEmpty(),
+            isFreeFallbackEnabled = uiState.isFreeFallbackEnabled,
+            onToggleFreeFallback = actions.onToggleFreeFallback,
+            currentSponsors = uiState.currentSponsors,
+            pastSponsors = uiState.pastSponsors,
+        )
     }
 
     // Add service bottom sheet

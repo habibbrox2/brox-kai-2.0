@@ -16,5 +16,6 @@
       "Bash(gh release *)",
       "WebFetch(domain:docs.gradle.org)"
     ]
-  }
+  },
+  "outputStyle": "Concise"
 }
