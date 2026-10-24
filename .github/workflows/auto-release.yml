@@ -78,11 +78,11 @@ jobs:
           packages: platform-tools
       - name: Install Android Build Tools
         run: |
-          sdkmanager "build-tools;37.0.0"
-          sdkmanager "build-tools;36.0.0"
-          sdkmanager "ndk;29.0.14206865"
+          yes | sdkmanager "build-tools;37.0.0"
+          yes | sdkmanager "build-tools;36.0.0"
+          yes | sdkmanager "ndk;29.0.14206865"
       - name: Build Foss APK
-        run: bash ./gradlew :androidApp:assembleFossRelease --stacktrace
+        run: bash ./gradlew :androidApp:assembleFossRelease --stacktrace --info
       - name: Sign APK
         uses: r0adkll/sign-android-release@v1
         with:
@@ -114,9 +114,9 @@ jobs:
       - name: Install WiX Toolset
         run: choco install wixtoolset -y --no-progress
       - name: Build MSI
-        run: ./gradlew packageReleaseMsi --stacktrace
+        run: ./gradlew packageReleaseMsi --stacktrace --info
       - name: Build distributable
-        run: ./gradlew createReleaseDistributable --stacktrace
+        run: ./gradlew createReleaseDistributable --stacktrace --info
       - name: Create zip
         run: |
           Compress-Archive -Path "composeApp/build/compose/binaries/main-release/app/Kai/*" -DestinationPath "Brox-Kai-2.0-v${{ needs.bump.outputs.version }}-Windows-x64.zip"
