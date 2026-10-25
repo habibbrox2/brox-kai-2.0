@@ -17,11 +17,15 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.DangerAlert
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -136,14 +140,14 @@ internal fun ExportImportSection(
 
     Text(
         text = stringResource(Res.string.settings_export_import_title),
-        style = MaterialTheme.typography.titleMedium,
-        color = MaterialTheme.colorScheme.onBackground,
+        style = KaiTypography.titleMedium,
+        color = TextPrimary,
     )
     Spacer(Modifier.height(4.dp))
     Text(
         text = stringResource(Res.string.settings_export_import_description),
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = KaiTypography.bodySmall,
+        color = TextSecondary,
     )
     Spacer(Modifier.height(12.dp))
     // FlowRow so the two buttons drop onto separate lines at large font scales
@@ -171,13 +175,13 @@ internal fun ExportImportSection(
     if (importResult != null) {
         Spacer(Modifier.height(8.dp))
         val (text, color) = when (val result = importResult!!) {
-            is ImportResult.Success -> stringResource(Res.string.settings_import_success) to MaterialTheme.colorScheme.primary
-            is ImportResult.PartialSuccess -> stringResource(Res.string.settings_import_partial, result.errorCount) to MaterialTheme.colorScheme.primary
-            is ImportResult.Failure -> stringResource(Res.string.settings_import_error) to MaterialTheme.colorScheme.error
+            is ImportResult.Success -> stringResource(Res.string.settings_import_success) to AccentPrimary
+            is ImportResult.PartialSuccess -> stringResource(Res.string.settings_import_partial, result.errorCount) to AccentPrimary
+            is ImportResult.Failure -> stringResource(Res.string.settings_import_error) to DangerAlert
         }
         Text(
             text = text,
-            style = MaterialTheme.typography.bodySmall,
+            style = KaiTypography.bodySmall,
             color = color,
         )
     }
@@ -212,13 +216,13 @@ private fun ImportPreviewDialog(
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = stringResource(Res.string.settings_import_replace_all),
-                                style = MaterialTheme.typography.bodyMedium,
+                                style = KaiTypography.bodyMedium,
                             )
                             if (replace) {
                                 Text(
                                     text = stringResource(Res.string.settings_import_replace_all_description),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    style = KaiTypography.bodySmall,
+                                    color = TextSecondary,
                                 )
                             }
                         }
@@ -254,14 +258,14 @@ private fun ImportPreviewDialog(
                             Spacer(Modifier.width(8.dp))
                             Text(
                                 text = sectionDisplayName(section),
-                                style = MaterialTheme.typography.bodyMedium,
+                                style = KaiTypography.bodyMedium,
                             )
                             if (count != null) {
                                 Spacer(Modifier.width(4.dp))
                                 Text(
                                     text = "($count)",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    style = KaiTypography.bodySmall,
+                                    color = TextSecondary,
                                 )
                             }
                         }
@@ -335,14 +339,14 @@ private fun ExportPreviewDialog(
                             Spacer(Modifier.width(8.dp))
                             Text(
                                 text = sectionDisplayName(section),
-                                style = MaterialTheme.typography.bodyMedium,
+                                style = KaiTypography.bodyMedium,
                             )
                             if (count != null) {
                                 Spacer(Modifier.width(4.dp))
                                 Text(
                                     text = "($count)",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    style = KaiTypography.bodySmall,
+                                    color = TextSecondary,
                                 )
                             }
                         }

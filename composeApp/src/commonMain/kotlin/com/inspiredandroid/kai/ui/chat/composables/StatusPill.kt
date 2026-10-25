@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.ui.chat.ChatShapes
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
 import com.inspiredandroid.kai.ui.chat.ChatStatusColors
+import com.inspiredandroid.kai.ui.KaiTypography
 
 /**
  * A compact status pill used by the timeline to surface streaming, tool execution,
@@ -52,7 +52,7 @@ fun StatusPill(
         }
         Text(
             text = text,
-            style = MaterialTheme.typography.labelSmall,
+            style = KaiTypography.labelSmall,
             color = color,
             fontWeight = FontWeight.Medium,
         )

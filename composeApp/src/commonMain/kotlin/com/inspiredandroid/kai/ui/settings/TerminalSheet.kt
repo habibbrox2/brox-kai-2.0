@@ -29,7 +29,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -63,6 +62,11 @@ import com.inspiredandroid.kai.SandboxController
 import com.inspiredandroid.kai.SandboxSessions
 import com.inspiredandroid.kai.TerminalLine
 import com.inspiredandroid.kai.linux.LinuxDistro
+import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.BackgroundPrimary
+import com.inspiredandroid.kai.ui.DangerAlert
+import com.inspiredandroid.kai.ui.SurfaceRaised
+import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.sandbox.SandboxSessionViewModel
 import kai.composeapp.generated.resources.Res
@@ -115,14 +119,13 @@ internal fun terminalColors(darkBackground: Boolean = false): TerminalColors {
             dimText = Color(0xFF666666),
         )
     }
-    val colorScheme = MaterialTheme.colorScheme
     return TerminalColors(
-        bg = colorScheme.background,
-        inputBg = colorScheme.surfaceContainer,
-        text = colorScheme.onBackground,
-        prompt = colorScheme.primary,
-        error = colorScheme.error,
-        dimText = colorScheme.onBackground.copy(alpha = 0.4f),
+        bg = BackgroundPrimary,
+        inputBg = SurfaceRaised,
+        text = TextPrimary,
+        prompt = AccentPrimary,
+        error = DangerAlert,
+        dimText = TextPrimary.copy(alpha = 0.4f),
     )
 }
 

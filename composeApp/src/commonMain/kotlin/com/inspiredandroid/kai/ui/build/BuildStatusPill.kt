@@ -1,6 +1,7 @@
 package com.inspiredandroid.kai.ui.build
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,17 +13,21 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.inspiredandroid.kai.ui.CardFill
+import com.inspiredandroid.kai.ui.KaiBorders
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 
 /**
  * Terminal-style status pill (Plan 3, Phase 1). Small colored dot plus a label so
@@ -37,13 +42,17 @@ fun BuildStatusPill(
 ) {
     val colors = rememberBuildStatusColors()
     val color = colors.forKind(kind)
-    Surface(
-        modifier = modifier.semantics {
-            contentDescription = "Status: $label"
-        },
-        shape = com.inspiredandroid.kai.ui.KaiShapes.pill,
-        color = color.copy(alpha = 0.16f),
-        border = androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.4f)),
+    Box(
+        modifier = modifier
+            .semantics {
+                contentDescription = "Status: $label"
+            }
+            .clip(com.inspiredandroid.kai.ui.KaiShapes.pill)
+            .background(color.copy(alpha = 0.16f), com.inspiredandroid.kai.ui.KaiShapes.pill)
+            .border(
+                androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.4f)),
+                com.inspiredandroid.kai.ui.KaiShapes.pill,
+            ),
     ) {
         Row(
             modifier = Modifier.padding(horizontal = BuildSpacing.sm, vertical = BuildSpacing.xs),
@@ -57,7 +66,7 @@ fun BuildStatusPill(
             )
             Text(
                 text = label,
-                style = MaterialTheme.typography.labelSmall,
+                style = KaiTypography.labelSmall,
                 color = color,
                 fontWeight = FontWeight.Medium,
             )
@@ -80,11 +89,12 @@ fun BuildProgressBlock(
 ) {
     val colors = rememberBuildStatusColors()
     val color = colors.forKind(kind)
-    Surface(
-        modifier = modifier.fillMaxWidth(),
-        shape = com.inspiredandroid.kai.ui.KaiShapes.card,
-        color = com.inspiredandroid.kai.ui.CardFill,
-        border = com.inspiredandroid.kai.ui.KaiBorders.soft,
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(com.inspiredandroid.kai.ui.KaiShapes.card)
+            .background(com.inspiredandroid.kai.ui.CardFill, com.inspiredandroid.kai.ui.KaiShapes.card)
+            .border(com.inspiredandroid.kai.ui.KaiBorders.soft, com.inspiredandroid.kai.ui.KaiShapes.card),
     ) {
         Column(
             modifier = Modifier.padding(BuildSpacing.lg),
@@ -111,8 +121,8 @@ fun BuildProgressBlock(
                 }
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    style = KaiTypography.titleSmall,
+                    color = TextPrimary,
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.weight(1f),
                 )
@@ -121,8 +131,8 @@ fun BuildProgressBlock(
             if (subtitle != null) {
                 Text(
                     text = subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = KaiTypography.bodySmall,
+                    color = TextSecondary,
                 )
             }
             if (progress != null) {

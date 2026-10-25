@@ -1,8 +1,8 @@
 package com.inspiredandroid.kai.ui.markdown
 
-import androidx.compose.material3.ColorScheme
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.CardFill
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -17,34 +17,33 @@ import androidx.compose.ui.text.withStyle
 
 @Composable
 internal fun List<InlineNode>.toAnnotatedString(): AnnotatedString {
-    val colors = MaterialTheme.colorScheme
-    return buildAnnotatedString { appendInlines(this@toAnnotatedString, colors) }
+    return buildAnnotatedString { appendInlines(this@toAnnotatedString) }
 }
 
-private fun AnnotatedString.Builder.appendInlines(nodes: List<InlineNode>, colors: ColorScheme) {
-    for (n in nodes) appendInline(n, colors)
+private fun AnnotatedString.Builder.appendInlines(nodes: List<InlineNode>) {
+    for (n in nodes) appendInline(n)
 }
 
-private fun AnnotatedString.Builder.appendInline(node: InlineNode, colors: ColorScheme) {
+private fun AnnotatedString.Builder.appendInline(node: InlineNode) {
     when (node) {
         is Text -> append(node.value)
 
         is Strong -> withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-            appendInlines(node.children, colors)
+            appendInlines(node.children)
         }
 
         is Emphasis -> withStyle(SpanStyle(fontStyle = FontStyle.Italic)) {
-            appendInlines(node.children, colors)
+            appendInlines(node.children)
         }
 
         is Strike -> withStyle(SpanStyle(textDecoration = TextDecoration.LineThrough)) {
-            appendInlines(node.children, colors)
+            appendInlines(node.children)
         }
 
         is InlineCode -> withStyle(
             SpanStyle(
                 fontFamily = FontFamily.Monospace,
-                background = colors.surfaceVariant,
+                background = CardFill,
             ),
         ) {
             append(node.code)
@@ -55,14 +54,14 @@ private fun AnnotatedString.Builder.appendInline(node: InlineNode, colors: Color
                 url = node.href,
                 styles = TextLinkStyles(
                     style = SpanStyle(
-                        color = colors.primary,
+                        color = AccentPrimary,
                         fontWeight = FontWeight.Bold,
                         textDecoration = TextDecoration.Underline,
                     ),
                 ),
             ),
         ) {
-            appendInlines(node.children, colors)
+            appendInlines(node.children)
         }
 
         is Image -> append(node.alt)

@@ -3,6 +3,8 @@ package com.inspiredandroid.kai.ui.chat.composables
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,7 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.Add
@@ -37,7 +38,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -49,6 +49,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -60,6 +61,13 @@ import com.inspiredandroid.kai.ui.chat.ConversationSummary
 import com.inspiredandroid.kai.ui.components.KaiSearchField
 import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.isOledFlavor
+import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.BorderSoft
+import com.inspiredandroid.kai.ui.SurfaceRaised
+import com.inspiredandroid.kai.ui.KaiShapes
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.chat_history_heartbeat_label
 import kai.composeapp.generated.resources.ic_settings
@@ -116,12 +124,12 @@ fun AppSidebar(
     val sidebarBg = if (isOled) {
         com.inspiredandroid.kai.ui.SurfaceRaised.copy(alpha = 0.95f)
     } else {
-        MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.9f)
+        SurfaceRaised.copy(alpha = 0.9f)
     }
     val sidebarBorder = if (isOled) {
         com.inspiredandroid.kai.ui.BorderSoft
     } else {
-        MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
+        BorderSoft.copy(alpha = 0.3f)
     }
 
     Column(
@@ -130,9 +138,9 @@ fun AppSidebar(
             .background(sidebarBg)
             .border(
                 if (isOled) {
-                    androidx.compose.foundation.BorderStroke(1.dp, sidebarBorder)
+                    BorderStroke(1.dp, sidebarBorder)
                 } else {
-                    androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                    BorderStroke(1.dp, BorderSoft.copy(alpha = 0.3f))
                 },
                 com.inspiredandroid.kai.ui.settings.SettingsShapes.section,
             )
@@ -154,7 +162,7 @@ fun AppSidebar(
                 modifier = Modifier.size(18.dp),
             )
             Spacer(Modifier.width(8.dp))
-            Text("New chat", style = MaterialTheme.typography.labelLarge)
+            Text("New chat", style = KaiTypography.labelLarge)
         }
 
         KaiSearchField(
@@ -173,8 +181,8 @@ fun AppSidebar(
                 item(key = "header_$label") {
                     Text(
                         text = label,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = KaiTypography.labelSmall,
+                        color = TextSecondary,
                         modifier = Modifier.padding(
                             start = ChatSpacing.xs,
                             top = ChatSpacing.sm,
@@ -197,15 +205,15 @@ fun AppSidebar(
                 item {
                     Text(
                         text = if (query.isBlank()) "No chats yet" else "No matches",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = KaiTypography.bodySmall,
+                        color = TextSecondary,
                         modifier = Modifier.padding(vertical = ChatSpacing.md, horizontal = ChatSpacing.xs),
                     )
                 }
             }
         }
 
-        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
+        HorizontalDivider(color = BorderSoft.copy(alpha = 0.4f))
 
         onNavigateToDashboard?.let {
             SidebarLink(icon = Icons.Default.Dashboard, label = "Dashboard", onClick = it)
@@ -235,13 +243,13 @@ fun AppSidebar(
             Image(
                 painter = painterResource(Res.drawable.logo),
                 contentDescription = null,
-                modifier = Modifier.size(24.dp).clip(RoundedCornerShape(6.dp)),
+                modifier = Modifier.size(24.dp).clip(KaiShapes.xs),
             )
             Text(
                 text = "Brox Kai 2.0",
-                style = MaterialTheme.typography.titleSmall,
+                style = KaiTypography.titleSmall,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = TextPrimary,
             )
         }
     }
@@ -270,23 +278,20 @@ private fun ConversationRow(
         )
     }
 
-    Surface(
-        onClick = onSelect,
-        shape = ChatShapes.quickStartCard,
-        color = if (isSelected) {
-            com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.15f)
-        } else {
-            androidx.compose.ui.graphics.Color.Transparent
-        },
-        border = if (isSelected) {
-            androidx.compose.foundation.BorderStroke(
-                1.dp,
-                com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.4f),
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .handCursor()
+            .clickable(onClick = onSelect)
+            .clip(ChatShapes.quickStartCard)
+            .background(
+                if (isSelected) AccentPrimary.copy(alpha = 0.15f) else Color.Transparent,
+                ChatShapes.quickStartCard,
             )
-        } else {
-            null
-        },
-        modifier = Modifier.fillMaxWidth().handCursor(),
+            .border(
+                if (isSelected) BorderStroke(1.dp, AccentPrimary.copy(alpha = 0.4f)) else BorderStroke(0.dp, Color.Transparent),
+                ChatShapes.quickStartCard,
+            ),
     ) {
         Row(
             modifier = Modifier.padding(horizontal = ChatSpacing.xs, vertical = ChatSpacing.xs),
@@ -299,7 +304,7 @@ private fun ConversationRow(
                 tint = if (isSelected) {
                     com.inspiredandroid.kai.ui.AccentPrimary
                 } else {
-                    MaterialTheme.colorScheme.onSurfaceVariant
+                    TextSecondary
                 },
                 modifier = Modifier.size(16.dp),
             )
@@ -307,17 +312,17 @@ private fun ConversationRow(
                 if (conversation.isHeartbeat) {
                     Text(
                         text = stringResource(Res.string.chat_history_heartbeat_label),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.tertiary,
+                        style = KaiTypography.labelSmall,
+                        color = TextSecondary,
                     )
                 }
                 Text(
                     text = conversation.title.ifBlank { "Untitled" },
-                    style = MaterialTheme.typography.bodySmall,
+                    style = KaiTypography.bodySmall,
                     color = if (isSelected) {
                         com.inspiredandroid.kai.ui.AccentPrimary
                     } else {
-                        MaterialTheme.colorScheme.onSurface
+                        TextPrimary
                     },
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -331,7 +336,7 @@ private fun ConversationRow(
                     Icon(
                         imageVector = Icons.Default.MoreVert,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = TextSecondary,
                         modifier = Modifier.size(14.dp),
                     )
                 }
@@ -405,23 +410,20 @@ private fun SidebarLink(
 ) {
     val isOled = MaterialTheme.colorScheme.isOledFlavor
 
-    Surface(
-        onClick = onClick,
-        shape = ChatShapes.quickStartCard,
-        color = if (isActive) {
-            com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.15f)
-        } else {
-            androidx.compose.ui.graphics.Color.Transparent
-        },
-        border = if (isActive) {
-            androidx.compose.foundation.BorderStroke(
-                1.dp,
-                com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.4f),
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .handCursor()
+            .clickable(onClick = onClick)
+            .clip(ChatShapes.quickStartCard)
+            .background(
+                if (isActive) AccentPrimary.copy(alpha = 0.15f) else Color.Transparent,
+                ChatShapes.quickStartCard,
             )
-        } else {
-            null
-        },
-        modifier = Modifier.fillMaxWidth().handCursor(),
+            .border(
+                if (isActive) BorderStroke(1.dp, AccentPrimary.copy(alpha = 0.4f)) else BorderStroke(0.dp, Color.Transparent),
+                ChatShapes.quickStartCard,
+            ),
     ) {
         Row(
             modifier = Modifier.padding(horizontal = ChatSpacing.xs, vertical = ChatSpacing.sm),
@@ -434,17 +436,17 @@ private fun SidebarLink(
                 tint = if (isActive) {
                     com.inspiredandroid.kai.ui.AccentPrimary
                 } else {
-                    MaterialTheme.colorScheme.onSurfaceVariant
+                    TextSecondary
                 },
                 modifier = Modifier.size(18.dp),
             )
             Text(
                 text = label,
-                style = MaterialTheme.typography.bodyMedium,
+                style = KaiTypography.bodyMedium,
                 color = if (isActive) {
                     com.inspiredandroid.kai.ui.AccentPrimary
                 } else {
-                    MaterialTheme.colorScheme.onSurface
+                    TextPrimary
                 },
                 fontWeight = if (isActive) FontWeight.Medium else FontWeight.Normal,
             )

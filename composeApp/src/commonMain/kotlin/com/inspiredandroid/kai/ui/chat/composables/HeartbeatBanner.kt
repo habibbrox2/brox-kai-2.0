@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,8 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.ui.handCursor
+import com.inspiredandroid.kai.ui.KaiTypography
 import com.inspiredandroid.kai.ui.kaiAdaptiveCardBorder
 import com.inspiredandroid.kai.ui.kaiAdaptiveCardColors
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.heartbeat_banner_dismiss
 import kai.composeapp.generated.resources.heartbeat_banner_message
@@ -56,13 +58,13 @@ internal fun HeartbeatBanner(
                 Icon(
                     imageVector = vectorResource(Res.drawable.ic_history),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = TextSecondary,
                     modifier = Modifier.size(18.dp),
                 )
                 Text(
                     text = stringResource(Res.string.heartbeat_banner_message),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    style = KaiTypography.bodySmall,
+                    color = TextPrimary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f).padding(horizontal = 8.dp),
@@ -74,7 +76,7 @@ internal fun HeartbeatBanner(
                     Icon(
                         imageVector = vectorResource(Res.drawable.ic_close),
                         contentDescription = stringResource(Res.string.heartbeat_banner_dismiss),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = TextSecondary,
                         modifier = Modifier.size(16.dp),
                     )
                 }

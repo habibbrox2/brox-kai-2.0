@@ -5,13 +5,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.TextPrimary
 
 /**
  * Concise settings overview surface (Plan 2, Phase 3). Summarizes the current
@@ -31,9 +32,9 @@ fun SettingsOverview(
         Column(verticalArrangement = Arrangement.spacedBy(SettingsSpacing.sm)) {
             Text(
                 text = "Overview",
-                style = MaterialTheme.typography.titleMedium,
+                style = KaiTypography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = TextPrimary,
                 modifier = Modifier.semantics { heading() },
             )
             val active = uiState.configuredServices.firstOrNull()

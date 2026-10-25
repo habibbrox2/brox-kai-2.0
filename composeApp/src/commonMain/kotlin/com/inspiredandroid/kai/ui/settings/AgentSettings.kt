@@ -19,7 +19,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -42,7 +41,12 @@ import com.inspiredandroid.kai.data.HeartbeatLogEntry
 import com.inspiredandroid.kai.data.MemoryEntry
 import com.inspiredandroid.kai.data.ScheduledTask
 import com.inspiredandroid.kai.data.TaskTrigger
+import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.DangerAlert
 import com.inspiredandroid.kai.ui.KaiOutlinedTextField
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.components.SettingsListItem
 import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.icons.Replay
@@ -204,8 +208,8 @@ private fun SoulEditor(
         ) {
             Text(
                 text = stringResource(Res.string.settings_soul),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onBackground,
+                style = KaiTypography.titleMedium,
+                color = TextPrimary,
                 modifier = Modifier.weight(1f),
             )
             if (soulText.isNotEmpty()) {
@@ -216,15 +220,15 @@ private fun SoulEditor(
                     Icon(
                         imageVector = Icons.Default.Replay,
                         contentDescription = stringResource(Res.string.settings_soul_reset),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = TextSecondary,
                     )
                 }
             }
         }
         Text(
             text = stringResource(Res.string.settings_soul_description),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KaiTypography.bodySmall,
+            color = TextSecondary,
         )
         Spacer(Modifier.height(12.dp))
 
@@ -237,15 +241,15 @@ private fun SoulEditor(
             label = {
                 Text(
                     stringResource(Res.string.settings_soul),
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = TextPrimary,
                 )
             },
         )
 
         Text(
             text = "${editedText.length}/$maxChars",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KaiTypography.bodySmall,
+            color = TextSecondary,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.End,
         )
@@ -379,8 +383,8 @@ private fun AllMemoriesSheet(
         ) {
             Text(
                 text = stringResource(Res.string.settings_memories_all_title),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onBackground,
+                style = KaiTypography.titleMedium,
+                color = TextPrimary,
             )
             Spacer(Modifier.height(12.dp))
             memories.forEach { memory ->
@@ -420,14 +424,14 @@ private fun EditMemorySheet(
         ) {
             Text(
                 text = stringResource(Res.string.settings_memories_edit_title),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onBackground,
+                style = KaiTypography.titleMedium,
+                color = TextPrimary,
             )
             Spacer(Modifier.height(12.dp))
             Text(
                 text = memory.key,
-                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.onBackground,
+                style = KaiTypography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                color = TextPrimary,
             )
             Spacer(Modifier.height(8.dp))
             KaiOutlinedTextField(
@@ -534,8 +538,8 @@ private fun TaskDetailsSheet(
         ) {
             Text(
                 text = task.description,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onBackground,
+                style = KaiTypography.titleMedium,
+                color = TextPrimary,
             )
             Spacer(Modifier.height(12.dp))
 
@@ -592,8 +596,8 @@ private fun TaskDetailsSheet(
             Spacer(Modifier.height(16.dp))
             Text(
                 text = stringResource(Res.string.settings_heartbeat_recent),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onBackground,
+                style = KaiTypography.labelMedium,
+                color = TextPrimary,
             )
             Spacer(Modifier.height(4.dp))
 
@@ -638,14 +642,14 @@ private fun TaskDetailRow(label: String, value: String) {
         // track the font scale; the value needs a weight or it overflows the row.
         Text(
             text = label,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KaiTypography.bodySmall,
+            color = TextSecondary,
             modifier = Modifier.width(140.dp * LocalDensity.current.fontScale),
         )
         Text(
             text = value,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onBackground,
+            style = KaiTypography.bodySmall,
+            color = TextPrimary,
             modifier = Modifier.weight(1f),
         )
     }
@@ -659,21 +663,21 @@ private fun ExecutionLogRow(success: Boolean, timestampEpochMs: Long, message: S
     ) {
         Text(
             text = if (success) stringResource(Res.string.execution_log_status_ok) else stringResource(Res.string.execution_log_status_fail),
-            style = MaterialTheme.typography.labelSmall,
-            color = if (success) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+            style = KaiTypography.labelSmall,
+            color = if (success) AccentPrimary else DangerAlert,
             modifier = Modifier.widthIn(min = 36.dp * LocalDensity.current.fontScale),
         )
         Column {
             Text(
                 text = formatTaskInstant(timestampEpochMs),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = KaiTypography.bodySmall,
+                color = TextSecondary,
             )
             if (!message.isNullOrBlank()) {
                 Text(
                     text = message,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = if (success) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.error,
+                    style = KaiTypography.labelSmall,
+                    color = if (success) TextSecondary else DangerAlert,
                     maxLines = 4,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -686,8 +690,8 @@ private fun ExecutionLogRow(success: Boolean, timestampEpochMs: Long, message: S
 private fun EmptyLogText(text: String) {
     Text(
         text = text,
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = KaiTypography.bodySmall,
+        color = TextSecondary,
     )
 }
 

@@ -2,6 +2,8 @@ package com.inspiredandroid.kai.ui.sandbox
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +19,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -32,12 +33,10 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
@@ -63,6 +62,9 @@ import com.inspiredandroid.kai.formatFileSize
 import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.kaiAdaptiveCardBorder
 import com.inspiredandroid.kai.ui.kaiAdaptiveCardColors
+import com.inspiredandroid.kai.ui.DangerAlert
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.TextSecondary
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import kai.composeapp.generated.resources.Res
@@ -221,13 +223,13 @@ private fun PathBar(
 
     val segments = remember(currentPath, rootPath) { breadcrumbs(currentPath, rootPath) }
 
-    Surface(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = com.inspiredandroid.kai.ui.build.BuildSpacing.sm),
-        shape = com.inspiredandroid.kai.ui.KaiShapes.input,
-        color = com.inspiredandroid.kai.ui.CardFill,
-        border = com.inspiredandroid.kai.ui.KaiBorders.soft,
+            .padding(horizontal = com.inspiredandroid.kai.ui.build.BuildSpacing.sm)
+            .clip(com.inspiredandroid.kai.ui.KaiShapes.input)
+            .background(com.inspiredandroid.kai.ui.CardFill)
+            .border(com.inspiredandroid.kai.ui.KaiBorders.soft),
     ) {
         Row(
             modifier = Modifier
@@ -306,8 +308,8 @@ internal fun breadcrumbs(currentPath: String, rootPath: String): List<Pair<Strin
 private fun Separator() {
     Text(
         text = "›",
-        style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = KaiTypography.bodyMedium,
+        color = TextSecondary,
         modifier = Modifier.padding(horizontal = 4.dp),
     )
 }
@@ -330,7 +332,7 @@ private fun FileList(
     }
     if (state.error != null) {
         Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
-            Text(state.error, color = MaterialTheme.colorScheme.error)
+            Text(state.error, color = DangerAlert)
         }
         return
     }
@@ -338,8 +340,8 @@ private fun FileList(
         Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
             Text(
                 stringResource(Res.string.sandbox_files_empty_directory),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
+                color = TextSecondary,
+                style = KaiTypography.bodyMedium,
             )
         }
         return
@@ -373,13 +375,12 @@ private fun FileRow(
     onRename: () -> Unit,
     onDelete: () -> Unit,
 ) {
-    androidx.compose.material3.Surface(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(com.inspiredandroid.kai.ui.KaiShapes.card),
-        color = com.inspiredandroid.kai.ui.CardFill,
-        border = com.inspiredandroid.kai.ui.KaiBorders.soft,
-        shape = com.inspiredandroid.kai.ui.KaiShapes.card,
+            .clip(com.inspiredandroid.kai.ui.KaiShapes.card)
+            .background(com.inspiredandroid.kai.ui.CardFill)
+            .border(com.inspiredandroid.kai.ui.KaiBorders.soft),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -447,13 +448,13 @@ private fun FileRowMenu(
             Icon(
                 imageVector = Icons.Filled.MoreVert,
                 contentDescription = stringResource(Res.string.sandbox_files_action_more),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = TextSecondary,
             )
         }
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            shape = RoundedCornerShape(16.dp),
+            shape = com.inspiredandroid.kai.ui.KaiShapes.card,
         ) {
             if (!isDirectory) {
                 DropdownMenuItem(
@@ -531,7 +532,7 @@ private fun EditorBody(
         is EditorState.Unreadable -> Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
             Text(
                 stringResource(Res.string.sandbox_files_editor_unreadable),
-                color = MaterialTheme.colorScheme.error,
+                color = DangerAlert,
             )
         }
 
@@ -547,8 +548,8 @@ private fun EditorBody(
                 if (editor.readOnly) {
                     Text(
                         stringResource(Res.string.sandbox_files_editor_read_only),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = KaiTypography.bodySmall,
+                        color = TextSecondary,
                         modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp),
                     )
                 }
@@ -626,8 +627,8 @@ private fun UnopenableFile(
         Spacer(Modifier.weight(1f))
         Text(
             message,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KaiTypography.bodyMedium,
+            color = TextSecondary,
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             TextButton(onClick = { onOpenExternal(path) }, modifier = Modifier.handCursor()) {

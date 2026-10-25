@@ -3,6 +3,8 @@
 package com.inspiredandroid.kai.ui.settings
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -35,8 +37,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,7 +46,6 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -69,6 +68,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
@@ -91,10 +91,18 @@ import com.inspiredandroid.kai.data.EmailAccount
 import com.inspiredandroid.kai.data.Service
 import com.inspiredandroid.kai.linux.LinuxDistro
 import com.inspiredandroid.kai.ui.components.VerticalScrollbarForScroll
+import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.BackgroundPrimary
+import com.inspiredandroid.kai.ui.BorderSoft
+import com.inspiredandroid.kai.ui.CardFill
+import com.inspiredandroid.kai.ui.SurfaceRaised
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.isOledFlavor
 import com.inspiredandroid.kai.ui.kaiAdaptiveCardBorder
 import com.inspiredandroid.kai.ui.kaiAdaptiveCardColors
+import com.inspiredandroid.kai.ui.KaiTypography
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.github_mark
 import kai.composeapp.generated.resources.settings_ai_mistakes_warning
@@ -256,7 +264,7 @@ fun SettingsScreenContent(
     val backgroundColor = if (MaterialTheme.colorScheme.isOledFlavor) {
         com.inspiredandroid.kai.ui.OledBlack
     } else {
-        MaterialTheme.colorScheme.background
+        BackgroundPrimary
     }
 
     Box(Modifier.fillMaxSize().background(backgroundColor).navigationBarsPadding().statusBarsPadding().imePadding()) {
@@ -352,20 +360,23 @@ private fun TopBar(onNavigateBack: () -> Unit) {
     val barBg = if (isOled) {
         com.inspiredandroid.kai.ui.CardFill
     } else {
-        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
+        CardFill
     }
 
-    Surface(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 10.dp),
-        color = barBg,
-        shape = SettingsShapes.panel,
-        border = if (isOled) {
-            androidx.compose.foundation.BorderStroke(1.dp, com.inspiredandroid.kai.ui.BorderSubtle)
-        } else {
-            androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f))
-        },
-        tonalElevation = 0.dp,
-        shadowElevation = 0.dp,
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 10.dp)
+            .clip(SettingsShapes.panel)
+            .background(barBg)
+            .border(
+                if (isOled) {
+                    BorderStroke(1.dp, com.inspiredandroid.kai.ui.BorderSubtle)
+                } else {
+                    BorderStroke(1.dp, BorderSoft.copy(alpha = 0.6f))
+                },
+                SettingsShapes.panel,
+            ),
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
@@ -380,7 +391,7 @@ private fun TopBar(onNavigateBack: () -> Unit) {
                 Icon(
                     imageVector = BackIcon,
                     contentDescription = "Navigate back",
-                    tint = MaterialTheme.colorScheme.onBackground,
+                    tint = TextPrimary,
                 )
             }
             Spacer(Modifier.weight(1f))
@@ -426,14 +437,23 @@ private fun SettingsTabSelector(
     val tabBarBg = if (isOled) {
         com.inspiredandroid.kai.ui.CardFill
     } else {
-        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
+        CardFill
     }
 
-    Surface(
+    Box(
         modifier = Modifier
             .widthIn(max = 960.dp)
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 10.dp)
+            .clip(SettingsShapes.pill)
+            .background(tabBarBg)
+            .border(
+                BorderStroke(
+                    1.dp,
+                    if (isOled) com.inspiredandroid.kai.ui.BorderSubtle else BorderSoft.copy(alpha = 0.6f),
+                ),
+                SettingsShapes.pill,
+            )
             .onKeyEvent { event ->
                 when (event.key) {
                     Key.DirectionLeft, Key.Tab -> {
@@ -464,14 +484,6 @@ private fun SettingsTabSelector(
                     else -> false
                 }
             },
-        color = tabBarBg,
-        shape = SettingsShapes.pill,
-        border = androidx.compose.foundation.BorderStroke(
-            1.dp,
-            if (isOled) com.inspiredandroid.kai.ui.BorderSubtle else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f),
-        ),
-        tonalElevation = 0.dp,
-        shadowElevation = 0.dp,
     ) {
         Row(
             modifier = Modifier
@@ -504,10 +516,10 @@ private fun SettingsTabSelector(
                     contentColor = if (isSelected) {
                         com.inspiredandroid.kai.ui.AccentPrimary
                     } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
+                        TextSecondary
                     },
                     disabledContainerColor = Color.Transparent,
-                    disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                    disabledContentColor = TextSecondary.copy(alpha = 0.5f),
                 )
 
                 val border = when {
@@ -537,7 +549,7 @@ private fun SettingsTabSelector(
                             selected = isSelected
                         },
                     colors = buttonColors,
-                    shape = RoundedCornerShape(999.dp),
+                    shape = SettingsShapes.pill,
                     border = border,
                     elevation = ButtonDefaults.buttonElevation(
                         defaultElevation = 0.dp,
@@ -562,11 +574,11 @@ private fun SettingsTabSelector(
                         color = if (isSelected) {
                             com.inspiredandroid.kai.ui.AccentPrimary
                         } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant
+                            TextSecondary
                         },
-                        style = MaterialTheme.typography.labelLarge,
+                        style = KaiTypography.labelLarge,
                         maxLines = 1,
-                        fontWeight = if (isSelected) androidx.compose.ui.text.font.FontWeight.SemiBold else androidx.compose.ui.text.font.FontWeight.Normal,
+                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
                     )
                 }
             }
@@ -578,9 +590,9 @@ private fun SettingsTabSelector(
 internal fun BottomInfo() {
     Text(
         text = stringResource(Res.string.settings_ai_mistakes_warning),
-        style = MaterialTheme.typography.bodySmall,
+        style = KaiTypography.bodySmall,
         textAlign = TextAlign.Center,
-        color = MaterialTheme.colorScheme.onBackground,
+        color = TextPrimary,
     )
 
     Spacer(Modifier.height(8.dp))
@@ -598,8 +610,8 @@ internal fun BottomInfo() {
         Text(
             stringResource(Res.string.settings_version, Version.appVersion),
             modifier = Modifier.align(Alignment.CenterVertically),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onBackground,
+            style = KaiTypography.bodyMedium,
+            color = TextPrimary,
         )
 
         IconButton(
@@ -612,7 +624,7 @@ internal fun BottomInfo() {
             Icon(
                 painter = painterResource(Res.drawable.github_mark),
                 contentDescription = "GitHub repository",
-                tint = MaterialTheme.colorScheme.onBackground,
+                tint = TextPrimary,
                 modifier = Modifier.size(24.dp),
             )
         }
@@ -625,8 +637,8 @@ internal fun BottomInfo() {
         ) {
             Text(
                 text = stringResource(Res.string.settings_documentation),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary,
+                style = KaiTypography.bodyMedium,
+                color = AccentPrimary,
             )
         }
 
@@ -639,8 +651,8 @@ internal fun BottomInfo() {
         ) {
             Text(
                 text = stringResource(Res.string.settings_licenses),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary,
+                style = KaiTypography.bodyMedium,
+                color = AccentPrimary,
             )
         }
         if (showLicenses) {
@@ -665,7 +677,7 @@ private fun LicensesDialog(onDismiss: () -> Unit) {
             Text(
                 text = notices.orEmpty(),
                 modifier = Modifier.verticalScroll(rememberScrollState()),
-                style = MaterialTheme.typography.bodySmall,
+                style = KaiTypography.bodySmall,
                 fontFamily = FontFamily.Monospace,
             )
         },
@@ -684,28 +696,26 @@ internal fun SettingsCard(
     onClick: (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
-    val scheme = MaterialTheme.colorScheme
-    val isOled = scheme.isOledFlavor
+    val isOled = MaterialTheme.colorScheme.isOledFlavor
     val cardBg = if (isOled) {
         com.inspiredandroid.kai.ui.CardFill
     } else {
-        scheme.surfaceVariant.copy(alpha = 0.42f)
+        CardFill
     }
     val cardBorder = if (isOled) {
-        androidx.compose.foundation.BorderStroke(1.dp, com.inspiredandroid.kai.ui.BorderSubtle)
+        BorderStroke(1.dp, com.inspiredandroid.kai.ui.BorderSubtle)
     } else {
-        androidx.compose.foundation.BorderStroke(1.dp, scheme.outlineVariant.copy(alpha = 0.7f))
+        BorderStroke(1.dp, BorderSoft.copy(alpha = 0.7f))
     }
     val cardShape = SettingsShapes.card
 
-    Card(
+    Box(
         modifier = modifier
             .fillMaxWidth()
+            .clip(cardShape)
+            .background(cardBg)
+            .border(cardBorder, cardShape)
             .then(if (onClick != null) Modifier.clickable(onClick = onClick).handCursor() else Modifier),
-        colors = CardDefaults.cardColors(containerColor = cardBg),
-        border = cardBorder,
-        shape = cardShape,
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
             modifier = Modifier
@@ -780,15 +790,15 @@ internal fun ToggleableHeadline(
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                style = KaiTypography.titleMedium,
+                color = TextPrimary,
+                fontWeight = FontWeight.SemiBold,
             )
             Spacer(Modifier.size(4.dp))
             Text(
                 text = description,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = KaiTypography.bodySmall,
+                color = TextSecondary,
             )
         }
         actions()
@@ -799,8 +809,8 @@ internal fun ToggleableHeadline(
             colors = androidx.compose.material3.SwitchDefaults.colors(
                 checkedThumbColor = com.inspiredandroid.kai.ui.AccentPrimary,
                 checkedTrackColor = com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.32f),
-                uncheckedThumbColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                uncheckedTrackColor = if (isOled) com.inspiredandroid.kai.ui.BorderSoft else MaterialTheme.colorScheme.outlineVariant,
+                uncheckedThumbColor = TextSecondary,
+                uncheckedTrackColor = BorderSoft,
             ),
         )
     }

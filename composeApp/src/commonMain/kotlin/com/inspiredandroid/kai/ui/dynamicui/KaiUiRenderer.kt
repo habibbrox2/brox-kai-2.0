@@ -41,7 +41,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -175,13 +174,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -231,6 +228,15 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.ui.KaiOutlinedTextField
+import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.BorderSoft
+import com.inspiredandroid.kai.ui.CardFill
+import com.inspiredandroid.kai.ui.DangerAlert
+import com.inspiredandroid.kai.ui.KaiShapes
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.SurfaceElevated
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.components.KaiChip
 import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.kaiAdaptiveCardBorder
@@ -292,8 +298,8 @@ fun KaiUiRenderer(
     if (hasError) {
         Text(
             text = stringResource(Res.string.kai_ui_render_failed),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.error,
+            style = KaiTypography.bodySmall,
+            color = DangerAlert,
             modifier = modifier,
         )
         return
@@ -320,7 +326,7 @@ fun KaiUiRenderer(
                 }
             }
         } else {
-            CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onBackground) {
+            CompositionLocalProvider(LocalContentColor provides TextPrimary) {
                 Column(
                     modifier = modifier
                         .fillMaxWidth()
@@ -485,17 +491,17 @@ private fun RenderCard(
 @Composable
 private fun RenderText(node: TextNode) {
     val style = when (node.style) {
-        TextNodeStyle.HEADLINE -> MaterialTheme.typography.headlineSmall
-        TextNodeStyle.TITLE -> MaterialTheme.typography.titleMedium
-        TextNodeStyle.BODY -> MaterialTheme.typography.bodyLarge
-        TextNodeStyle.CAPTION -> MaterialTheme.typography.bodySmall
-        null -> MaterialTheme.typography.bodyLarge
+        TextNodeStyle.HEADLINE -> KaiTypography.headlineSmall
+        TextNodeStyle.TITLE -> KaiTypography.titleMedium
+        TextNodeStyle.BODY -> KaiTypography.bodyLarge
+        TextNodeStyle.CAPTION -> KaiTypography.bodySmall
+        null -> KaiTypography.bodyLarge
     }
     val color = when (node.color) {
-        "primary" -> MaterialTheme.colorScheme.primary
-        "secondary" -> MaterialTheme.colorScheme.secondary
-        "error" -> MaterialTheme.colorScheme.error
-        else -> MaterialTheme.colorScheme.onSurface
+        "primary" -> AccentPrimary
+        "secondary" -> TextSecondary
+        "error" -> DangerAlert
+        else -> TextPrimary
     }
     Text(
         text = node.value.replace("**", ""),
@@ -571,8 +577,8 @@ private fun RenderButton(
         // against the greyed-out disabled siblings. `enabled=false` prevents clicks; the
         // override on disabled colors bypasses Material's auto-faded disabled appearance.
         val pressedColors = ButtonDefaults.buttonColors(
-            disabledContainerColor = MaterialTheme.colorScheme.primary,
-            disabledContentColor = MaterialTheme.colorScheme.onPrimary,
+            disabledContainerColor = AccentPrimary,
+            disabledContentColor = TextPrimary,
         )
         Button(
             onClick = {},
@@ -681,7 +687,7 @@ private fun RenderCheckbox(
         )
         Text(
             text = node.label,
-            style = MaterialTheme.typography.bodyLarge,
+            style = KaiTypography.bodyLarge,
             modifier = Modifier
                 .padding(start = 12.dp)
                 .fillMaxWidth()
@@ -693,7 +699,6 @@ private fun RenderCheckbox(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RenderSelect(
     node: SelectNode,
@@ -714,7 +719,7 @@ private fun RenderSelect(
             label = node.label?.let { { Text(it) } },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             enabled = isInteractive,
-            shape = RoundedCornerShape(12.dp),
+            shape = KaiShapes.row,
             modifier = Modifier
                 .fillMaxWidth()
                 .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
@@ -749,7 +754,7 @@ private fun RenderImage(node: ImageNode) {
     val aspectRatio = (node.aspectRatio ?: DEFAULT_IMAGE_ASPECT_RATIO)
     BoxWithConstraints(Modifier.fillMaxWidth()) {
         val width = minOf(maxWidth, height * aspectRatio)
-        val modifier = Modifier.height(width / aspectRatio).width(width).clip(RoundedCornerShape(6.dp))
+        val modifier = Modifier.height(width / aspectRatio).width(width).clip(KaiShapes.xs)
         val previewBitmap = LocalPreviewImages.current[node.url]
         if (previewBitmap != null) {
             Image(
@@ -788,7 +793,7 @@ private fun RenderTable(node: TableNode) {
                 for (index in 0 until columnCount) {
                     Text(
                         text = node.headers.getOrElse(index) { "" },
-                        style = MaterialTheme.typography.titleSmall,
+                        style = KaiTypography.titleSmall,
                         modifier = Modifier.weight(1f),
                     )
                 }
@@ -803,7 +808,7 @@ private fun RenderTable(node: TableNode) {
                 for (index in 0 until columnCount) {
                     Text(
                         text = row.getOrElse(index) { "" },
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = KaiTypography.bodyMedium,
                         modifier = Modifier.weight(1f),
                     )
                 }
@@ -827,7 +832,7 @@ private fun RenderList(
         itemsIndexed(node.items) { index, item ->
             Row {
                 val prefix = if (node.ordered == true) "${index + 1}. " else "\u2022 "
-                Text(prefix, style = MaterialTheme.typography.bodyLarge)
+                Text(prefix, style = KaiTypography.bodyLarge)
                 Column(Modifier.weight(1f)) {
                     RenderNode(item, isInteractive, formState, toggleState, onCallback, depth + 1)
                 }
@@ -857,7 +862,7 @@ private fun RenderSwitch(
     ) {
         Text(
             text = node.label,
-            style = MaterialTheme.typography.bodyLarge,
+            style = KaiTypography.bodyLarge,
             modifier = Modifier
                 .weight(1f)
                 .padding(end = 12.dp)
@@ -904,11 +909,11 @@ private fun RenderSlider(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Text(node.label, style = MaterialTheme.typography.bodyLarge)
+                Text(node.label, style = KaiTypography.bodyLarge)
                 Text(
                     text = valueDescription,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary,
+                    style = KaiTypography.bodyMedium,
+                    color = AccentPrimary,
                 )
             }
         }
@@ -931,9 +936,9 @@ private fun RenderSlider(
                     contentDescription = "${node.label ?: "Slider"}: $valueDescription. Range $min to $max."
                 },
             colors = SliderDefaults.colors(
-                thumbColor = MaterialTheme.colorScheme.primary,
-                activeTrackColor = MaterialTheme.colorScheme.primary,
-                inactiveTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+                thumbColor = AccentPrimary,
+                activeTrackColor = AccentPrimary,
+                inactiveTrackColor = CardFill,
                 activeTickColor = Color.Transparent,
                 inactiveTickColor = Color.Transparent,
             ),
@@ -941,15 +946,15 @@ private fun RenderSlider(
                 Box(
                     modifier = Modifier
                         .size(20.dp)
-                        .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(50)),
+                        .background(AccentPrimary, KaiShapes.pill),
                 )
             },
             track = { sliderState ->
                 SliderDefaults.Track(
                     sliderState = sliderState,
                     colors = SliderDefaults.colors(
-                        activeTrackColor = MaterialTheme.colorScheme.primary,
-                        inactiveTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+                        activeTrackColor = AccentPrimary,
+                        inactiveTrackColor = CardFill,
                     ),
                     drawStopIndicator = null,
                     drawTick = { _, _ -> },
@@ -996,7 +1001,7 @@ private fun RenderRadioGroup(
         if (node.label != null) {
             Text(
                 text = node.label,
-                style = MaterialTheme.typography.titleSmall,
+                style = KaiTypography.titleSmall,
                 modifier = Modifier.padding(bottom = 4.dp),
             )
         }
@@ -1027,7 +1032,7 @@ private fun RenderRadioGroup(
                     )
                     Text(
                         text = option,
-                        style = MaterialTheme.typography.bodyLarge,
+                        style = KaiTypography.bodyLarge,
                         modifier = Modifier
                             .padding(start = 12.dp)
                             .fillMaxWidth()
@@ -1046,7 +1051,7 @@ private fun RenderProgress(node: ProgressNode) {
         if (node.label != null) {
             Text(
                 text = node.label,
-                style = MaterialTheme.typography.bodyMedium,
+                style = KaiTypography.bodyMedium,
                 modifier = Modifier.padding(bottom = 4.dp),
             )
         }
@@ -1121,7 +1126,7 @@ private fun RenderCountdown(
         if (node.label != null) {
             Text(
                 text = node.label,
-                style = MaterialTheme.typography.bodyMedium,
+                style = KaiTypography.bodyMedium,
                 modifier = Modifier.padding(bottom = 4.dp),
             )
         }
@@ -1135,36 +1140,35 @@ private fun RenderCountdown(
         }
         Text(
             text = formatted,
-            style = MaterialTheme.typography.headlineMedium,
-            color = if (expired) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
+            style = KaiTypography.headlineMedium,
+            color = if (expired) DangerAlert else TextPrimary,
         )
     }
 }
 
 @Composable
 private fun RenderAlert(node: AlertNode) {
-    val isDark = MaterialTheme.colorScheme.surface.luminance() < 0.5f
-    val successContainer = if (isDark) Color(0xFF1B3A1B) else Color(0xFFE8F5E9)
-    val onSuccessContainer = if (isDark) Color(0xFFC8E6C9) else Color(0xFF1B5E20)
-    val warningContainer = if (isDark) Color(0xFF3D2600) else Color(0xFFFFF3E0)
-    val onWarningContainer = if (isDark) Color(0xFFFF9100) else Color(0xFFE65100)
+    val successContainer = Color(0xFF1B3A1B)
+    val onSuccessContainer = Color(0xFFC8E6C9)
+    val warningContainer = Color(0xFF3D2600)
+    val onWarningContainer = Color(0xFFFF9100)
     val containerColor = when (node.severity) {
         AlertSeverity.SUCCESS -> successContainer
         AlertSeverity.WARNING -> warningContainer
-        AlertSeverity.ERROR -> MaterialTheme.colorScheme.errorContainer
-        AlertSeverity.INFO, null -> MaterialTheme.colorScheme.primaryContainer
+        AlertSeverity.ERROR -> DangerAlert.copy(alpha = 0.2f)
+        AlertSeverity.INFO, null -> AccentPrimary.copy(alpha = 0.2f)
     }
     val contentColor = when (node.severity) {
         AlertSeverity.SUCCESS -> onSuccessContainer
         AlertSeverity.WARNING -> onWarningContainer
-        AlertSeverity.ERROR -> MaterialTheme.colorScheme.onErrorContainer
-        AlertSeverity.INFO, null -> MaterialTheme.colorScheme.onPrimaryContainer
+        AlertSeverity.ERROR -> TextPrimary
+        AlertSeverity.INFO, null -> TextPrimary
     }
-    Surface(
-        color = containerColor,
-        contentColor = contentColor,
-        shape = RoundedCornerShape(8.dp),
-        modifier = Modifier.fillMaxWidth(),
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(KaiShapes.xs)
+            .background(containerColor, KaiShapes.xs),
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
@@ -1176,14 +1180,16 @@ private fun RenderAlert(node: AlertNode) {
                 if (node.title != null) {
                     Text(
                         text = node.title,
-                        style = MaterialTheme.typography.titleSmall,
+                        style = KaiTypography.titleSmall,
                         fontWeight = FontWeight.Bold,
+                        color = contentColor,
                     )
                     Spacer(Modifier.height(2.dp))
                 }
                 Text(
                     text = node.message,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = KaiTypography.bodyMedium,
+                    color = contentColor,
                 )
             }
         }
@@ -1201,8 +1207,8 @@ private fun AlertIcon(severity: AlertSeverity?, contentColor: Color, containerCo
         when (severity) {
             AlertSeverity.SUCCESS -> Icon(Icons.Default.Check, null, Modifier.size(14.dp), tint = containerColor)
             AlertSeverity.ERROR -> Icon(Icons.Default.Close, null, Modifier.size(14.dp), tint = containerColor)
-            AlertSeverity.WARNING -> Text("!", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = containerColor)
-            AlertSeverity.INFO, null -> Text("i", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = containerColor)
+            AlertSeverity.WARNING -> Text("!", style = KaiTypography.labelSmall, fontWeight = FontWeight.Bold, color = containerColor)
+            AlertSeverity.INFO, null -> Text("i", style = KaiTypography.labelSmall, fontWeight = FontWeight.Bold, color = containerColor)
         }
     }
 }
@@ -1262,10 +1268,10 @@ private fun RenderIcon(node: IconNode) {
     val size = (node.size ?: 24).dp
     if (imageVector != null) {
         val color = when (node.color) {
-            "primary" -> MaterialTheme.colorScheme.primary
-            "secondary" -> MaterialTheme.colorScheme.secondary
-            "error" -> MaterialTheme.colorScheme.error
-            else -> MaterialTheme.colorScheme.onSurface
+            "primary" -> AccentPrimary
+            "secondary" -> TextSecondary
+            "error" -> DangerAlert
+            else -> TextPrimary
         }
         Icon(
             imageVector = imageVector,
@@ -1288,28 +1294,29 @@ private fun RenderIcon(node: IconNode) {
 private fun RenderCode(node: CodeNode) {
     val copyToClipboard = rememberCopyToClipboard()
     val copyCodeDescription = stringResource(Res.string.kai_ui_code_copy)
-    Surface(
-        color = MaterialTheme.colorScheme.surfaceVariant,
-        shape = RoundedCornerShape(8.dp),
-        modifier = Modifier.fillMaxWidth(),
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(KaiShapes.xs)
+            .background(CardFill, KaiShapes.xs),
     ) {
         Box(Modifier.padding(12.dp)) {
             Column {
                 if (node.language != null) {
                     Text(
                         text = node.language,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = KaiTypography.labelSmall,
+                        color = TextSecondary,
                         modifier = Modifier.padding(bottom = 4.dp, end = 32.dp),
                     )
                 }
                 Text(
                     text = node.code,
-                    style = MaterialTheme.typography.bodyMedium.copy(
+                    style = KaiTypography.bodyMedium.copy(
                         fontFamily = FontFamily.Monospace,
                         fontFeatureSettings = "tnum",
                     ),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = TextSecondary,
                     modifier = Modifier.horizontalScroll(rememberScrollState()).padding(end = 32.dp),
                 )
             }
@@ -1318,14 +1325,14 @@ private fun RenderCode(node: CodeNode) {
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .size(28.dp)
-                    .clip(RoundedCornerShape(6.dp))
+                    .clip(KaiShapes.xs)
                     .handCursor()
                     .semantics { contentDescription = copyCodeDescription },
             ) {
                 Icon(
                     imageVector = Icons.Filled.ContentCopy,
                     contentDescription = copyCodeDescription,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = TextSecondary,
                     modifier = Modifier.size(16.dp),
                 )
             }
@@ -1342,22 +1349,22 @@ private fun RenderQuote(node: QuoteNode) {
             modifier = Modifier
                 .width(3.dp)
                 .fillMaxHeight()
-                .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(1.5.dp)),
+                .background(AccentPrimary, KaiShapes.xs),
         )
         Spacer(Modifier.width(12.dp))
         Column {
             Text(
                 text = node.text,
-                style = MaterialTheme.typography.bodyLarge,
+                style = KaiTypography.bodyLarge,
                 fontStyle = FontStyle.Italic,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = TextPrimary,
             )
             if (node.source != null) {
                 Spacer(Modifier.height(2.dp))
                 Text(
                     text = "— ${node.source}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = KaiTypography.bodySmall,
+                    color = TextSecondary,
                 )
             }
         }
@@ -1367,25 +1374,26 @@ private fun RenderQuote(node: QuoteNode) {
 @Composable
 private fun RenderBadge(node: BadgeNode) {
     val backgroundColor = when (node.color) {
-        "primary" -> MaterialTheme.colorScheme.primary
-        "secondary" -> MaterialTheme.colorScheme.secondary
-        "error" -> MaterialTheme.colorScheme.error
-        else -> MaterialTheme.colorScheme.primary
+        "primary" -> AccentPrimary
+        "secondary" -> BorderSoft
+        "error" -> DangerAlert
+        else -> AccentPrimary
     }
     val contentColor = when (node.color) {
-        "primary" -> MaterialTheme.colorScheme.onPrimary
-        "secondary" -> MaterialTheme.colorScheme.onSecondary
-        "error" -> MaterialTheme.colorScheme.onError
-        else -> MaterialTheme.colorScheme.onPrimary
+        "primary" -> TextPrimary
+        "secondary" -> TextSecondary
+        "error" -> TextPrimary
+        else -> TextPrimary
     }
-    Surface(
-        color = backgroundColor,
-        contentColor = contentColor,
-        shape = RoundedCornerShape(12.dp),
+    Box(
+        modifier = Modifier
+            .clip(KaiShapes.row)
+            .background(backgroundColor, KaiShapes.row),
     ) {
         Text(
             text = node.value,
-            style = MaterialTheme.typography.labelSmall,
+            style = KaiTypography.labelSmall,
+            color = contentColor,
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
         )
     }
@@ -1399,20 +1407,20 @@ private fun RenderStat(node: StatNode) {
     ) {
         Text(
             text = node.value,
-            style = MaterialTheme.typography.headlineMedium,
+            style = KaiTypography.headlineMedium,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = TextPrimary,
         )
         Text(
             text = node.label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KaiTypography.bodyMedium,
+            color = TextSecondary,
         )
         if (node.description != null) {
             Text(
                 text = node.description,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = KaiTypography.bodySmall,
+                color = TextSecondary,
             )
         }
     }
@@ -1422,10 +1430,11 @@ private fun RenderStat(node: StatNode) {
 private fun RenderAvatar(node: AvatarNode) {
     val sizeDp = (node.size ?: 40).coerceIn(24, 80).dp
     if (node.imageUrl != null) {
-        Surface(
-            shape = androidx.compose.foundation.shape.CircleShape,
-            color = MaterialTheme.colorScheme.surfaceContainer,
-            modifier = Modifier.size(sizeDp),
+        Box(
+            modifier = Modifier
+                .size(sizeDp)
+                .clip(androidx.compose.foundation.shape.CircleShape)
+                .background(CardFill, androidx.compose.foundation.shape.CircleShape),
         ) {
             coil3.compose.AsyncImage(
                 model = node.imageUrl,
@@ -1438,32 +1447,34 @@ private fun RenderAvatar(node: AvatarNode) {
             .filter { it.isNotEmpty() }
             .take(2)
             .joinToString("") { it.first().uppercase() }
-        Surface(
-            color = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            shape = androidx.compose.foundation.shape.CircleShape,
-            modifier = Modifier.size(sizeDp),
+        Box(
+            modifier = Modifier
+                .size(sizeDp)
+                .clip(androidx.compose.foundation.shape.CircleShape)
+                .background(AccentPrimary, androidx.compose.foundation.shape.CircleShape),
         ) {
             Box(contentAlignment = Alignment.Center, modifier = Modifier.size(sizeDp)) {
                 Text(
                     text = initials,
-                    style = MaterialTheme.typography.titleSmall,
+                    style = KaiTypography.titleSmall,
                     fontWeight = FontWeight.Bold,
+                    color = TextPrimary,
                 )
             }
         }
     } else {
-        Surface(
-            color = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            shape = androidx.compose.foundation.shape.CircleShape,
-            modifier = Modifier.size(sizeDp),
+        Box(
+            modifier = Modifier
+                .size(sizeDp)
+                .clip(androidx.compose.foundation.shape.CircleShape)
+                .background(AccentPrimary, androidx.compose.foundation.shape.CircleShape),
         ) {
             Box(contentAlignment = Alignment.Center, modifier = Modifier.size(sizeDp)) {
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = null,
                     modifier = Modifier.size(sizeDp * 0.6f),
+                    tint = TextPrimary,
                 )
             }
         }
@@ -1525,7 +1536,7 @@ private fun RenderTabs(
 ) {
     if (node.tabs.isEmpty()) return
     var selectedIndex by remember { mutableIntStateOf((node.selectedIndex ?: 0).coerceIn(0, node.tabs.lastIndex)) }
-    val pillShape = RoundedCornerShape(50)
+    val pillShape = KaiShapes.pill
 
     Column(Modifier.fillMaxWidth()) {
         Row(
@@ -1551,7 +1562,7 @@ private fun RenderTabs(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 modifier = Modifier
                     .clip(pillShape)
-                    .background(MaterialTheme.colorScheme.surfaceContainerHigh, pillShape)
+                    .background(SurfaceElevated, pillShape)
                     .padding(4.dp),
             ) {
                 node.tabs.forEachIndexed { index, tab ->
@@ -1564,7 +1575,7 @@ private fun RenderTabs(
                             .then(
                                 if (isSelected) {
                                     Modifier.background(
-                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                                        AccentPrimary.copy(alpha = 0.15f),
                                         pillShape,
                                     )
                                 } else {
@@ -1577,12 +1588,12 @@ private fun RenderTabs(
                     ) {
                         Text(
                             text = tab.label,
-                            style = MaterialTheme.typography.labelLarge,
+                            style = KaiTypography.labelLarge,
                             fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
                             color = if (isSelected) {
-                                MaterialTheme.colorScheme.primary
+                                AccentPrimary
                             } else {
-                                MaterialTheme.colorScheme.onSurfaceVariant
+                                TextSecondary
                             },
                             maxLines = 1,
                         )
@@ -1617,11 +1628,13 @@ private fun RenderAccordion(
 ) {
     var expanded by remember { mutableStateOf(node.expanded ?: false) }
 
-    Surface(
-        onClick = { expanded = !expanded },
-        modifier = Modifier.fillMaxWidth().handCursor(),
-        shape = RoundedCornerShape(6.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .handCursor()
+            .clickable { expanded = !expanded }
+            .clip(KaiShapes.xs)
+            .background(SurfaceElevated, KaiShapes.xs),
     ) {
         Column(Modifier.fillMaxWidth()) {
             Row(
@@ -1630,7 +1643,7 @@ private fun RenderAccordion(
             ) {
                 Text(
                     text = node.title,
-                    style = MaterialTheme.typography.titleSmall,
+                    style = KaiTypography.titleSmall,
                     modifier = Modifier.weight(1f),
                 )
                 Icon(

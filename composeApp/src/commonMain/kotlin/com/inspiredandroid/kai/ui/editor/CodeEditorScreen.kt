@@ -1,6 +1,8 @@
 package com.inspiredandroid.kai.ui.editor
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,8 +19,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,8 +36,13 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.BackgroundPrimary
 import com.inspiredandroid.kai.ui.handCursor
+import com.inspiredandroid.kai.ui.KaiTypography
 import com.inspiredandroid.kai.ui.rememberCopyToClipboard
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 
 /**
  * Lightweight code editor workspace (Plan 7, Phase 7). Opened from a code block's
@@ -53,7 +58,11 @@ fun CodeEditorScreen(
     var text by remember { mutableStateOf(code) }
     val copyToClipboard = rememberCopyToClipboard()
 
-    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(BackgroundPrimary),
+    ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Row(
                 modifier = Modifier.fillMaxWidth().padding(8.dp),
@@ -63,20 +72,20 @@ fun CodeEditorScreen(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Close editor",
-                        tint = MaterialTheme.colorScheme.onBackground,
+                        tint = TextPrimary,
                     )
                 }
                 Text(
                     text = "Code Editor",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    style = KaiTypography.titleMedium,
+                    color = TextPrimary,
                     modifier = Modifier.weight(1f).padding(start = 8.dp),
                 )
                 if (!language.isNullOrBlank()) {
                     Text(
                         text = language,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = KaiTypography.labelSmall,
+                        color = TextSecondary,
                         modifier = Modifier.padding(end = 8.dp),
                     )
                 }
@@ -84,7 +93,7 @@ fun CodeEditorScreen(
                     Icon(
                         imageVector = Icons.Default.ContentCopy,
                         contentDescription = "Copy code",
-                        tint = MaterialTheme.colorScheme.onBackground,
+                        tint = TextPrimary,
                     )
                 }
             }
@@ -102,10 +111,10 @@ fun CodeEditorScreen(
                     },
                 textStyle = TextStyle(
                     fontFamily = FontFamily.Monospace,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = TextPrimary,
                     fontFeatureSettings = "tnum",
                 ),
-                cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+                cursorBrush = SolidColor(AccentPrimary),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.None,
@@ -119,7 +128,7 @@ fun CodeEditorScreen(
                                 text = "Enter code here...",
                                 style = TextStyle(
                                     fontFamily = FontFamily.Monospace,
-                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f),
+                                    color = TextPrimary.copy(alpha = 0.4f),
                                     fontFeatureSettings = "tnum",
                                 ),
                                 modifier = Modifier

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
@@ -15,6 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.SurfaceRaised
 import com.inspiredandroid.kai.ui.handCursor
 
 @Composable
@@ -80,21 +81,21 @@ private fun KaiSliderThumb() {
     Box(
         modifier = Modifier
             .size(20.dp)
-            .background(MaterialTheme.colorScheme.primary, CircleShape),
+            .background(AccentPrimary, CircleShape),
     )
 }
 
 @Composable
 private fun kaiSliderColors() = SliderDefaults.colors(
-    thumbColor = MaterialTheme.colorScheme.primary,
-    activeTrackColor = MaterialTheme.colorScheme.primary,
-    inactiveTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+    thumbColor = AccentPrimary,
+    activeTrackColor = AccentPrimary,
+    inactiveTrackColor = SurfaceRaised,
     activeTickColor = Color.Transparent,
     inactiveTickColor = Color.Transparent,
 )
 
 @Composable
 private fun kaiSliderTrackColors() = SliderDefaults.colors(
-    activeTrackColor = MaterialTheme.colorScheme.primary,
-    inactiveTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+    activeTrackColor = AccentPrimary,
+    inactiveTrackColor = SurfaceRaised,
 )

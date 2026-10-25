@@ -2,14 +2,14 @@ package com.inspiredandroid.kai.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.BorderSoft
@@ -55,12 +56,11 @@ fun KaiDialog(
     dismissButton: KaiDialogButton? = null,
     modifier: Modifier = Modifier,
 ) {
-    val colorScheme = MaterialTheme.colorScheme
-    val isOled = colorScheme.background == com.inspiredandroid.kai.ui.OledBlack
+    val isOled = androidx.compose.material3.MaterialTheme.colorScheme.background == OledBlack
 
     val dialogFocusRequester = remember { FocusRequester() }
 
-    Surface(
+    Box(
         modifier = modifier
             .fillMaxWidth()
             .padding(24.dp)
@@ -77,11 +77,10 @@ fun KaiDialog(
                 if (focused.isFocused) {
                     dialogFocusRequester.requestFocus()
                 }
-            },
-        shape = KaiShapes.section,
-        color = if (isOled) CardFill else SurfaceRaised,
-        border = BorderStroke(1.dp, BorderSoft),
-        contentColor = colorScheme.onSurface,
+            }
+            .clip(KaiShapes.section)
+            .background(if (isOled) CardFill else SurfaceRaised)
+            .border(BorderStroke(1.dp, BorderSoft)),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -96,7 +95,7 @@ fun KaiDialog(
                 Text(
                     text = titleText,
                     style = KaiTypography.headlineSmall,
-                    color = colorScheme.onSurface,
+                    color = TextPrimary,
                 )
             }
 
@@ -104,7 +103,7 @@ fun KaiDialog(
                 Text(
                     text = bodyText,
                     style = KaiTypography.bodyMedium,
-                    color = colorScheme.onSurfaceVariant,
+                    color = TextSecondary,
                 )
             }
 

@@ -3,6 +3,8 @@ package com.inspiredandroid.kai.ui.chat.composables
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -25,7 +27,6 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -43,6 +44,11 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.BorderSoft
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.SurfaceRaised
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.chat.ChatShapes
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
 import com.inspiredandroid.kai.ui.components.LogoAnimation
@@ -77,9 +83,9 @@ internal fun EmptyState(
         Text(
             text = "How can I help you today?",
             modifier = Modifier.padding(horizontal = 16.dp),
-            style = MaterialTheme.typography.headlineSmall,
+            style = KaiTypography.headlineSmall,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onBackground,
+            color = TextPrimary,
         )
         if (onQuickStart != null) {
             Spacer(Modifier.height(ChatSpacing.xl))
@@ -87,7 +93,7 @@ internal fun EmptyState(
         }
         if (isUsingSharedKey) {
             Spacer(Modifier.height(ChatSpacing.xl))
-            val linkColor = MaterialTheme.colorScheme.primary
+            val linkColor = AccentPrimary
             val prefixText = stringResource(Res.string.privacy_agree_prefix)
             val policyText = stringResource(Res.string.privacy_policy)
             val annotatedString = remember(prefixText, policyText, linkColor) {
@@ -107,9 +113,9 @@ internal fun EmptyState(
             Text(
                 annotatedString,
                 modifier = Modifier.padding(horizontal = 16.dp),
-                style = MaterialTheme.typography.bodySmall,
+                style = KaiTypography.bodySmall,
                 textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = TextSecondary,
             )
         }
     }
@@ -161,24 +167,24 @@ private fun QuickStartCard(
     val cardBg = if (isOled) {
         com.inspiredandroid.kai.ui.CardFill
     } else {
-        MaterialTheme.colorScheme.surfaceContainerLow
+        SurfaceRaised
     }
     val cardBorder = if (isHovered) {
         androidx.compose.foundation.BorderStroke(1.dp, com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.5f))
     } else if (isOled) {
         androidx.compose.foundation.BorderStroke(1.dp, com.inspiredandroid.kai.ui.BorderSoft)
     } else {
-        androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
+        androidx.compose.foundation.BorderStroke(1.dp, BorderSoft.copy(alpha = 0.4f))
     }
 
-    Surface(
-        onClick = onClick,
-        shape = ChatShapes.quickStartCard,
-        color = cardBg,
-        border = cardBorder,
+    Box(
         modifier = modifier
             .handCursor()
-            .hoverable(interactionSource),
+            .hoverable(interactionSource)
+            .clickable(onClick = onClick)
+            .clip(ChatShapes.quickStartCard)
+            .background(cardBg, ChatShapes.quickStartCard)
+            .border(cardBorder, ChatShapes.quickStartCard),
     ) {
         Row(
             modifier = Modifier.padding(ChatSpacing.md),
@@ -188,19 +194,19 @@ private fun QuickStartCard(
             Icon(
                 imageVector = item.icon,
                 contentDescription = item.label,
-                tint = if (isHovered) com.inspiredandroid.kai.ui.AccentPrimary else MaterialTheme.colorScheme.primary,
+                tint = if (isHovered) com.inspiredandroid.kai.ui.AccentPrimary else AccentPrimary,
                 modifier = Modifier.size(20.dp),
             )
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(
                     text = item.label,
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    style = KaiTypography.labelLarge,
+                    color = TextPrimary,
                 )
                 Text(
                     text = item.subtext,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = KaiTypography.bodySmall,
+                    color = TextSecondary,
                 )
             }
         }

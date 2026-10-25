@@ -1,19 +1,25 @@
 package com.inspiredandroid.kai.ui.settings
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 
 /**
  * A key/value row used by settings cards and the overview surface (Plan 2, Phase 3).
@@ -33,13 +39,14 @@ fun SettingsKeyValueRow(
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = label,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface,
+                style = KaiTypography.bodyMedium,
+                color = TextPrimary,
+                modifier = Modifier.weight(1f),
             )
             Text(
                 text = value,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = KaiTypography.bodySmall,
+                color = TextSecondary,
             )
         }
         if (trailing != null) trailing()
@@ -63,17 +70,18 @@ fun SettingsStatusRow(
     ) {
         Text(
             text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface,
+            style = KaiTypography.bodyMedium,
+            color = TextPrimary,
             modifier = Modifier.weight(1f),
         )
-        Surface(
-            shape = SettingsShapes.pill,
-            color = color.copy(alpha = 0.14f),
+        Box(
+            modifier = Modifier
+                .clip(SettingsShapes.pill)
+                .background(color.copy(alpha = 0.14f), SettingsShapes.pill),
         ) {
             Text(
                 text = status,
-                style = MaterialTheme.typography.labelSmall,
+                style = KaiTypography.labelSmall,
                 color = color,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(horizontal = SettingsSpacing.sm, vertical = SettingsSpacing.xxs),

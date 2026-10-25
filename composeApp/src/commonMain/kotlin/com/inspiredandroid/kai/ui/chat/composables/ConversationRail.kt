@@ -1,6 +1,9 @@
 package com.inspiredandroid.kai.ui.chat.composables
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,14 +19,19 @@ import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.CardFill
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.chat.ChatShapes
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
 import com.inspiredandroid.kai.ui.chat.ChatUiState
@@ -57,16 +65,16 @@ fun ConversationRail(
         ) {
             Text(
                 text = "Conversations",
-                style = MaterialTheme.typography.titleSmall,
+                style = KaiTypography.titleSmall,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = TextPrimary,
                 modifier = Modifier.weight(1f),
             )
             IconButton(onClick = onNewChat, modifier = Modifier.handCursor()) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "New conversation",
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = AccentPrimary,
                 )
             }
         }
@@ -77,11 +85,16 @@ fun ConversationRail(
         ) {
             items(filteredConversations, key = { it.id }) { conversation ->
                 val selected = conversation.id == uiState.currentConversationId
-                androidx.compose.material3.Surface(
-                    onClick = { onConversationSelected(conversation.id) },
-                    shape = ChatShapes.quickStartCard,
-                    color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface,
-                    modifier = Modifier.fillMaxWidth().handCursor(),
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .handCursor()
+                        .clickable(onClick = { onConversationSelected(conversation.id) })
+                        .clip(ChatShapes.quickStartCard)
+                        .background(
+                            if (selected) AccentPrimary.copy(alpha = 0.15f) else CardFill,
+                            ChatShapes.quickStartCard,
+                        ),
                 ) {
                     Row(
                         modifier = Modifier.padding(ChatSpacing.sm),
@@ -91,13 +104,13 @@ fun ConversationRail(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Chat,
                             contentDescription = null,
-                            tint = if (selected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                            tint = if (selected) TextPrimary else TextSecondary,
                             modifier = Modifier.size(16.dp),
                         )
                         Text(
                             text = conversation.title.ifBlank { "Untitled" },
-                            style = MaterialTheme.typography.bodySmall,
-                            color = if (selected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface,
+                            style = KaiTypography.bodySmall,
+                            color = if (selected) TextPrimary else TextPrimary,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.weight(1f),

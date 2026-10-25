@@ -109,8 +109,10 @@ class SandboxFileBrowserViewModelTest {
                 files[newPath] = content
             }
             entriesByPath.values.forEach { list ->
-                list.replaceAll { entry ->
-                    if (entry.path == path) entry.copy(name = newName, path = newPath) else entry
+                for (i in list.indices) {
+                    if (list[i].path == path) {
+                        list[i] = list[i].copy(name = newName, path = newPath)
+                    }
                 }
             }
             return Result.success(newPath)

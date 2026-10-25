@@ -21,8 +21,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,6 +42,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.prefersReducedMotion
+import com.inspiredandroid.kai.ui.CardFill
+import com.inspiredandroid.kai.ui.KaiShapes
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.TextSecondary
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.tools_count
 import kai.composeapp.generated.resources.waiting_brewing
@@ -82,8 +84,8 @@ internal fun WaitingResponseRow(
         Box(
             modifier = Modifier
                 .background(
-                    MaterialTheme.colorScheme.surfaceVariant,
-                    RoundedCornerShape(8.dp),
+                    CardFill,
+                    KaiShapes.xs,
                 )
                 .animateContentSize(
                     animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing),
@@ -95,9 +97,9 @@ internal fun WaitingResponseRow(
                 toolSummary = summary,
                 isStatusOnly = effectiveStatusOnly,
                 dotSize = 16.dp,
-                dotColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                textColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                textStyle = MaterialTheme.typography.bodyMedium,
+                dotColor = TextSecondary,
+                textColor = TextSecondary,
+                textStyle = KaiTypography.bodyMedium,
             )
         }
     }

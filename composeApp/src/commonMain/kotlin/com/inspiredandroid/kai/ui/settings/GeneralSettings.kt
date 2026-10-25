@@ -1,7 +1,11 @@
 package com.inspiredandroid.kai.ui.settings
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -10,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,9 +25,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.data.ThemeMode
+import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.BorderSoft
+import com.inspiredandroid.kai.ui.CardFill
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.components.KaiSlider
 import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.isOledFlavor
+import com.inspiredandroid.kai.ui.KaiTypography
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.settings_daemon_mode
 import kai.composeapp.generated.resources.settings_daemon_mode_description
@@ -135,13 +144,13 @@ private fun ThemeModeSwitch(
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = stringResource(Res.string.settings_theme),
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onBackground,
+            style = KaiTypography.titleMedium,
+            color = TextPrimary,
         )
         Text(
             text = stringResource(Res.string.settings_theme_description),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KaiTypography.bodyMedium,
+            color = TextSecondary,
             modifier = Modifier.padding(top = 4.dp, bottom = 12.dp),
         )
         // One button per theme: the choice is visible at a glance and takes a single tap,
@@ -173,46 +182,43 @@ private fun ThemeModeButton(
     val selectedBg = if (isOled) {
         com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.2f)
     } else {
-        MaterialTheme.colorScheme.primaryContainer
+        AccentPrimary
     }
     val selectedText = if (isOled) {
         com.inspiredandroid.kai.ui.AccentPrimary
     } else {
-        MaterialTheme.colorScheme.onPrimaryContainer
+        TextPrimary
     }
     val unselectedBg = if (isOled) {
         com.inspiredandroid.kai.ui.CardFill
     } else {
-        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+        CardFill
     }
-    val unselectedText = if (isOled) {
-        MaterialTheme.colorScheme.onSurfaceVariant
-    } else {
-        MaterialTheme.colorScheme.onSurfaceVariant
-    }
+    val unselectedText = TextSecondary
     val unselectedBorder = if (isOled) {
         com.inspiredandroid.kai.ui.BorderSoft
     } else {
-        MaterialTheme.colorScheme.outlineVariant
+        BorderSoft
     }
 
-    Surface(
+    Box(
         modifier = Modifier
-            .clip(RoundedCornerShape(50))
+            .clip(SettingsShapes.pill)
             .handCursor()
-            .clickable { onClick() },
-        shape = RoundedCornerShape(50),
-        color = if (isSelected) selectedBg else unselectedBg,
-        contentColor = if (isSelected) selectedText else unselectedText,
-        border = if (!isSelected) {
-            androidx.compose.foundation.BorderStroke(1.dp, unselectedBorder)
-        } else {
-            androidx.compose.foundation.BorderStroke(1.dp, com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.4f))
-        },
+            .clickable { onClick() }
+            .background(if (isSelected) selectedBg else unselectedBg, SettingsShapes.pill)
+            .border(
+                if (!isSelected) {
+                    BorderStroke(1.dp, unselectedBorder)
+                } else {
+                    BorderStroke(1.dp, com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.4f))
+                },
+                SettingsShapes.pill,
+            ),
     ) {
         Text(
             text = label,
-            style = MaterialTheme.typography.labelLarge,
+            style = KaiTypography.labelLarge,
             maxLines = 1,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
         )
@@ -235,13 +241,13 @@ private fun UiScaleSection(
         ) {
             Text(
                 text = stringResource(Res.string.settings_ui_scale),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onBackground,
+                style = KaiTypography.titleMedium,
+                color = TextPrimary,
             )
             Text(
                 text = "${(sliderValue * 100).roundToInt()}%",
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onBackground,
+                style = KaiTypography.labelLarge,
+                color = TextPrimary,
             )
         }
         KaiSlider(

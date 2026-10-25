@@ -2,6 +2,7 @@ package com.inspiredandroid.kai.ui.chat.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +19,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -26,7 +26,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,8 +56,16 @@ import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.window.PopupProperties
 import com.inspiredandroid.kai.data.ServiceEntry
+import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.BorderSoft
+import com.inspiredandroid.kai.ui.CardFill
 import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.isOledFlavor
+import com.inspiredandroid.kai.ui.KaiShapes
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.SurfaceRaised
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.settings.SettingsModel
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.settings_model_label
@@ -110,19 +117,19 @@ internal fun ServiceSelector(
             val pillBg = if (isOled) {
                 com.inspiredandroid.kai.ui.SurfaceRaised.copy(alpha = 0.9f)
             } else {
-                MaterialTheme.colorScheme.surfaceContainerHigh
+                SurfaceRaised
             }
             val pillBorder = if (isOled) {
                 com.inspiredandroid.kai.ui.BorderSoft
             } else {
-                MaterialTheme.colorScheme.outlineVariant
+                BorderSoft
             }
 
             Row(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(50))
-                    .background(pillBg, RoundedCornerShape(50))
-                    .border(androidx.compose.foundation.BorderStroke(1.dp, pillBorder), RoundedCornerShape(50))
+                    .clip(KaiShapes.pill)
+                    .background(pillBg, KaiShapes.pill)
+                    .border(BorderStroke(1.dp, pillBorder), KaiShapes.pill)
                     .clickable { expanded = true }
                     .handCursor()
                     .padding(horizontal = 8.dp, vertical = 4.dp),
@@ -132,13 +139,13 @@ internal fun ServiceSelector(
                     imageVector = vectorResource(current.icon),
                     contentDescription = null,
                     modifier = Modifier.size(14.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = TextSecondary,
                 )
                 Spacer(Modifier.width(6.dp))
                 Text(
                     text = current.serviceName,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    style = KaiTypography.labelSmall,
+                    color = TextPrimary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.widthIn(max = 100.dp),
@@ -146,8 +153,8 @@ internal fun ServiceSelector(
                 if (currentModelLabel.isNotBlank()) {
                     Text(
                         text = " · $currentModelLabel",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = KaiTypography.labelSmall,
+                        color = TextSecondary,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.widthIn(max = 120.dp),
@@ -158,7 +165,7 @@ internal fun ServiceSelector(
                     imageVector = Icons.Default.KeyboardArrowDown,
                     contentDescription = current.serviceName,
                     modifier = Modifier.size(16.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = TextSecondary,
                 )
             }
         } else {
@@ -166,12 +173,12 @@ internal fun ServiceSelector(
             val circleBg = if (isOled) {
                 com.inspiredandroid.kai.ui.SurfaceRaised.copy(alpha = 0.9f)
             } else {
-                MaterialTheme.colorScheme.surfaceVariant
+                SurfaceRaised
             }
             val circleBorder = if (isOled) {
                 com.inspiredandroid.kai.ui.BorderSoft
             } else {
-                MaterialTheme.colorScheme.outlineVariant
+                BorderSoft
             }
 
             Box(
@@ -179,7 +186,7 @@ internal fun ServiceSelector(
                     .size(42.dp)
                     .clip(CircleShape)
                     .background(circleBg, CircleShape)
-                    .border(androidx.compose.foundation.BorderStroke(1.dp, circleBorder), CircleShape)
+                    .border(BorderStroke(1.dp, circleBorder), CircleShape)
                     .clickable { expanded = true }
                     .handCursor(),
                 contentAlignment = Alignment.Center,
@@ -188,7 +195,7 @@ internal fun ServiceSelector(
                     imageVector = vectorResource(current.icon),
                     contentDescription = current.serviceName,
                     modifier = Modifier.size(18.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = TextSecondary,
                 )
             }
         }
@@ -199,13 +206,9 @@ internal fun ServiceSelector(
             val popupBg = if (isOled) {
                 com.inspiredandroid.kai.ui.CardFill
             } else {
-                MaterialTheme.colorScheme.surface
+                CardFill
             }
-            val popupBorder = if (isOled) {
-                androidx.compose.foundation.BorderStroke(1.dp, com.inspiredandroid.kai.ui.BorderSoft)
-            } else {
-                androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-            }
+            val popupBorder = BorderStroke(1.dp, BorderSoft)
 
             Popup(
                 onDismissRequest = { expanded = false },
@@ -214,13 +217,11 @@ internal fun ServiceSelector(
             ) {
                 BoxWithConstraints {
                     val maxMenuHeight = maxHeight - 24.dp // keep a margin from screen edges
-                    Surface(
-                        shape = RoundedCornerShape(16.dp),
-                        color = popupBg,
-                        border = popupBorder,
-                        tonalElevation = if (isOled) 3.dp else 0.dp,
-                        shadowElevation = if (isOled) 8.dp else 0.dp,
+                    Box(
                         modifier = Modifier
+                            .clip(KaiShapes.card)
+                            .background(popupBg, KaiShapes.card)
+                            .border(popupBorder, KaiShapes.card)
                             .onKeyEvent { event ->
                                 if (event.key == Key.Escape) {
                                     expanded = false
@@ -269,7 +270,7 @@ internal fun ServiceSelector(
                                     itemIndex++
                                 }
                                 HorizontalDivider(
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.12f),
+                                    color = TextSecondary.copy(alpha = 0.12f),
                                     modifier = Modifier.padding(vertical = 4.dp),
                                 )
                             } else if (isLoadingModels) {
@@ -282,12 +283,12 @@ internal fun ServiceSelector(
                                     CircularProgressIndicator(
                                         modifier = Modifier.size(14.dp),
                                         strokeWidth = 2.dp,
-                                        color = MaterialTheme.colorScheme.primary,
+                                        color = AccentPrimary,
                                     )
                                     Text(
                                         text = stringResource(Res.string.settings_model_loading),
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        style = KaiTypography.labelSmall,
+                                        color = TextSecondary,
                                     )
                                 }
                             }
@@ -329,8 +330,8 @@ internal fun ServiceSelector(
 private fun PickerSectionLabel(text: String) {
     Text(
         text = text,
-        style = MaterialTheme.typography.labelSmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = KaiTypography.labelSmall,
+        color = TextSecondary,
         modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
     )
 }
@@ -354,13 +355,13 @@ private fun ModelMenuItem(
     val textColor = if (isCurrent) {
         com.inspiredandroid.kai.ui.AccentPrimary
     } else {
-        MaterialTheme.colorScheme.onSurface
+        TextPrimary
     }
     val shortName = model.displayName?.takeIf { it.isNotBlank() } ?: model.id
     Row(
         modifier = modifier
             .padding(horizontal = 4.dp)
-            .clip(RoundedCornerShape(10.dp))
+            .clip(KaiShapes.sm)
             .background(rowBackground)
             .clickable(onClick = onClick)
             .handCursor()
@@ -370,7 +371,7 @@ private fun ModelMenuItem(
     ) {
         Text(
             text = shortName,
-            style = MaterialTheme.typography.bodySmall,
+            style = KaiTypography.bodySmall,
             color = textColor,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -394,17 +395,17 @@ private fun ServiceMenuItem(
     val textColor = if (isCurrent) {
         com.inspiredandroid.kai.ui.AccentPrimary
     } else {
-        MaterialTheme.colorScheme.onSurface
+        TextPrimary
     }
     val subTextColor = if (isCurrent) {
         com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.7f)
     } else {
-        MaterialTheme.colorScheme.onSurfaceVariant
+        TextSecondary
     }
     Row(
         modifier = Modifier
             .padding(horizontal = 4.dp)
-            .clip(RoundedCornerShape(10.dp))
+            .clip(KaiShapes.sm)
             .background(rowBackground)
             .clickable(onClick = onClick)
             .handCursor()
@@ -422,13 +423,13 @@ private fun ServiceMenuItem(
         Column {
             Text(
                 text = entry.serviceName,
-                style = MaterialTheme.typography.bodySmall,
+                style = KaiTypography.bodySmall,
                 color = textColor,
             )
             if (entry.modelId.isNotEmpty()) {
                 Text(
                     text = entry.modelId,
-                    style = MaterialTheme.typography.labelSmall,
+                    style = KaiTypography.labelSmall,
                     color = subTextColor,
                 )
             }

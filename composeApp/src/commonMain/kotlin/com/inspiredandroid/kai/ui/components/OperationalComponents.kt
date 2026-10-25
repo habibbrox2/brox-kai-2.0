@@ -26,10 +26,19 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.BorderSoft
+import com.inspiredandroid.kai.ui.DangerAlert
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.SurfaceRaised
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
+import com.inspiredandroid.kai.ui.TextTertiary
 import com.inspiredandroid.kai.ui.isOledFlavor
 import com.inspiredandroid.kai.ui.kaiAdaptiveCardBorder
 import com.inspiredandroid.kai.ui.kaiAdaptiveCardColors
 import com.inspiredandroid.kai.ui.settings.SettingsSpacing
+import androidx.compose.foundation.BorderStroke
 
 /**
  * Shared operational status vocabulary (Plan 4, Phase 1) so MCP, skills,
@@ -87,17 +96,16 @@ data class OperationalStatusColors(
 
 @Composable
 fun rememberOperationalStatusColors(): OperationalStatusColors {
-    val colorScheme = MaterialTheme.colorScheme
-    return remember(colorScheme) {
+    return remember {
         OperationalStatusColors(
-            connected = colorScheme.tertiary,
-            connecting = colorScheme.primary,
-            disabled = colorScheme.onSurfaceVariant,
-            installing = colorScheme.primary,
-            needsSetup = colorScheme.secondary,
-            error = colorScheme.error,
-            active = colorScheme.tertiary,
-            ready = colorScheme.tertiary,
+            connected = TextSecondary,
+            connecting = AccentPrimary,
+            disabled = TextSecondary,
+            installing = AccentPrimary,
+            needsSetup = TextTertiary,
+            error = DangerAlert,
+            active = TextSecondary,
+            ready = TextSecondary,
         )
     }
 }
@@ -130,7 +138,7 @@ fun StatusBadge(
         )
         Text(
             text = label,
-            style = MaterialTheme.typography.labelSmall,
+            style = KaiTypography.labelSmall,
             color = color,
             fontWeight = FontWeight.Medium,
         )
@@ -153,12 +161,12 @@ fun CapabilityCountCard(
     val cardBg = if (isOled) {
         com.inspiredandroid.kai.ui.CardFill
     } else {
-        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+        SurfaceRaised.copy(alpha = 0.5f)
     }
     val cardBorder = if (isOled) {
         androidx.compose.foundation.BorderStroke(1.dp, com.inspiredandroid.kai.ui.BorderSoft)
     } else {
-        androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        BorderStroke(1.dp, BorderSoft)
     }
     val cardShape = com.inspiredandroid.kai.ui.settings.SettingsShapes.card
 
@@ -174,14 +182,14 @@ fun CapabilityCountCard(
         ) {
             Text(
                 text = count,
-                style = MaterialTheme.typography.headlineSmall,
+                style = KaiTypography.headlineSmall,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onBackground,
+                color = TextPrimary,
             )
             Text(
                 text = label,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = KaiTypography.bodySmall,
+                color = TextSecondary,
             )
             if (status != null) {
                 StatusBadge(
@@ -215,12 +223,12 @@ fun CollectionEmptyState(
     val cardBg = if (isOled) {
         com.inspiredandroid.kai.ui.CardFill
     } else {
-        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
+        SurfaceRaised.copy(alpha = 0.4f)
     }
     val cardBorder = if (isOled) {
         androidx.compose.foundation.BorderStroke(1.dp, com.inspiredandroid.kai.ui.BorderSoft)
     } else {
-        androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
+        BorderStroke(1.dp, BorderSoft.copy(alpha = 0.4f))
     }
     val cardShape = com.inspiredandroid.kai.ui.settings.SettingsShapes.card
 
@@ -235,8 +243,8 @@ fun CollectionEmptyState(
     ) {
         Text(
             text = message,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KaiTypography.bodyMedium,
+            color = TextSecondary,
             textAlign = TextAlign.Center,
         )
     }

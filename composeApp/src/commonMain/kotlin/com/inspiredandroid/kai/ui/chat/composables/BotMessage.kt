@@ -26,7 +26,6 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -46,6 +45,8 @@ import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.BorderSoft
 import com.inspiredandroid.kai.ui.CardFill
 import com.inspiredandroid.kai.ui.KaiShapes
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
 import com.inspiredandroid.kai.ui.dynamicui.FrozenSubmission
 import com.inspiredandroid.kai.ui.dynamicui.toSpeakableText
@@ -154,7 +155,7 @@ internal fun BotMessage(
                     .padding(8.dp)
                     .size(28.dp)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surfaceContainer)
+                    .background(CardFill)
                     .handCursor()
                     .clickable { isEditing = !isEditing },
                 contentAlignment = Alignment.Center,
@@ -165,7 +166,7 @@ internal fun BotMessage(
                         if (isEditing) Res.string.chat_cancel_edit_content_description else Res.string.chat_edit_submission_content_description,
                     ),
                     modifier = Modifier.size(16.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = TextSecondary,
                 )
             }
         }
@@ -244,20 +245,20 @@ private fun ReasoningBlockquote(
             Icon(
                 imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                 contentDescription = stringResource(Res.string.bot_message_thinking_expand_content_description),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = TextSecondary,
                 modifier = Modifier.size(16.dp),
             )
             Spacer(Modifier.size(6.dp))
             Text(
                 text = stringResource(Res.string.bot_message_thinking_label),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = KaiTypography.labelMedium,
+                color = TextSecondary,
             )
             if (!expanded && preview.isNotEmpty()) {
                 Text(
                     text = " · $preview",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = KaiTypography.bodySmall,
+                    color = TextSecondary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f).padding(start = 4.dp),
@@ -283,9 +284,9 @@ private fun ReasoningBlockquote(
                         SelectionContainer(modifier = Modifier.padding(start = 12.dp)) {
                             Text(
                                 text = segment,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.bodySmall,
-                                lineHeight = MaterialTheme.typography.bodySmall.lineHeight * 1.2f,
+                                color = TextSecondary,
+                                style = KaiTypography.bodySmall,
+                                lineHeight = KaiTypography.bodySmall.lineHeight * 1.2f,
                             )
                         }
                     }

@@ -21,7 +21,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -55,6 +54,13 @@ import com.inspiredandroid.kai.ui.components.VerticalScrollbarForScroll
 import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.kaiAdaptiveCardBorder
 import com.inspiredandroid.kai.ui.kaiAdaptiveCardColors
+import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.DangerAlert
+import com.inspiredandroid.kai.ui.KaiShapes
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.SurfaceRaised
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.settings_skills
 import kai.composeapp.generated.resources.settings_skills_add
@@ -97,14 +103,14 @@ internal fun SkillsSection(
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = stringResource(Res.string.settings_skills),
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onBackground,
+            style = KaiTypography.titleMedium,
+            color = TextPrimary,
         )
         Spacer(Modifier.height(4.dp))
         Text(
             text = stringResource(Res.string.settings_skills_description),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KaiTypography.bodySmall,
+            color = TextSecondary,
         )
 
         Spacer(Modifier.height(12.dp))
@@ -115,8 +121,8 @@ internal fun SkillsSection(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = stringResource(Res.string.settings_skills_needs_sandbox),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = KaiTypography.bodyMedium,
+                    color = TextSecondary,
                     modifier = Modifier.weight(1f),
                 )
                 StatusBadge(label = "Needs setup", status = OperationalStatus.NeedsSetup)
@@ -189,28 +195,28 @@ private fun SkillCard(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = "/${skill.id}",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onBackground,
+                        style = KaiTypography.titleMedium,
+                        color = TextPrimary,
                         modifier = Modifier.weight(1f, fill = false),
                     )
                     if (skill.isBuiltIn) {
                         Spacer(Modifier.width(8.dp))
                         Text(
                             text = stringResource(Res.string.settings_skills_builtin),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = KaiTypography.labelSmall,
+                            color = TextSecondary,
                         )
                     }
                 }
                 TooltipBox(
                     positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
-                    tooltip = { Text(text = skill.description, style = MaterialTheme.typography.bodyMedium) },
+                    tooltip = { Text(text = skill.description, style = KaiTypography.bodyMedium) },
                     state = rememberTooltipState(),
                 ) {
                     Text(
                         text = skill.description,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = KaiTypography.bodySmall,
+                        color = TextSecondary,
                         maxLines = if (expanded) Int.MAX_VALUE else 2,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -224,7 +230,7 @@ private fun SkillCard(
                 TextButton(onClick = { showRemoveConfirm = true }, modifier = Modifier.handCursor()) {
                     Text(
                         text = stringResource(Res.string.settings_skills_remove),
-                        color = MaterialTheme.colorScheme.error,
+                        color = DangerAlert,
                     )
                 }
             }
@@ -282,15 +288,15 @@ private fun AddSkillDialog(
             ) {
                 Text(
                     text = stringResource(Res.string.settings_skills_add),
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    style = KaiTypography.headlineSmall,
+                    color = TextPrimary,
                 )
                 Spacer(Modifier.height(16.dp))
 
                 Text(
                     text = stringResource(Res.string.settings_skills_add_github),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    style = KaiTypography.titleSmall,
+                    color = TextPrimary,
                 )
                 Spacer(Modifier.height(8.dp))
                 KaiOutlinedTextField(
@@ -304,8 +310,8 @@ private fun AddSkillDialog(
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = stringResource(Res.string.settings_skills_github_hint),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = KaiTypography.bodySmall,
+                    color = TextSecondary,
                 )
 
                 if (installError != null) {
@@ -327,8 +333,8 @@ private fun AddSkillDialog(
                         Spacer(Modifier.width(8.dp))
                         Text(
                             text = stringResource(Res.string.settings_skills_installing),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = KaiTypography.bodySmall,
+                            color = TextSecondary,
                         )
                         Spacer(Modifier.width(8.dp))
                     }
@@ -347,8 +353,8 @@ private fun AddSkillDialog(
                 Spacer(Modifier.height(16.dp))
                 Text(
                     text = stringResource(Res.string.settings_skills_browse),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    style = KaiTypography.titleSmall,
+                    color = TextPrimary,
                 )
                 Spacer(Modifier.height(8.dp))
 
@@ -359,8 +365,8 @@ private fun AddSkillDialog(
                             Spacer(Modifier.width(8.dp))
                             Text(
                                 text = stringResource(Res.string.settings_skills_browse_loading),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = KaiTypography.bodySmall,
+                                color = TextSecondary,
                             )
                         }
                     }
@@ -398,8 +404,8 @@ private fun AddSkillDialog(
                         if (filtered.isEmpty()) {
                             Text(
                                 text = stringResource(Res.string.settings_skills_search_empty),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = KaiTypography.bodySmall,
+                                color = TextSecondary,
                             )
                         } else {
                             for (entry in filtered) {
@@ -441,10 +447,10 @@ private fun RegistrySkillRow(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(CardDefaults.shape)
+            .clip(KaiShapes.card)
             .then(if (enabled && !alreadyInstalled) Modifier.clickable { onInstall() }.handCursor() else Modifier),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+            containerColor = SurfaceRaised.copy(alpha = 0.3f),
         ),
     ) {
         Row(
@@ -454,27 +460,27 @@ private fun RegistrySkillRow(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = "/${entry.id}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    style = KaiTypography.bodyMedium,
+                    color = TextPrimary,
                     fontWeight = FontWeight.Medium,
                 )
                 TooltipBox(
                     positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
-                    tooltip = { Text(text = entry.description, style = MaterialTheme.typography.bodyMedium) },
+                    tooltip = { Text(text = entry.description, style = KaiTypography.bodyMedium) },
                     state = rememberTooltipState(),
                 ) {
                     Text(
                         text = entry.description,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = KaiTypography.bodySmall,
+                        color = TextSecondary,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                     )
                 }
                 Text(
                     text = entry.sourceName,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = KaiTypography.labelSmall,
+                    color = TextSecondary,
                 )
             }
             if (installing) {
@@ -483,7 +489,7 @@ private fun RegistrySkillRow(
                 Icon(
                     imageVector = Icons.Default.Check,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = AccentPrimary,
                     modifier = Modifier.size(20.dp),
                 )
             }

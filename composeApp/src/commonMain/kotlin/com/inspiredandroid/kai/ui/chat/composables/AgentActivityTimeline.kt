@@ -13,12 +13,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,7 +33,14 @@ import com.inspiredandroid.kai.ui.chat.activities.ActivityDetails
 import com.inspiredandroid.kai.ui.chat.activities.ActivityStatus
 import com.inspiredandroid.kai.ui.chat.activities.ActivityType
 import com.inspiredandroid.kai.ui.chat.activities.AgentActivity
+import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.CardFill
+import com.inspiredandroid.kai.ui.DangerAlert
 import com.inspiredandroid.kai.ui.handCursor
+import com.inspiredandroid.kai.ui.KaiShapes
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 
 @Composable
 fun AgentActivityTimeline(
@@ -62,8 +67,8 @@ fun AgentActivityTimeline(
                     if (completed > 0) append(" • $completed done")
                     if (failed > 0) append(" • $failed failed")
                 },
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = KaiTypography.labelMedium,
+                color = TextSecondary,
             )
         }
 
@@ -83,8 +88,8 @@ private fun AgentActivityItem(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+            .clip(KaiShapes.row)
+            .background(CardFill)
             .clickable(enabled = activity.isExpandable) {
                 if (activity.isExpandable) expanded = !expanded
             }
@@ -105,16 +110,16 @@ private fun AgentActivityItem(
             ) {
                 Text(
                     text = activity.title,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    style = KaiTypography.bodyMedium,
+                    color = TextPrimary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
                 activity.description?.let { desc ->
                     Text(
                         text = desc,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = KaiTypography.bodySmall,
+                        color = TextSecondary,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -125,7 +130,7 @@ private fun AgentActivityItem(
                 Icon(
                     imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                     contentDescription = if (expanded) "Collapse" else "Expand",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = TextSecondary,
                     modifier = Modifier.size(20.dp),
                 )
             }
@@ -155,13 +160,13 @@ private fun ActivityStatusIndicator(
     modifier: Modifier = Modifier,
 ) {
     val (color, _) = when (status) {
-        ActivityStatus.PENDING -> MaterialTheme.colorScheme.onSurfaceVariant to ""
-        ActivityStatus.RUNNING -> MaterialTheme.colorScheme.primary to ""
-        ActivityStatus.COMPLETED -> MaterialTheme.colorScheme.primary to ""
-        ActivityStatus.FAILED -> MaterialTheme.colorScheme.error to ""
-        ActivityStatus.CANCELLED -> MaterialTheme.colorScheme.onSurfaceVariant to ""
-        ActivityStatus.DENIED -> MaterialTheme.colorScheme.error to ""
-        ActivityStatus.TIMEOUT -> MaterialTheme.colorScheme.error to ""
+        ActivityStatus.PENDING -> TextSecondary to ""
+        ActivityStatus.RUNNING -> AccentPrimary to ""
+        ActivityStatus.COMPLETED -> AccentPrimary to ""
+        ActivityStatus.FAILED -> DangerAlert to ""
+        ActivityStatus.CANCELLED -> TextSecondary to ""
+        ActivityStatus.DENIED -> DangerAlert to ""
+        ActivityStatus.TIMEOUT -> DangerAlert to ""
     }
 
     Box(
@@ -191,36 +196,36 @@ private fun ActivityDetailsView(
                 details.arguments?.let { args ->
                     Text(
                         text = "Arguments:",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = KaiTypography.labelSmall,
+                        color = TextSecondary,
                     )
                     Text(
                         text = args,
-                        style = MaterialTheme.typography.bodySmall,
+                        style = KaiTypography.bodySmall,
                         fontFamily = FontFamily.Monospace,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        color = TextPrimary,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(MaterialTheme.colorScheme.surface)
+                            .clip(KaiShapes.xs)
+                            .background(CardFill)
                             .padding(8.dp),
                     )
                 }
                 details.result?.let { result ->
                     Text(
                         text = "Result:",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = KaiTypography.labelSmall,
+                        color = TextSecondary,
                     )
                     Text(
                         text = result.take(500) + if (result.length > 500) "..." else "",
-                        style = MaterialTheme.typography.bodySmall,
+                        style = KaiTypography.bodySmall,
                         fontFamily = FontFamily.Monospace,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        color = TextPrimary,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(MaterialTheme.colorScheme.surface)
+                            .clip(KaiShapes.xs)
+                            .background(CardFill)
                             .padding(8.dp),
                         maxLines = 10,
                         overflow = TextOverflow.Ellipsis,
@@ -229,8 +234,8 @@ private fun ActivityDetailsView(
                 details.error?.let { error ->
                     Text(
                         text = "Error: $error",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.error,
+                        style = KaiTypography.bodySmall,
+                        color = DangerAlert,
                     )
                 }
             }
@@ -240,33 +245,33 @@ private fun ActivityDetailsView(
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
                     text = "$ ${details.command}",
-                    style = MaterialTheme.typography.bodySmall,
+                    style = KaiTypography.bodySmall,
                     fontFamily = FontFamily.Monospace,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = TextPrimary,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(MaterialTheme.colorScheme.surface)
+                        .clip(KaiShapes.xs)
+                        .background(CardFill)
                         .padding(8.dp),
                 )
                 details.workingDirectory?.let { cwd ->
                     Text(
                         text = "cwd: $cwd",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = KaiTypography.labelSmall,
+                        color = TextSecondary,
                     )
                 }
                 details.stdout?.let { stdout ->
                     if (stdout.isNotEmpty()) {
                         Text(
                             text = stdout,
-                            style = MaterialTheme.typography.bodySmall,
+                            style = KaiTypography.bodySmall,
                             fontFamily = FontFamily.Monospace,
-                            color = MaterialTheme.colorScheme.onSurface,
+                            color = TextPrimary,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(MaterialTheme.colorScheme.surface)
+                                .clip(KaiShapes.xs)
+                                .background(CardFill)
                                 .padding(8.dp),
                             maxLines = 15,
                             overflow = TextOverflow.Ellipsis,
@@ -277,13 +282,13 @@ private fun ActivityDetailsView(
                     if (stderr.isNotEmpty()) {
                         Text(
                             text = stderr,
-                            style = MaterialTheme.typography.bodySmall,
+                            style = KaiTypography.bodySmall,
                             fontFamily = FontFamily.Monospace,
-                            color = MaterialTheme.colorScheme.error,
+                            color = DangerAlert,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(MaterialTheme.colorScheme.surface)
+                                .clip(KaiShapes.xs)
+                                .background(CardFill)
                                 .padding(8.dp),
                             maxLines = 10,
                             overflow = TextOverflow.Ellipsis,
@@ -293,8 +298,8 @@ private fun ActivityDetailsView(
                 details.exitCode?.let { code ->
                     Text(
                         text = "Exit code: $code",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = if (code == 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+                        style = KaiTypography.labelSmall,
+                        color = if (code == 0) AccentPrimary else DangerAlert,
                     )
                 }
             }
@@ -304,21 +309,21 @@ private fun ActivityDetailsView(
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
                     text = "Skill: ${details.skillName} (${details.skillId})",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    style = KaiTypography.bodySmall,
+                    color = TextPrimary,
                 )
                 details.description?.let { desc ->
                     Text(
                         text = desc,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = KaiTypography.bodySmall,
+                        color = TextSecondary,
                     )
                 }
                 details.stage?.let { stage ->
                     Text(
                         text = "Stage: $stage",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = KaiTypography.labelSmall,
+                        color = TextSecondary,
                     )
                 }
             }
@@ -328,14 +333,14 @@ private fun ActivityDetailsView(
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
                     text = "${details.operation}: ${details.path}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    style = KaiTypography.bodySmall,
+                    color = TextPrimary,
                 )
                 details.changeSummary?.let { summary ->
                     Text(
                         text = summary,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = KaiTypography.bodySmall,
+                        color = TextSecondary,
                     )
                 }
             }
@@ -345,19 +350,19 @@ private fun ActivityDetailsView(
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
                     text = "Action: ${details.action}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    style = KaiTypography.bodySmall,
+                    color = TextPrimary,
                 )
                 Text(
                     text = "Target: ${details.target}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    style = KaiTypography.bodySmall,
+                    color = TextPrimary,
                 )
                 details.scope?.let { scope ->
                     Text(
                         text = "Scope: $scope",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = KaiTypography.bodySmall,
+                        color = TextSecondary,
                     )
                 }
             }
@@ -367,8 +372,8 @@ private fun ActivityDetailsView(
             details.content?.let { content ->
                 Text(
                     text = content,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    style = KaiTypography.bodySmall,
+                    color = TextPrimary,
                 )
             }
         }

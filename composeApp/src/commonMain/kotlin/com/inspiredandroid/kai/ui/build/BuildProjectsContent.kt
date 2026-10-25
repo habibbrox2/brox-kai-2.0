@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -29,7 +28,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -49,10 +47,17 @@ import com.inspiredandroid.kai.build.BuildAgents
 import com.inspiredandroid.kai.build.BuildSystemInfo
 import com.inspiredandroid.kai.build.KaiBuildState
 import com.inspiredandroid.kai.formatFileSize
+import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.BorderSoft
+import com.inspiredandroid.kai.ui.CardFill
+import com.inspiredandroid.kai.ui.DangerAlert
+import com.inspiredandroid.kai.ui.KaiShapes
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.components.KaiChip
 import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.settings.SettingsCard
-import com.inspiredandroid.kai.ui.settings.SettingsShapes
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.kai_build_new_project_title
 import kai.composeapp.generated.resources.kai_build_open_with
@@ -135,8 +140,8 @@ internal fun BuildProjectsContent(
                 ) {
                     Text(
                         text = stringResource(Res.string.kai_build_open_with),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = KaiTypography.bodySmall,
+                        color = TextSecondary,
                     )
                     KaiChip(
                         selected = launchAgentId == null,
@@ -144,7 +149,7 @@ internal fun BuildProjectsContent(
                     ) {
                         Text(
                             text = stringResource(Res.string.kai_build_session_shell),
-                            style = MaterialTheme.typography.labelMedium,
+                            style = KaiTypography.labelMedium,
                         )
                     }
                     installedAgents.forEach { agent ->
@@ -152,7 +157,7 @@ internal fun BuildProjectsContent(
                             selected = launchAgentId == agent.id,
                             onClick = { onSelectLaunchAgent(agent.id) },
                         ) {
-                            Text(text = agent.title, style = MaterialTheme.typography.labelMedium)
+                            Text(text = agent.title, style = KaiTypography.labelMedium)
                         }
                     }
                 }
@@ -174,16 +179,16 @@ internal fun BuildProjectsContent(
 
         items(state.projects, key = { it }) { project ->
             val cardColors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                containerColor = CardFill,
             )
-            val cardBorder = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+            val cardBorder = androidx.compose.foundation.BorderStroke(1.dp, BorderSoft)
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { onOpenProject(project) },
                 colors = cardColors,
                 border = cardBorder,
-                shape = com.inspiredandroid.kai.ui.settings.SettingsShapes.card,
+                shape = KaiShapes.card,
             ) {
                 Row(
                     modifier = Modifier
@@ -195,12 +200,12 @@ internal fun BuildProjectsContent(
                     Icon(
                         imageVector = Icons.Default.Folder,
                         contentDescription = "Project folder",
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = AccentPrimary,
                     )
                     Text(
                         text = project,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        style = KaiTypography.titleMedium,
+                        color = TextPrimary,
                         modifier = Modifier.weight(1f),
                     )
                     // Shells left behind here: the list is the only place they can be
@@ -209,8 +214,8 @@ internal fun BuildProjectsContent(
                     if (open > 0) {
                         Text(
                             text = openSessionsLabel(open),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary,
+                            style = KaiTypography.labelMedium,
+                            color = AccentPrimary,
                         )
                     }
                     ProjectRowMenu(
@@ -225,8 +230,8 @@ internal fun BuildProjectsContent(
             item {
                 Text(
                     text = error,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.error,
+                    style = KaiTypography.bodySmall,
+                    color = DangerAlert,
                 )
             }
         }
@@ -322,13 +327,13 @@ private fun ProjectRowMenu(
             Icon(
                 imageVector = Icons.Default.MoreVert,
                 contentDescription = stringResource(Res.string.sandbox_files_action_more),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = TextSecondary,
             )
         }
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            shape = RoundedCornerShape(16.dp),
+            shape = KaiShapes.card,
         ) {
             DropdownMenuItem(
                 text = { Text(stringResource(Res.string.sandbox_files_action_rename)) },
@@ -419,8 +424,8 @@ private fun DeleteProjectDialog(
                 if (openSessions > 0) {
                     Text(
                         text = openSessionsLabel(openSessions),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.error,
+                        style = KaiTypography.bodySmall,
+                        color = DangerAlert,
                     )
                 }
             }
@@ -429,7 +434,7 @@ private fun DeleteProjectDialog(
             TextButton(onClick = onDelete, modifier = Modifier.handCursor()) {
                 Text(
                     text = stringResource(Res.string.sandbox_files_delete_confirm),
-                    color = MaterialTheme.colorScheme.error,
+                    color = DangerAlert,
                 )
             }
         },
@@ -452,14 +457,14 @@ private fun BuildSystemCard(
         if (info != null) {
             Text(
                 text = "${info.distribution} · ${info.architecture}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = KaiTypography.bodySmall,
+                color = TextSecondary,
             )
             if (info.packageCount > 0) {
                 Text(
                     text = stringResource(Res.string.kai_build_system_packages, info.packageCount),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = KaiTypography.bodySmall,
+                    color = TextSecondary,
                 )
             }
             Spacer(Modifier.height(12.dp))
@@ -484,7 +489,7 @@ private fun BuildSystemCard(
         ) {
             Text(
                 text = stringResource(Res.string.kai_build_uninstall),
-                color = MaterialTheme.colorScheme.error,
+                color = DangerAlert,
             )
         }
     }
@@ -514,7 +519,7 @@ private fun BuildAgentManagerCard(
         ) {
             missingAgents.forEach { agent ->
                 KaiChip(onClick = { onInstallAgent(agent.id) }) {
-                    Text(text = agent.title, style = MaterialTheme.typography.labelMedium)
+                    Text(text = agent.title, style = KaiTypography.labelMedium)
                 }
             }
         }
@@ -531,14 +536,14 @@ private fun SystemInfoRow(label: String, value: String) {
         Text(
             text = label,
             modifier = Modifier.weight(1f),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KaiTypography.bodyMedium,
+            color = TextSecondary,
         )
         Spacer(Modifier.width(8.dp))
         Text(
             text = value,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface,
+            style = KaiTypography.bodyMedium,
+            color = TextPrimary,
             textAlign = TextAlign.End,
         )
     }

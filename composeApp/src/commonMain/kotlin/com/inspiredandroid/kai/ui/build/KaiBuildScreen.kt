@@ -13,13 +13,14 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.ui.draw.clip
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -40,7 +41,10 @@ import com.inspiredandroid.kai.build.BuildAgents
 import com.inspiredandroid.kai.build.terminal.TerminalKey
 import com.inspiredandroid.kai.build.terminal.TerminalModifiers
 import com.inspiredandroid.kai.ui.handCursor
+import com.inspiredandroid.kai.ui.KaiTypography
 import com.inspiredandroid.kai.ui.sandbox.SandboxFilesContent
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.kai_build_exit_content_description
 import kai.composeapp.generated.resources.kai_build_new_project_content_description
@@ -162,9 +166,9 @@ internal fun KaiBuildScreenContent(
 
     // Surface, not just a background modifier: it also provides the matching
     // content color, which is what keeps the bare icons legible in dark mode.
-    Surface(
-        modifier = modifier.fillMaxSize(),
-        color = com.inspiredandroid.kai.ui.BackgroundPrimary,
+    Box(
+        modifier = modifier.fillMaxSize()
+            .background(com.inspiredandroid.kai.ui.BackgroundPrimary),
     ) {
         Column(
             modifier = Modifier
@@ -237,8 +241,8 @@ internal fun KaiBuildScreenContent(
                         ) {
                             Text(
                                 text = "Starting session…",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = KaiTypography.bodyMedium,
+                                color = TextSecondary,
                             )
                         }
                     }
@@ -321,11 +325,12 @@ private fun KaiBuildTopBar(
     onExit: () -> Unit,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
-    androidx.compose.material3.Surface(
-        modifier = Modifier.fillMaxWidth(),
-        color = com.inspiredandroid.kai.ui.BackgroundPrimary,
-        shape = com.inspiredandroid.kai.ui.KaiShapes.card,
-        border = com.inspiredandroid.kai.ui.KaiBorders.soft,
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(com.inspiredandroid.kai.ui.KaiShapes.card)
+            .background(com.inspiredandroid.kai.ui.BackgroundPrimary, com.inspiredandroid.kai.ui.KaiShapes.card)
+            .border(com.inspiredandroid.kai.ui.KaiBorders.soft, com.inspiredandroid.kai.ui.KaiShapes.card),
     ) {
         Row(
             modifier = Modifier

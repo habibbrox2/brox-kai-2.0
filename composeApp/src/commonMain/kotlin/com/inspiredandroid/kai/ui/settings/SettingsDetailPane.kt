@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +21,9 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.linux.LinuxDistro
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.components.VerticalScrollbarForList
 
 /**
@@ -145,13 +147,13 @@ private fun SandboxUnavailableContent() {
     ) {
         Text(
             text = "Linux Sandbox",
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onBackground,
+            style = KaiTypography.titleMedium,
+            color = TextPrimary,
         )
         Text(
             text = "The Linux sandbox is only available on Android devices.",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KaiTypography.bodySmall,
+            color = TextSecondary,
         )
     }
 }
@@ -168,13 +170,13 @@ fun DataControlContent(
     ) {
         Text(
             text = "Data Control",
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onBackground,
+            style = KaiTypography.titleMedium,
+            color = TextPrimary,
         )
         Text(
             text = "Manage your chat history and stored data.",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KaiTypography.bodySmall,
+            color = TextSecondary,
         )
         Button(onClick = { actions.onClearAllConversations() }) {
             Text("Clear all conversations")
@@ -193,18 +195,18 @@ fun AccountPlanContent(
     ) {
         Text(
             text = "Account and Plan",
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onBackground,
+            style = KaiTypography.titleMedium,
+            color = TextPrimary,
         )
         Text(
             text = "Brox Kai 2.0",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KaiTypography.bodyMedium,
+            color = TextSecondary,
         )
         Text(
             text = "Version " + com.inspiredandroid.kai.Version.appVersion,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KaiTypography.bodySmall,
+            color = TextSecondary,
         )
     }
 }

@@ -21,13 +21,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
@@ -46,6 +44,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.KaiShapes
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.SurfaceRaised
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.chat.ChatActions
 import com.inspiredandroid.kai.ui.chat.ConversationSummary
 import com.inspiredandroid.kai.ui.components.VerticalScrollbarForList
@@ -103,16 +107,16 @@ internal fun ChatHistorySheet(
                 Text(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     text = stringResource(Res.string.chat_history_title),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    style = KaiTypography.titleLarge,
+                    color = TextPrimary,
                 )
                 Spacer(Modifier.height(12.dp))
 
                 if (conversations.isEmpty()) {
                     Text(
                         text = stringResource(Res.string.chat_history_empty),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = KaiTypography.bodyMedium,
+                        color = TextSecondary,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp),
                     )
                 } else {
@@ -129,15 +133,15 @@ internal fun ChatHistorySheet(
                                 val borderModifier = if (conversation.isInteractive) {
                                     Modifier.animatedGradientBorder(
                                         cornerRadius = 12.dp,
-                                        backgroundColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                                        backgroundColor = SurfaceRaised,
                                     )
                                 } else {
                                     Modifier
-                                        .clip(RoundedCornerShape(12.dp))
+                                        .clip(KaiShapes.row)
                                         .border(
                                             1.dp,
-                                            MaterialTheme.colorScheme.primary,
-                                            RoundedCornerShape(12.dp),
+                                            AccentPrimary,
+                                            KaiShapes.row,
                                         )
                                 }
                                 Row(
@@ -159,8 +163,8 @@ internal fun ChatHistorySheet(
                                                 modifier = Modifier
                                                     .padding(bottom = 4.dp)
                                                     .background(
-                                                        color = MaterialTheme.colorScheme.tertiaryContainer,
-                                                        shape = RoundedCornerShape(4.dp),
+                                                        color = SurfaceRaised,
+                                                        shape = KaiShapes.xs,
                                                     )
                                                     .padding(horizontal = 6.dp, vertical = 2.dp),
                                                 verticalAlignment = Alignment.CenterVertically,
@@ -168,25 +172,25 @@ internal fun ChatHistorySheet(
                                                 Icon(
                                                     imageVector = vectorResource(Res.drawable.ic_history),
                                                     contentDescription = null,
-                                                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                                    tint = TextPrimary,
                                                     modifier = Modifier.size(12.dp),
                                                 )
                                                 Spacer(Modifier.width(4.dp))
                                                 Text(
                                                     text = stringResource(Res.string.chat_history_heartbeat_label),
-                                                    style = MaterialTheme.typography.labelSmall,
-                                                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                                    style = KaiTypography.labelSmall,
+                                                    color = TextPrimary,
                                                 )
                                             }
                                         }
                                         if (conversation.title.isNotEmpty()) {
                                             Text(
                                                 text = conversation.title,
-                                                style = MaterialTheme.typography.bodyLarge,
+                                                style = KaiTypography.bodyLarge,
                                                 color = if (isActive) {
-                                                    MaterialTheme.colorScheme.primary
+                                                    AccentPrimary
                                                 } else {
-                                                    MaterialTheme.colorScheme.onBackground
+                                                    TextPrimary
                                                 },
                                                 maxLines = 1,
                                                 overflow = TextOverflow.Ellipsis,
@@ -194,8 +198,8 @@ internal fun ChatHistorySheet(
                                         }
                                         Text(
                                             text = formatDate(conversation.updatedAt),
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            style = KaiTypography.bodySmall,
+                                            color = TextSecondary,
                                         )
                                     }
                                     IconButton(
@@ -205,7 +209,7 @@ internal fun ChatHistorySheet(
                                         Icon(
                                             imageVector = Icons.Default.Delete,
                                             contentDescription = stringResource(Res.string.chat_history_delete_content_description),
-                                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            tint = TextSecondary,
                                         )
                                     }
                                 }

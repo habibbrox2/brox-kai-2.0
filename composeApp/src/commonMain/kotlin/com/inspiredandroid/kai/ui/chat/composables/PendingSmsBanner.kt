@@ -15,7 +15,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -27,9 +26,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.data.SmsDraft
 import com.inspiredandroid.kai.data.SmsDraftStatus
+import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.DangerAlert
 import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.kaiAdaptiveCardBorder
 import com.inspiredandroid.kai.ui.kaiAdaptiveCardColors
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.ic_close
 import kai.composeapp.generated.resources.sms_draft_banner_discard
@@ -99,9 +103,9 @@ private fun PendingSmsBanner(
             ) {
                 Text(
                     text = stringResource(Res.string.sms_draft_banner_to, draft.address),
-                    style = MaterialTheme.typography.labelMedium,
+                    style = KaiTypography.labelMedium,
                     fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = TextPrimary,
                     modifier = Modifier.weight(1f),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -120,7 +124,7 @@ private fun PendingSmsBanner(
                     Icon(
                         imageVector = vectorResource(Res.drawable.ic_close),
                         contentDescription = dismissLabel,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = TextSecondary,
                         modifier = Modifier.size(16.dp),
                     )
                 }
@@ -128,8 +132,8 @@ private fun PendingSmsBanner(
             Spacer(Modifier.height(4.dp))
             Text(
                 text = draft.body,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onBackground,
+                style = KaiTypography.bodySmall,
+                color = TextPrimary,
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -152,27 +156,27 @@ private fun PendingSmsBanner(
                         CircularProgressIndicator(
                             modifier = Modifier.size(14.dp),
                             strokeWidth = 2.dp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            color = TextSecondary,
                         )
                         Spacer(Modifier.size(8.dp))
                         Text(
                             text = stringResource(Res.string.sms_draft_banner_sending),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = KaiTypography.labelSmall,
+                            color = TextSecondary,
                         )
                     }
                 }
 
                 SmsDraftStatus.SENT -> Text(
                     text = stringResource(Res.string.sms_draft_banner_sent),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.primary,
+                    style = KaiTypography.labelSmall,
+                    color = AccentPrimary,
                 )
 
                 SmsDraftStatus.FAILED -> Text(
                     text = stringResource(Res.string.sms_draft_banner_failed, draft.lastError ?: "unknown error"),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.error,
+                    style = KaiTypography.labelSmall,
+                    color = DangerAlert,
                 )
             }
         }

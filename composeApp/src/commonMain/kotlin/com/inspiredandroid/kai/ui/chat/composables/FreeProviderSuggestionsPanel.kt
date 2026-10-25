@@ -1,7 +1,9 @@
 package com.inspiredandroid.kai.ui.chat.composables
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -12,11 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
@@ -30,7 +29,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.data.freeProviderSuggestions
 import com.inspiredandroid.kai.network.UiError
+import com.inspiredandroid.kai.ui.CardFill
 import com.inspiredandroid.kai.ui.handCursor
+import com.inspiredandroid.kai.ui.KaiShapes
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.SurfaceRaised
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.error_free_limit_body
 import kai.composeapp.generated.resources.error_free_limit_title
@@ -55,22 +60,22 @@ internal fun FreeProviderSuggestionsPanel(
     ) {
         Text(
             text = stringResource(Res.string.error_free_limit_title),
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onBackground,
+            style = KaiTypography.titleMedium,
+            color = TextPrimary,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(8.dp))
         Text(
             text = stringResource(Res.string.error_free_limit_body),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KaiTypography.bodyMedium,
+            color = TextSecondary,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(6.dp))
         Text(
             text = uiErrorText(error),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KaiTypography.bodySmall,
+            color = TextSecondary,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(12.dp))
@@ -81,13 +86,12 @@ internal fun FreeProviderSuggestionsPanel(
         ) {
             freeProviderSuggestions.forEach { suggestion ->
                 key(suggestion.service.id) {
-                    Surface(
+                    Box(
                         modifier = Modifier
                             .handCursor()
-                            .clip(RoundedCornerShape(50))
-                            .clickable { uriHandler.openUri(suggestion.signupUrl) },
-                        shape = RoundedCornerShape(50),
-                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                            .clickable(onClick = { uriHandler.openUri(suggestion.signupUrl) })
+                            .clip(KaiShapes.pill)
+                            .background(CardFill, KaiShapes.pill),
                     ) {
                         Row(
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
@@ -97,13 +101,13 @@ internal fun FreeProviderSuggestionsPanel(
                                 imageVector = vectorResource(suggestion.service.icon),
                                 contentDescription = null,
                                 modifier = Modifier.size(16.dp),
-                                tint = MaterialTheme.colorScheme.onSurface,
+                                tint = TextPrimary,
                             )
                             Spacer(Modifier.width(6.dp))
                             Text(
                                 text = suggestion.service.displayName,
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurface,
+                                style = KaiTypography.labelMedium,
+                                color = TextPrimary,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )
@@ -120,7 +124,7 @@ internal fun FreeProviderSuggestionsPanel(
             Icon(
                 imageVector = vectorResource(Res.drawable.ic_refresh),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onBackground,
+                tint = TextPrimary,
             )
         }
     }

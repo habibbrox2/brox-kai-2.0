@@ -6,11 +6,11 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.ui.handCursor
+import com.inspiredandroid.kai.ui.TextSecondary
 
 @Composable
 fun RefreshIconButton(
@@ -28,13 +28,13 @@ fun RefreshIconButton(
             CircularProgressIndicator(
                 modifier = Modifier.size(18.dp),
                 strokeWidth = 2.dp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = TextSecondary,
             )
         } else {
             Icon(
                 imageVector = Icons.Default.Refresh,
                 contentDescription = contentDescription,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = TextSecondary,
             )
         }
     }

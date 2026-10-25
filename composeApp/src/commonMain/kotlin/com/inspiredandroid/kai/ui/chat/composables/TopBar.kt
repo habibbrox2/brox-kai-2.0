@@ -4,6 +4,8 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -19,19 +21,22 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.BackIcon
 import com.inspiredandroid.kai.data.ServiceEntry
 import com.inspiredandroid.kai.prefersReducedMotion
+import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.BorderSoft
 import com.inspiredandroid.kai.ui.CardFill
 import com.inspiredandroid.kai.ui.KaiShapes
+import com.inspiredandroid.kai.ui.SurfaceRaised
+import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.chat.ChatActions
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
 import com.inspiredandroid.kai.ui.handCursor
@@ -85,27 +90,25 @@ internal fun TopBar(
     val topBarBg = if (isOled) {
         com.inspiredandroid.kai.ui.CardFill
     } else {
-        MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.85f)
+        SurfaceRaised.copy(alpha = 0.85f)
     }
     val topBarBorder = if (isOled) {
         androidx.compose.foundation.BorderStroke(1.dp, com.inspiredandroid.kai.ui.BorderSoft)
     } else {
-        androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+        androidx.compose.foundation.BorderStroke(1.dp, BorderSoft.copy(alpha = 0.5f))
     }
     val topBarShape = com.inspiredandroid.kai.ui.KaiShapes.panel
 
     Box(
         modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = ChatSpacing.xxxl + 4.dp),
     ) {
-        Surface(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = ChatSpacing.lg, vertical = ChatSpacing.sm),
-            color = topBarBg,
-            shape = topBarShape,
-            border = topBarBorder,
-            tonalElevation = 2.dp,
-            shadowElevation = 4.dp,
+                .padding(horizontal = ChatSpacing.lg, vertical = ChatSpacing.sm)
+                .clip(topBarShape)
+                .background(topBarBg, topBarShape)
+                .border(topBarBorder, topBarShape),
         ) {
             Row(
                 modifier = Modifier
@@ -127,7 +130,7 @@ internal fun TopBar(
                             Icon(
                                 imageVector = Icons.Default.Menu,
                                 contentDescription = "Open navigation",
-                                tint = MaterialTheme.colorScheme.onBackground,
+                                tint = TextPrimary,
                             )
                         }
                     }
@@ -143,9 +146,9 @@ internal fun TopBar(
                                 imageVector = Icons.Default.Widgets,
                                 contentDescription = stringResource(Res.string.interactive_mode_content_description),
                                 tint = if (isInteractiveMode) {
-                                    MaterialTheme.colorScheme.primary
+                                    AccentPrimary
                                 } else {
-                                    MaterialTheme.colorScheme.onBackground
+                                    TextPrimary
                                 },
                             )
                         }
@@ -183,7 +186,7 @@ internal fun TopBar(
                             Icon(
                                 imageVector = BackIcon,
                                 contentDescription = stringResource(Res.string.interactive_back_content_description),
-                                tint = MaterialTheme.colorScheme.onBackground,
+                                tint = TextPrimary,
                             )
                         }
                     }
@@ -204,7 +207,7 @@ internal fun TopBar(
                         Icon(
                             imageVector = vectorResource(Res.drawable.ic_settings),
                             contentDescription = stringResource(Res.string.settings_content_description),
-                            tint = MaterialTheme.colorScheme.onBackground,
+                            tint = TextPrimary,
                         )
                     }
                 }
@@ -230,7 +233,7 @@ private fun SandboxToggleButton(
             )
         }
     }
-    val primary = MaterialTheme.colorScheme.primary
+    val primary = AccentPrimary
     val checkedContainer = primary.copy(alpha = 0.2f)
     val flashContainer = primary.copy(alpha = flashAlpha.value)
     IconToggleButton(
@@ -240,16 +243,16 @@ private fun SandboxToggleButton(
         colors = IconButtonDefaults.iconToggleButtonColors(
             containerColor = flashContainer,
             checkedContainerColor = if (flashAlpha.value > 0f) flashContainer else checkedContainer,
-            checkedContentColor = MaterialTheme.colorScheme.primary,
+            checkedContentColor = AccentPrimary,
         ),
     ) {
         Icon(
             imageVector = Icons.Filled.Dns,
             contentDescription = stringResource(Res.string.sandbox_content_description),
             tint = if (isSandboxOpen) {
-                MaterialTheme.colorScheme.primary
+                AccentPrimary
             } else {
-                MaterialTheme.colorScheme.onBackground
+                TextPrimary
             },
         )
     }
@@ -279,7 +282,7 @@ private fun SpeechToggleButton(
                 vectorResource(Res.drawable.ic_volume_off)
             },
             contentDescription = stringResource(Res.string.toggle_speech_output_content_description),
-            tint = MaterialTheme.colorScheme.onBackground,
+            tint = TextPrimary,
         )
     }
 }

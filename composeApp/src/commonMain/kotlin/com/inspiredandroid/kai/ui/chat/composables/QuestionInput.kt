@@ -29,11 +29,10 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -66,14 +65,17 @@ import com.inspiredandroid.kai.data.ServiceEntry
 import com.inspiredandroid.kai.data.imageExtensions
 import com.inspiredandroid.kai.prefersReducedMotion
 import com.inspiredandroid.kai.skills.SkillManifest
+import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.AccentGradientEnd
 import com.inspiredandroid.kai.ui.AccentGradientStart
-import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.BorderSoft
 import com.inspiredandroid.kai.ui.CardFill
 import com.inspiredandroid.kai.ui.KaiShapes
 import com.inspiredandroid.kai.ui.OledBlack
+import com.inspiredandroid.kai.ui.SurfaceRaised
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
-import com.inspiredandroid.kai.ui.gradientBrush
 import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.isOledFlavor
 import com.inspiredandroid.kai.ui.outlineTextFieldColors
@@ -193,7 +195,7 @@ internal fun CircleIconButton(
     icon: ImageVector,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    tint: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    tint: Color = TextSecondary,
     contentDescription: String,
 ) {
     Box(
@@ -288,7 +290,7 @@ fun QuestionInput(
                                     modifier = Modifier.size(16.dp),
                                     painter = painterResource(icon),
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onBackground,
+                                    tint = TextPrimary,
                                 )
                             },
                             label = {
@@ -333,12 +335,12 @@ fun QuestionInput(
         val inputPillBg = if (isOled) {
             com.inspiredandroid.kai.ui.CardFill
         } else {
-            MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.9f)
+            SurfaceRaised.copy(alpha = 0.9f)
         }
         val inputBorder = if (isOled) {
             com.inspiredandroid.kai.ui.BorderSoft
         } else {
-            MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)
+            BorderSoft.copy(alpha = 0.6f)
         }
 
         Box(
@@ -346,18 +348,19 @@ fun QuestionInput(
                 .fillMaxWidth()
                 .padding(horizontal = com.inspiredandroid.kai.ui.chat.ChatSpacing.lg, vertical = com.inspiredandroid.kai.ui.chat.ChatSpacing.md),
         ) {
-            Surface(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(max = 140.dp),
-                color = inputPillBg,
-                shape = com.inspiredandroid.kai.ui.KaiShapes.composer,
-                border = BorderStroke(
-                    width = 1.dp,
-                    color = inputBorder,
-                ),
-                shadowElevation = 12.dp,
-                tonalElevation = 4.dp,
+                    .heightIn(max = 140.dp)
+                    .clip(com.inspiredandroid.kai.ui.KaiShapes.composer)
+                    .background(inputPillBg, com.inspiredandroid.kai.ui.KaiShapes.composer)
+                    .border(
+                        BorderStroke(
+                            width = 1.dp,
+                            color = inputBorder,
+                        ),
+                        com.inspiredandroid.kai.ui.KaiShapes.composer,
+                    ),
             ) {
                 TextField(
                     value = textState,
@@ -371,7 +374,7 @@ fun QuestionInput(
                     placeholder = {
                         Text(
                             stringResource(Res.string.prompt_ask_question),
-                            color = MaterialTheme.colorScheme.onBackground,
+                            color = TextPrimary,
                         )
                     },
                     trailingIcon = {
@@ -417,7 +420,7 @@ fun QuestionInput(
                                 icon = vectorResource(Res.drawable.ic_attach),
                                 onClick = { filePickerLauncher.launch() },
                                 modifier = Modifier.padding(start = 7.dp),
-                                tint = MaterialTheme.colorScheme.onBackground,
+                                tint = TextPrimary,
                                 contentDescription = "Attach file",
                             )
                         }

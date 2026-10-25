@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Terminal
@@ -41,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import com.inspiredandroid.kai.build.terminal.TerminalKey
 import com.inspiredandroid.kai.build.terminal.TerminalModifiers
 import com.inspiredandroid.kai.ui.handCursor
+import com.inspiredandroid.kai.ui.KaiShapes
 import com.inspiredandroid.kai.ui.settings.monoStyle
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.kai_build_terminal_input_mode_content_description
@@ -77,7 +77,7 @@ private val IconKeyCapMinWidth = 48.dp
 /** Enter is the row's action key and gets the width to say so. */
 private val EnterKeyCapMinWidth = 52.dp
 private val KeyCapFontSize = 13.sp
-private val KeyCapShape = RoundedCornerShape(8.dp)
+private val KeyCapShape = KaiShapes.xs
 
 /**
  * The keys no soft keyboard has. Ctrl/Alt/Shift latch for exactly one press —

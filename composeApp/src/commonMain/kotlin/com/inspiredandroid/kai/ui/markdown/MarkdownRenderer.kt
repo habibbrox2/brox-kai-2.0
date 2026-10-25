@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
+import com.inspiredandroid.kai.ui.BorderSoft
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.TextPrimary
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
@@ -48,7 +50,7 @@ fun MarkdownContent(
     frozen: FrozenSubmission? = null,
     onOpenInEditor: ((String, String?) -> Unit)? = null,
 ) {
-    CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
+    CompositionLocalProvider(LocalContentColor provides TextPrimary) {
         Column(modifier) {
             for (block in document.blocks) {
                 BlockRenderer(block, isInteractive, onUiCallback, frozen, onOpenInEditor)
@@ -128,14 +130,13 @@ private fun BlockRenderer(
 
 @Composable
 private fun HeadingBlock(block: Heading) {
-    val typography = MaterialTheme.typography
     val style = when (block.level) {
-        1 -> typography.headlineSmall
-        2 -> typography.titleLarge
-        3 -> typography.titleMedium
-        4 -> typography.titleSmall
-        5 -> typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
-        else -> typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+        1 -> KaiTypography.headlineSmall
+        2 -> KaiTypography.titleLarge
+        3 -> KaiTypography.titleMedium
+        4 -> KaiTypography.titleSmall
+        5 -> KaiTypography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+        else -> KaiTypography.bodyMedium.copy(fontWeight = FontWeight.Bold)
     }
     InlineContent(
         inlines = block.inlines,
@@ -161,7 +162,7 @@ private fun ParagraphBlock(block: Paragraph) {
     }
     InlineContent(
         inlines = block.inlines,
-        style = MaterialTheme.typography.bodyLarge,
+        style = KaiTypography.bodyLarge,
         modifier = Modifier.padding(vertical = 2.dp),
     )
 }
@@ -192,7 +193,7 @@ private fun BlockquoteBlock(
     Row(modifier = Modifier.padding(vertical = 4.dp).height(IntrinsicSize.Min)) {
         VerticalDivider(
             thickness = 3.dp,
-            color = MaterialTheme.colorScheme.outline,
+            color = BorderSoft,
             modifier = Modifier.fillMaxHeight(),
         )
         Column(Modifier.padding(start = 8.dp)) {
@@ -245,7 +246,7 @@ private fun ListItemRow(
     Row {
         Text(
             text = marker,
-            style = MaterialTheme.typography.bodyLarge,
+            style = KaiTypography.bodyLarge,
             modifier = Modifier.widthIn(min = scaledMarkerWidth).padding(end = 4.dp),
         )
         Column(Modifier.fillMaxWidth()) {
@@ -262,7 +263,7 @@ private fun TableBlock(block: Table) {
                 block.headers.forEachIndexed { i, cell ->
                     InlineContent(
                         inlines = cell,
-                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                        style = KaiTypography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                         textAlign = alignTextFor(block.alignments.getOrNull(i)),
                         modifier = Modifier.weight(1f).padding(4.dp),
                     )
@@ -275,7 +276,7 @@ private fun TableBlock(block: Table) {
                 row.forEachIndexed { i, cell ->
                     InlineContent(
                         inlines = cell,
-                        style = MaterialTheme.typography.bodyLarge,
+                        style = KaiTypography.bodyLarge,
                         textAlign = alignTextFor(block.alignments.getOrNull(i)),
                         modifier = Modifier.weight(1f).padding(4.dp),
                     )

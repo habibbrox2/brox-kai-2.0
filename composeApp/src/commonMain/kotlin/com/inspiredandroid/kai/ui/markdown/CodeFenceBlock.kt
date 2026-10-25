@@ -1,5 +1,7 @@
 package com.inspiredandroid.kai.ui.markdown
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Edit
@@ -22,13 +23,13 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,8 +40,10 @@ import com.inspiredandroid.kai.ui.CardFill
 import com.inspiredandroid.kai.ui.OledBlack
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
 import com.inspiredandroid.kai.ui.isOledFlavor
+import com.inspiredandroid.kai.ui.KaiShapes
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.rememberCopyToClipboard
-import com.inspiredandroid.kai.ui.settings.SettingsShapes
 
 @Composable
 internal fun CodeFenceBlock(
@@ -58,23 +61,19 @@ internal fun CodeFenceBlock(
     }
     val copyToClipboard = rememberCopyToClipboard()
 
-    val surfaceBg = if (isOled) {
-        CardFill
-    } else {
-        colorScheme.surfaceVariant
-    }
+    val surfaceBg = CardFill
     val surfaceBorder = if (isOled) {
         BorderSoft
     } else {
-        colorScheme.outline.copy(alpha = 0.2f)
+        BorderSoft.copy(alpha = 0.2f)
     }
 
-    Surface(
-        modifier = modifier.fillMaxWidth(),
-        shape = SettingsShapes.card,
-        color = surfaceBg,
-        border = androidx.compose.foundation.BorderStroke(1.dp, surfaceBorder),
-        contentColor = colorScheme.onSurfaceVariant,
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(KaiShapes.card)
+            .background(surfaceBg, KaiShapes.card)
+            .border(androidx.compose.foundation.BorderStroke(1.dp, surfaceBorder), KaiShapes.card),
     ) {
         Column {
             Row(
@@ -86,8 +85,8 @@ internal fun CodeFenceBlock(
             ) {
                 Text(
                     text = language?.takeIf { it.isNotBlank() } ?: "",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = if (isOled) AccentPrimary else colorScheme.onSurfaceVariant,
+                    style = KaiTypography.labelSmall,
+                    color = if (isOled) AccentPrimary else TextSecondary,
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
                     if (onOpenInEditor != null) {
@@ -122,7 +121,7 @@ internal fun CodeFenceBlock(
                             Spacer(Modifier.width(4.dp))
                             Text(
                                 "Run in Sandbox",
-                                style = MaterialTheme.typography.labelSmall,
+                                style = KaiTypography.labelSmall,
                                 color = AccentPrimary,
                             )
                         }
@@ -145,7 +144,8 @@ internal fun CodeFenceBlock(
                 Text(
                     text = highlighted,
                     fontFamily = FontFamily.Monospace,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = KaiTypography.bodyMedium,
+                    color = TextSecondary,
                 )
             }
         }

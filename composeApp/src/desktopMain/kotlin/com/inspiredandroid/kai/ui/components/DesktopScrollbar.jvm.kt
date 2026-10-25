@@ -7,15 +7,15 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import com.inspiredandroid.kai.ui.TextPrimary
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
 private fun scrollbarStyle(): ScrollbarStyle {
-    val onSurface = MaterialTheme.colorScheme.onSurface
+    val onSurface = TextPrimary
     return remember(onSurface) {
         ScrollbarStyle(
             minimalHeight = 48.dp,

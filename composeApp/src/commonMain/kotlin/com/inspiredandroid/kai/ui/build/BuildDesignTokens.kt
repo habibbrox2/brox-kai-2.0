@@ -1,7 +1,6 @@
 package com.inspiredandroid.kai.ui.build
 
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
@@ -10,6 +9,11 @@ import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.build.BuildEnvironmentState
 import com.inspiredandroid.kai.build.BuildStep
 import com.inspiredandroid.kai.prefersReducedMotion
+import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.DangerAlert
+import com.inspiredandroid.kai.ui.SuccessGreen
+import com.inspiredandroid.kai.ui.TextSecondary
+import com.inspiredandroid.kai.ui.WarningAmber
 import androidx.compose.runtime.remember
 
 /**
@@ -69,14 +73,13 @@ fun BuildEnvironmentState.toStatusKind(): BuildStatusKind = when (this) {
 /** Color ramp for the four terminal/workflow statuses plus neutral idle. */
 @Composable
 fun rememberBuildStatusColors(): BuildStatusColors {
-    val colorScheme = MaterialTheme.colorScheme
-    return remember(colorScheme) {
+    return remember {
         BuildStatusColors(
-            idle = colorScheme.onSurfaceVariant,
-            running = colorScheme.primary,
-            success = colorScheme.tertiary,
-            warning = colorScheme.secondary,
-            failed = colorScheme.error,
+            idle = TextSecondary,
+            running = AccentPrimary,
+            success = SuccessGreen,
+            warning = WarningAmber,
+            failed = DangerAlert,
         )
     }
 }

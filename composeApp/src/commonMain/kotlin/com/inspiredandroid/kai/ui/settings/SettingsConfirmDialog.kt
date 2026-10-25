@@ -1,11 +1,12 @@
 package com.inspiredandroid.kai.ui.settings
 
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.inspiredandroid.kai.ui.DangerAlert
+import com.inspiredandroid.kai.ui.KaiTypography
 
 /**
  * Confirmation dialog for destructive settings actions (Plan 2, Phase 4).
@@ -34,11 +35,11 @@ fun SettingsConfirmDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         modifier = modifier,
-        title = { Text(title, style = MaterialTheme.typography.titleMedium) },
-        text = { Text(message, style = MaterialTheme.typography.bodyMedium) },
+        title = { Text(title, style = KaiTypography.titleMedium) },
+        text = { Text(message, style = KaiTypography.bodyMedium) },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text(confirmLabel, color = MaterialTheme.colorScheme.error)
+                Text(confirmLabel, color = DangerAlert)
             }
         },
         dismissButton = {

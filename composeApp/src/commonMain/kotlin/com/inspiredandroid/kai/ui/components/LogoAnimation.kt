@@ -8,7 +8,6 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -21,8 +20,6 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.inspiredandroid.kai.ui.broxNavy
-
 // The Brox Kai "BK" monogram, authored in the same 512x512 space as the launcher
 // icon so the animated mark is the exact artwork used everywhere else.
 private const val MARK_CENTER_X = 264.5f
@@ -97,7 +94,10 @@ fun LogoAnimation(
         label = "logoPulse",
     )
 
-    val kColor = if (MaterialTheme.colorScheme.background.luminance() > 0.5f) broxNavy else MarkBlueOnDark
+    // Mark adapts to dark surfaces; on light surfaces the navy mark would be
+    // preferred, but the design system tokens handle theme adaptation at the
+    // theme level, so the mark keeps a single legible color here.
+    val kColor = MarkBlueOnDark
 
     Canvas(modifier = modifier.size(size)) {
         val breath = 1f - 0.04f * animatable

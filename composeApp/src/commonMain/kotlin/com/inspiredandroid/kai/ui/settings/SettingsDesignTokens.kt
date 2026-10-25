@@ -1,7 +1,6 @@
 package com.inspiredandroid.kai.ui.settings
 
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
@@ -65,11 +64,7 @@ object SettingsStatusColors {
 object SettingsSurfaces {
     /** Page background - OLED black in dark themes */
     @Composable
-    fun page(): Color = when {
-        MaterialTheme.colorScheme.background == OledBlack -> OledBlack
-        MaterialTheme.colorScheme.background.luminance() > 0.5f -> Color(0xFFFFFFFF)
-        else -> OledBlack
-    }
+    fun page(): Color = OledBlack
 
     /** Glassmorphic card background with blur effect */
     @Composable

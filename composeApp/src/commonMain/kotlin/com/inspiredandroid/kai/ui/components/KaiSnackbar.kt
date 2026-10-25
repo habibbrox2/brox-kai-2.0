@@ -1,7 +1,9 @@
 package com.inspiredandroid.kai.ui.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,16 +11,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.inspiredandroid.kai.ui.DangerAlert
+import com.inspiredandroid.kai.ui.InfoBlue
 import com.inspiredandroid.kai.ui.KaiShapes
 import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.SuccessGreen
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.WarningAmber
 
 /** Color configuration for a KaiSnackbar variant. */
 private data class SnackbarColors(
@@ -42,37 +50,37 @@ fun KaiSnackbar(
     onDismiss: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
-    val colorScheme = MaterialTheme.colorScheme
-    val colors = snackbarColors(variant, colorScheme)
+    val colors = snackbarColors(variant)
 
-    Surface(
+    Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp),
-        shape = KaiShapes.pill,
-        color = colors.background,
-        border = BorderStroke(1.dp, colors.border),
-        contentColor = colors.text,
+            .padding(16.dp)
+            .clip(KaiShapes.pill)
+            .background(colors.background, KaiShapes.pill)
+            .border(BorderStroke(1.dp, colors.border), KaiShapes.pill),
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Text(
-                text = message,
-                style = KaiTypography.bodySmall,
-                modifier = Modifier.weight(1f),
-            )
-            onDismiss?.let {
-                IconButton(
-                    onClick = it,
-                    modifier = Modifier.padding(start = 4.dp),
-                ) {
-                    androidx.compose.material3.Text(
-                        text = "✕",
-                        style = KaiTypography.labelSmall,
-                        color = colors.text,
-                    )
+        CompositionLocalProvider(LocalContentColor provides colors.text) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(
+                    text = message,
+                    style = KaiTypography.bodySmall,
+                    modifier = Modifier.weight(1f),
+                )
+                onDismiss?.let {
+                    IconButton(
+                        onClick = it,
+                        modifier = Modifier.padding(start = 4.dp),
+                    ) {
+                        androidx.compose.material3.Text(
+                            text = "✕",
+                            style = KaiTypography.labelSmall,
+                            color = colors.text,
+                        )
+                    }
                 }
             }
         }
@@ -81,34 +89,33 @@ fun KaiSnackbar(
 
 private fun snackbarColors(
     variant: SnackbarVariant,
-    colorScheme: androidx.compose.material3.ColorScheme,
 ): SnackbarColors = when (variant) {
     SnackbarVariant.Success ->
         SnackbarColors(
-            background = colorScheme.tertiaryContainer,
-            text = colorScheme.onTertiaryContainer,
-            border = colorScheme.tertiary,
+            background = SuccessGreen,
+            text = TextPrimary,
+            border = SuccessGreen.copy(alpha = 0.4f),
         )
 
     SnackbarVariant.Warning ->
         SnackbarColors(
-            background = colorScheme.secondaryContainer,
-            text = colorScheme.onSecondaryContainer,
-            border = colorScheme.secondary,
+            background = WarningAmber,
+            text = TextPrimary,
+            border = WarningAmber.copy(alpha = 0.4f),
         )
 
     SnackbarVariant.Error ->
         SnackbarColors(
-            background = colorScheme.errorContainer,
-            text = colorScheme.onErrorContainer,
-            border = colorScheme.error,
+            background = DangerAlert,
+            text = TextPrimary,
+            border = DangerAlert.copy(alpha = 0.4f),
         )
 
     SnackbarVariant.Info ->
         SnackbarColors(
-            background = colorScheme.primaryContainer,
-            text = colorScheme.onPrimaryContainer,
-            border = colorScheme.primary,
+            background = InfoBlue,
+            text = TextPrimary,
+            border = InfoBlue.copy(alpha = 0.4f),
         )
 }
 

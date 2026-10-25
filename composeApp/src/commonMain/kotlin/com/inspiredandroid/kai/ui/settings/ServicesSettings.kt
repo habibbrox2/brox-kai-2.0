@@ -5,6 +5,8 @@ package com.inspiredandroid.kai.ui.settings
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,11 +45,9 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -101,7 +101,17 @@ import com.inspiredandroid.kai.inference.ModelImportError
 import com.inspiredandroid.kai.inference.calculateDevicePerformance
 import com.inspiredandroid.kai.inference.estimateGpuMemoryMb
 import com.inspiredandroid.kai.network.dtos.SponsorsResponseDto
+import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.BorderSoft
+import com.inspiredandroid.kai.ui.CardFill
+import com.inspiredandroid.kai.ui.DangerAlert
 import com.inspiredandroid.kai.ui.KaiClearableTextField
+import com.inspiredandroid.kai.ui.KaiShapes
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.SurfaceRaised
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
+import com.inspiredandroid.kai.ui.WarningAmber
 import com.inspiredandroid.kai.ui.components.CollectionEmptyState
 import com.inspiredandroid.kai.ui.components.KaiSlider
 import com.inspiredandroid.kai.ui.components.OperationalStatus
@@ -196,23 +206,23 @@ internal fun FreeSettings(
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = stringResource(Res.string.settings_free_tier_title),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary,
+                style = KaiTypography.titleMedium,
+                color = AccentPrimary,
             )
 
             if (showFallbackToggle) {
                 Spacer(Modifier.height(6.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth()
-                        .clip(RoundedCornerShape(8.dp))
+                        .clip(KaiShapes.xs)
                         .clickable { onToggleFreeFallback(!isFreeFallbackEnabled) }
                         .handCursor(),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = stringResource(Res.string.settings_free_fallback),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        style = KaiTypography.bodyMedium,
+                        color = TextPrimary,
                         modifier = Modifier.weight(1f),
                     )
                     Switch(
@@ -227,8 +237,8 @@ internal fun FreeSettings(
 
             Text(
                 text = stringResource(Res.string.settings_free_tier_description),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = KaiTypography.bodySmall,
+                color = TextSecondary,
             )
 
             Spacer(Modifier.height(12.dp))
@@ -264,14 +274,14 @@ internal fun FreeSettings(
 
             Text(
                 text = stringResource(Res.string.settings_business_partnerships),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = KaiTypography.labelLarge,
+                color = TextSecondary,
             )
             Spacer(Modifier.height(6.dp))
             Text(
                 text = stringResource(Res.string.settings_business_partnerships_description),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = KaiTypography.bodySmall,
+                color = TextSecondary,
             )
 
             TextButton(
@@ -414,7 +424,7 @@ private fun OwnerProfileCard(profile: SupportProfile) {
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surfaceContainerHighest),
+                    .background(SurfaceRaised),
                 contentAlignment = Alignment.Center,
             ) {
                 // Local branded avatar — no network dependency (Plan 5, Phase 3).
@@ -428,21 +438,21 @@ private fun OwnerProfileCard(profile: SupportProfile) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = profile.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    style = KaiTypography.titleMedium,
+                    color = TextPrimary,
                 )
                 profile.subtitle?.let {
                     Text(
                         text = it,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = KaiTypography.bodySmall,
+                        color = TextSecondary,
                     )
                 }
             }
             Text(
                 text = SupportLinks.OWNER_PROFILE.removePrefix("https://"),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = KaiTypography.labelSmall,
+                color = TextSecondary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -458,7 +468,7 @@ private fun SponsorTile(profile: SupportProfile, tileWidth: Dp) {
         horizontalAlignment = CenterHorizontally,
         modifier = Modifier
             .width(tileWidth)
-            .clip(RoundedCornerShape(8.dp))
+            .clip(KaiShapes.xs)
             .then(
                 if (destination != null) {
                     Modifier
@@ -479,7 +489,7 @@ private fun SponsorTile(profile: SupportProfile, tileWidth: Dp) {
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceContainerHighest),
+                .background(SurfaceRaised),
             contentAlignment = Alignment.Center,
         ) {
             if (profile.avatarUrl != null) {
@@ -495,16 +505,16 @@ private fun SponsorTile(profile: SupportProfile, tileWidth: Dp) {
                 // Neutral initial when no avatar image exists (Plan 5, Phase 3).
                 Text(
                     text = profile.name.take(1).uppercase(),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary,
+                    style = KaiTypography.titleMedium,
+                    color = AccentPrimary,
                 )
             }
         }
         Spacer(Modifier.height(4.dp))
         Text(
             text = profile.name,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KaiTypography.labelSmall,
+            color = TextSecondary,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center,
@@ -577,8 +587,8 @@ private fun SupportSection(
                     if (mainProfiles.isNotEmpty()) {
                         Text(
                             text = stringResource(Res.string.settings_sponsors),
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = KaiTypography.labelLarge,
+                            color = TextSecondary,
                         )
                         Spacer(Modifier.height(8.dp))
                         SponsorGrid(profiles = mainProfiles)
@@ -587,8 +597,8 @@ private fun SupportSection(
                         Spacer(Modifier.height(12.dp))
                         Text(
                             text = "Past sponsors",
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = KaiTypography.labelLarge,
+                            color = TextSecondary,
                         )
                         Spacer(Modifier.height(8.dp))
                         SponsorGrid(profiles = past)
@@ -759,8 +769,8 @@ private fun setupRequirement(service: Service): String = when {
 private fun ProviderGroupHeader(title: String) {
     Text(
         text = title,
-        style = MaterialTheme.typography.labelLarge,
-        color = MaterialTheme.colorScheme.primary,
+        style = KaiTypography.labelLarge,
+        color = AccentPrimary,
         modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 6.dp),
     )
 }
@@ -779,11 +789,14 @@ private fun ProviderRowItem(
         bottomEnd = if (isLast) 12.dp else 0.dp,
     )
     val isSpecial = service.isOnDevice || service is Service.OpenAICompatible || service is Service.AtlasCloud
-    Surface(
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth().handCursor(),
-        shape = itemShape,
-        color = MaterialTheme.colorScheme.surfaceContainer,
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .handCursor()
+            .clickable { onClick() }
+            .clip(itemShape)
+            .background(CardFill, itemShape)
+            .border(BorderStroke(1.dp, BorderSoft), itemShape),
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
@@ -795,8 +808,8 @@ private fun ProviderRowItem(
                     .then(
                         if (isSpecial) {
                             Modifier.background(
-                                color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                                shape = RoundedCornerShape(8.dp),
+                                color = SurfaceRaised,
+                                shape = KaiShapes.xs,
                             )
                         } else {
                             Modifier
@@ -808,22 +821,22 @@ private fun ProviderRowItem(
                     imageVector = vectorResource(service.icon),
                     contentDescription = null,
                     modifier = Modifier.size(20.dp),
-                    tint = MaterialTheme.colorScheme.onBackground,
+                    tint = TextPrimary,
                 )
             }
             Spacer(Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = service.displayName,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    style = KaiTypography.bodyLarge,
+                    color = TextPrimary,
                 )
                 Text(
                     // Requirement summary so nobody adds a service and only then
                     // discovers it needs a key or a base URL (Plan 5, Phase 2).
                     text = setupRequirement(service),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = KaiTypography.bodySmall,
+                    color = TextSecondary,
                 )
             }
         }
@@ -859,16 +872,16 @@ private fun ServicesOverview(entries: ImmutableList<ConfiguredServiceEntry>) {
         ) {
             Text(
                 text = entries.size.toString(),
-                style = MaterialTheme.typography.headlineSmall,
+                style = KaiTypography.headlineSmall,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onBackground,
+                color = TextPrimary,
             )
             Spacer(Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = if (entries.size == 1) "Configured service" else "Configured services",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = KaiTypography.bodySmall,
+                    color = TextSecondary,
                 )
                 Spacer(Modifier.height(2.dp))
                 StatusBadge(
@@ -962,7 +975,7 @@ private fun ConfiguredServiceCardContent(
                             imageVector = Icons.Rounded.DragIndicator,
                             contentDescription = stringResource(Res.string.settings_reorder_content_description),
                             modifier = Modifier.size(24.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            tint = TextSecondary,
                         )
                     }
                     Spacer(Modifier.width(8.dp))
@@ -989,8 +1002,8 @@ private fun ConfiguredServiceCardContent(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = entry.service.displayName,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onBackground,
+                        style = KaiTypography.titleMedium,
+                        color = TextPrimary,
                     )
                     val displayModelId = when {
                         entry.useCustomModel && entry.customModelId.isNotBlank() -> entry.customModelId
@@ -1000,13 +1013,13 @@ private fun ConfiguredServiceCardContent(
                     if (displayModelId != null) {
                         TooltipBox(
                             positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
-                            tooltip = { Text(text = displayModelId, style = MaterialTheme.typography.bodyMedium) },
+                            tooltip = { Text(text = displayModelId, style = KaiTypography.bodyMedium) },
                             state = rememberTooltipState(),
                         ) {
                             Text(
                                 text = displayModelId,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = KaiTypography.bodySmall,
+                                color = TextSecondary,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )
@@ -1018,7 +1031,7 @@ private fun ConfiguredServiceCardContent(
                 Icon(
                     imageVector = vectorResource(Res.drawable.ic_arrow_drop_down),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = TextSecondary,
                 )
             }
         }
@@ -1093,7 +1106,7 @@ private fun ConfiguredServiceCardContent(
                     ) {
                         Text(
                             text = stringResource(Res.string.settings_remove_service),
-                            color = MaterialTheme.colorScheme.error,
+                            color = DangerAlert,
                         )
                     }
                 }
@@ -1129,7 +1142,7 @@ private fun ServiceSettings(
 
     Spacer(Modifier.height(8.dp))
 
-    val linkColor = MaterialTheme.colorScheme.primary
+    val linkColor = AccentPrimary
 
     val copyApiKeyPromptString = stringResource(Res.string.settings_sign_in_copy_api_key_from)
     val annotatedString = remember(apiKeyUrl, apiKeyUrlDisplay) {
@@ -1146,7 +1159,7 @@ private fun ServiceSettings(
     Text(
         annotatedString,
         modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colorScheme.onBackground,
+        color = TextPrimary,
     )
 
     Spacer(Modifier.height(16.dp))
@@ -1178,7 +1191,7 @@ private fun OpenAICompatibleSettings(
         label = {
             Text(
                 stringResource(Res.string.settings_base_url_label),
-                color = MaterialTheme.colorScheme.onBackground,
+                color = TextPrimary,
             )
         },
         singleLine = true,
@@ -1190,8 +1203,8 @@ private fun OpenAICompatibleSettings(
     if (baseUrl.isNotBlank()) {
         Text(
             text = "${Service.normalizeOpenAICompatibleBaseUrl(baseUrl)}${Service.OpenAICompatible.chatUrl}",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KaiTypography.bodySmall,
+            color = TextSecondary,
             modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 4.dp),
         )
     }
@@ -1212,7 +1225,7 @@ private fun OpenAICompatibleSettings(
 
     Spacer(Modifier.height(8.dp))
 
-    val linkColor = MaterialTheme.colorScheme.primary
+    val linkColor = AccentPrimary
     val setupOllamaText = stringResource(Res.string.settings_openai_compatible_setup_ollama)
     val orOtherServiceText = stringResource(Res.string.settings_openai_compatible_or_other_service)
     val providersText = stringResource(Res.string.settings_openai_compatible_providers)
@@ -1238,7 +1251,7 @@ private fun OpenAICompatibleSettings(
     Text(
         annotatedString,
         modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colorScheme.onBackground,
+        color = TextPrimary,
     )
 
     Spacer(Modifier.height(16.dp))
@@ -1262,8 +1275,8 @@ private fun OpenAICompatibleSettings(
         Spacer(Modifier.width(8.dp))
         Text(
             text = stringResource(Res.string.settings_custom_model_label),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onBackground,
+            style = KaiTypography.bodyMedium,
+            color = TextPrimary,
         )
     }
 
@@ -1275,15 +1288,15 @@ private fun OpenAICompatibleSettings(
             label = {
                 Text(
                     stringResource(Res.string.settings_model_label),
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = TextPrimary,
                 )
             },
             singleLine = true,
         )
         Text(
             text = stringResource(Res.string.settings_custom_model_hint),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KaiTypography.bodySmall,
+            color = TextSecondary,
             modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 4.dp),
         )
     }
@@ -1328,24 +1341,24 @@ private fun LiteRTSettings(
 
     Text(
         text = stringResource(Res.string.litert_on_device_description),
-        style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = KaiTypography.bodyMedium,
+        color = TextSecondary,
     )
 
     Spacer(Modifier.height(4.dp))
 
     Text(
         text = stringResource(Res.string.litert_tool_support),
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = KaiTypography.bodySmall,
+        color = TextSecondary,
     )
 
     Spacer(Modifier.height(12.dp))
 
     Text(
         text = stringResource(Res.string.litert_import_description),
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = KaiTypography.bodySmall,
+        color = TextSecondary,
     )
     Spacer(Modifier.height(8.dp))
     OutlinedButton(
@@ -1360,8 +1373,8 @@ private fun LiteRTSettings(
         Spacer(Modifier.height(8.dp))
         Text(
             text = stringResource(Res.string.litert_importing) + " $importingFileName",
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KaiTypography.labelSmall,
+            color = TextSecondary,
         )
         if (importProgress != null) {
             Spacer(Modifier.height(4.dp))
@@ -1377,8 +1390,8 @@ private fun LiteRTSettings(
             ) {
                 Text(
                     text = "${(importProgress * 100).toInt()}%",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = KaiTypography.labelSmall,
+                    color = TextSecondary,
                 )
                 TextButton(
                     onClick = onCancelImport,
@@ -1386,7 +1399,7 @@ private fun LiteRTSettings(
                 ) {
                     Text(
                         text = stringResource(Res.string.litert_cancel),
-                        style = MaterialTheme.typography.labelSmall,
+                        style = KaiTypography.labelSmall,
                     )
                 }
             }
@@ -1408,8 +1421,8 @@ private fun LiteRTSettings(
                     ModelImportError.CANCELLED -> Res.string.litert_error_import_failed
                 },
             ),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.error,
+            style = KaiTypography.bodySmall,
+            color = DangerAlert,
         )
     }
 
@@ -1438,8 +1451,8 @@ private fun LiteRTSettings(
         Spacer(Modifier.height(8.dp))
         Text(
             text = stringResource(Res.string.litert_imported),
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onBackground,
+            style = KaiTypography.titleSmall,
+            color = TextPrimary,
         )
         Spacer(Modifier.height(4.dp))
         importedModels.forEach { model ->
@@ -1473,8 +1486,8 @@ private fun LiteRTSettings(
                     DownloadError.CHECKSUM_MISMATCH -> Res.string.litert_error_checksum_mismatch
                 },
             ),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.error,
+            style = KaiTypography.bodySmall,
+            color = DangerAlert,
         )
     }
 
@@ -1482,8 +1495,8 @@ private fun LiteRTSettings(
 
     Text(
         text = stringResource(Res.string.litert_free_space, formatFileSize(freeSpaceBytes)),
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = KaiTypography.bodySmall,
+        color = TextSecondary,
     )
 }
 
@@ -1513,10 +1526,13 @@ private fun LocalModelCard(
     val estimatedMemoryMb = estimateGpuMemoryMb(model, contextTokens)
     val performance = calculateDevicePerformance(totalDeviceMemoryBytes, estimatedMemoryMb)
 
-    Surface(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-        shape = RoundedCornerShape(8.dp),
-        tonalElevation = if (isSelected) 3.dp else 1.dp,
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+            .clip(KaiShapes.xs)
+            .background(SurfaceRaised, KaiShapes.xs)
+            .border(BorderStroke(1.dp, BorderSoft), KaiShapes.xs),
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             Row(
@@ -1541,16 +1557,16 @@ private fun LocalModelCard(
 
                             else -> model.displayName
                         },
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onBackground,
+                        style = KaiTypography.bodyLarge,
+                        color = TextPrimary,
                     )
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
                             text = formatFileSize(model.sizeBytes),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = KaiTypography.bodySmall,
+                            color = TextSecondary,
                         )
                         Spacer(Modifier.width(8.dp))
                         DevicePerformanceLabel(performance)
@@ -1565,7 +1581,7 @@ private fun LocalModelCard(
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Delete downloaded model",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            tint = TextSecondary,
                         )
                     }
                 } else if (!isDownloading) {
@@ -1581,8 +1597,8 @@ private fun LocalModelCard(
             Spacer(Modifier.height(8.dp))
             Text(
                 text = stringResource(Res.string.litert_context_size, "${contextTokens / 1024}K"),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = KaiTypography.labelSmall,
+                color = TextSecondary,
             )
             // A model whose export tops out at its own default (LFM2.5) has nothing to
             // drag: a 0f..0f range divides by zero working out the thumb fraction. Show
@@ -1612,8 +1628,8 @@ private fun LocalModelCard(
                 ) {
                     Text(
                         text = "${(downloadProgress * 100).toInt()}%",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = KaiTypography.labelSmall,
+                        color = TextSecondary,
                     )
                     TextButton(
                         onClick = onCancelDownload,
@@ -1621,7 +1637,7 @@ private fun LocalModelCard(
                     ) {
                         Text(
                             text = stringResource(Res.string.litert_cancel),
-                            style = MaterialTheme.typography.labelSmall,
+                            style = KaiTypography.labelSmall,
                         )
                     }
                 }
@@ -1635,19 +1651,19 @@ private fun DevicePerformanceLabel(performance: DevicePerformance) {
     when (performance) {
         DevicePerformance.GOOD -> Text(
             text = stringResource(Res.string.litert_performance_good),
-            style = MaterialTheme.typography.labelSmall,
+            style = KaiTypography.labelSmall,
             color = StatusColorConnected,
         )
 
         DevicePerformance.OK -> Text(
             text = stringResource(Res.string.litert_performance_ok),
-            style = MaterialTheme.typography.labelSmall,
+            style = KaiTypography.labelSmall,
             color = StatusColorChecking,
         )
 
         DevicePerformance.POOR -> Text(
             text = stringResource(Res.string.litert_performance_poor),
-            style = MaterialTheme.typography.labelSmall,
+            style = KaiTypography.labelSmall,
             color = StatusColorError,
         )
     }
@@ -1666,13 +1682,13 @@ private fun ConnectionStatusIndicator(status: ConnectionStatus, onOpenAppPermiss
                 CircularProgressIndicator(
                     modifier = Modifier.size(16.dp),
                     strokeWidth = 2.dp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = TextSecondary,
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
                     text = stringResource(Res.string.settings_status_checking),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = KaiTypography.bodySmall,
+                    color = TextSecondary,
                 )
             }
         }
@@ -1686,19 +1702,19 @@ private fun ConnectionStatusIndicator(status: ConnectionStatus, onOpenAppPermiss
                     imageVector = Icons.Default.CheckCircle,
                     contentDescription = null,
                     modifier = Modifier.size(16.dp),
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = AccentPrimary,
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
                     text = stringResource(Res.string.settings_status_connected),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary,
+                    style = KaiTypography.bodySmall,
+                    color = AccentPrimary,
                 )
             }
         }
 
         ConnectionStatus.ErrorQuotaExhausted -> {
-            val warningColor = Color(0xFFFF9800)
+            val warningColor = WarningAmber
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -1712,7 +1728,7 @@ private fun ConnectionStatusIndicator(status: ConnectionStatus, onOpenAppPermiss
                 Spacer(Modifier.width(8.dp))
                 Text(
                     text = stringResource(Res.string.settings_status_error_quota_exhausted),
-                    style = MaterialTheme.typography.bodySmall,
+                    style = KaiTypography.bodySmall,
                     color = warningColor,
                 )
             }
@@ -1739,13 +1755,13 @@ private fun ConnectionStatusIndicator(status: ConnectionStatus, onOpenAppPermiss
                     imageVector = Icons.Default.Warning,
                     contentDescription = null,
                     modifier = Modifier.size(16.dp),
-                    tint = MaterialTheme.colorScheme.error,
+                    tint = DangerAlert,
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
                     text = errorMessage,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.error,
+                    style = KaiTypography.bodySmall,
+                    color = DangerAlert,
                 )
             }
             if (status == ConnectionStatus.ErrorLocalNetworkDenied) {
@@ -1776,7 +1792,7 @@ private fun ApiKeyField(
         label = {
             Text(
                 labelText,
-                color = MaterialTheme.colorScheme.onBackground,
+                color = TextPrimary,
             )
         },
         singleLine = singleLine,

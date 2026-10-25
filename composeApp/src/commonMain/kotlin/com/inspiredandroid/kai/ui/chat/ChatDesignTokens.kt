@@ -1,7 +1,6 @@
 package com.inspiredandroid.kai.ui.chat
 
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
@@ -86,33 +85,17 @@ object ChatStatusColors {
  */
 object ChatSurfaces {
     @Composable
-    fun page(): Color = when {
-        MaterialTheme.colorScheme.background == OledBlack -> OledBlack
-        MaterialTheme.colorScheme.background.luminance() > 0.5f -> Color(0xFFFFFFFF)
-        else -> OledBlack
-    }
+    fun page(): Color = OledBlack
 
     @Composable
-    fun elevated(): Color = if (MaterialTheme.colorScheme.background.luminance() > 0.5f) {
-        Color(0xFFF2F2F2)
-    } else {
-        SurfaceRaised
-    }
+    fun elevated(): Color = SurfaceRaised
 
     @Composable
     fun border(): Color = BorderSoft
 
     @Composable
-    fun assistantMessage(): Color = if (MaterialTheme.colorScheme.background.luminance() > 0.5f) {
-        Color(0xFFF5F8FC)
-    } else {
-        CardFill
-    }
+    fun assistantMessage(): Color = CardFill
 
     @Composable
-    fun composer(): Color = if (MaterialTheme.colorScheme.background.luminance() > 0.5f) {
-        Color(0xFFFFFFFF)
-    } else {
-        SurfaceRaised.copy(alpha = 0.9f)
-    }
+    fun composer(): Color = SurfaceRaised.copy(alpha = 0.9f)
 }

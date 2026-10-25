@@ -4,6 +4,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +20,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,8 +33,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.BorderSoft
 import com.inspiredandroid.kai.ui.BorderSubtle
 import com.inspiredandroid.kai.ui.CardFill
+import com.inspiredandroid.kai.ui.TextSecondary
+import com.inspiredandroid.kai.ui.KaiTypography
 import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.isOledFlavor
 import kai.composeapp.generated.resources.Res
@@ -55,19 +58,17 @@ fun SettingsNavRail(
     modifier: Modifier = Modifier,
 ) {
     val isOled = MaterialTheme.colorScheme.isOledFlavor
-    val railBg = if (isOled) CardFill else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
-    val railBorder = if (isOled) BorderSubtle else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)
+    val railBg = if (isOled) CardFill else CardFill
+    val railBorder = if (isOled) BorderSubtle else BorderSoft.copy(alpha = 0.6f)
 
-    Surface(
+    Box(
         modifier = modifier
             .fillMaxHeight()
             .width(116.dp)
-            .padding(12.dp),
-        color = railBg,
-        shape = SettingsShapes.panel,
-        border = androidx.compose.foundation.BorderStroke(1.dp, railBorder),
-        tonalElevation = 0.dp,
-        shadowElevation = 0.dp,
+            .padding(12.dp)
+            .clip(SettingsShapes.panel)
+            .background(railBg)
+            .border(BorderStroke(1.dp, railBorder), SettingsShapes.panel),
     ) {
         Column(
             modifier = Modifier
@@ -96,7 +97,7 @@ fun SettingsNavRail(
                     label = "railBg",
                 )
                 val textColor by animateColorAsState(
-                    targetValue = if (isSelected) AccentPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    targetValue = if (isSelected) AccentPrimary else TextSecondary,
                     animationSpec = tween(durationMillis = 200),
                     label = "railText",
                 )
@@ -130,7 +131,7 @@ fun SettingsNavRail(
                     ) {
                         Text(
                             text = label,
-                            style = MaterialTheme.typography.labelSmall,
+                            style = KaiTypography.labelSmall,
                             fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
                             color = textColor,
                             textAlign = TextAlign.Center,

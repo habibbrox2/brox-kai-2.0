@@ -1,11 +1,13 @@
 package com.inspiredandroid.kai.ui.build
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -30,7 +32,6 @@ import androidx.compose.material.icons.filled.Keyboard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -48,6 +49,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalUriHandler
@@ -225,11 +227,11 @@ internal fun BuildTerminalContent(
     // Full-bleed sideways: the cell grid keeps its own inset, so an outer margin
     // only cost columns.
     Column(modifier = modifier.fillMaxSize().imePadding()) {
-        Surface(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = com.inspiredandroid.kai.ui.build.BuildSpacing.sm, vertical = com.inspiredandroid.kai.ui.build.BuildSpacing.xs).weight(1f),
-            shape = com.inspiredandroid.kai.ui.KaiShapes.card,
-            color = BuildSurfaces.terminal,
-            border = com.inspiredandroid.kai.ui.KaiBorders.soft,
+        Box(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = com.inspiredandroid.kai.ui.build.BuildSpacing.sm, vertical = com.inspiredandroid.kai.ui.build.BuildSpacing.xs).weight(1f)
+                .clip(com.inspiredandroid.kai.ui.KaiShapes.card)
+                .background(BuildSurfaces.terminal)
+                .border(com.inspiredandroid.kai.ui.KaiBorders.soft),
         ) {
             Column {
                 Column(modifier = Modifier.weight(1f).fillMaxWidth()) {

@@ -11,7 +11,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,8 +21,10 @@ import com.inspiredandroid.kai.build.BuildEnvironmentState
 import com.inspiredandroid.kai.build.BuildStep
 import com.inspiredandroid.kai.build.KaiBuildState
 import com.inspiredandroid.kai.ui.handCursor
+import com.inspiredandroid.kai.ui.KaiTypography
 import com.inspiredandroid.kai.ui.sandbox.SandboxProgressRow
 import com.inspiredandroid.kai.ui.settings.SettingsCard
+import com.inspiredandroid.kai.ui.TextPrimary
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.kai_build_setup_agents_description
 import kai.composeapp.generated.resources.kai_build_setup_agents_title
@@ -93,8 +94,8 @@ internal fun BuildSetupContent(
                     )
                     Text(
                         text = agent.title,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        style = KaiTypography.bodyLarge,
+                        color = TextPrimary,
                     )
                 }
             }

@@ -314,15 +314,9 @@ object KaiElevation {
     val level4 = BorderStroke(1.dp, AccentPrimary.copy(alpha = 0.6f))
 }
 
-// ─── Legacy brand tokens (kept for migration) ───
-val darkPurple = broxNavy
-val lightPurple = Color(0xff8063C5)
-val gradientBrush = androidx.compose.ui.graphics.Brush.horizontalGradient(listOf(broxNavy, broxCyan))
-
-// ─── Animated border gradient colors ───
-val gradientPurple = broxNavy
-val gradientViolet = broxCyan
-val gradientMagenta = broxDeepNavy
+// ─── Animated border gradient colors (Brox brand palette) ───
+// gradientPurple = broxNavy, gradientViolet = broxCyan, gradientMagenta = broxDeepNavy
+// (now referenced directly in AnimatedGradientBorder.kt)
 
 // ─── Utility Modifiers ───
 fun Modifier.handCursor() = pointerHoverIcon(PointerIcon.Hand, overrideDescendants = true)
@@ -541,7 +535,7 @@ fun kaiAdaptiveCardColors(): CardColors = CardDefaults.cardColors(
     containerColor = if (MaterialTheme.colorScheme.isOledFlavor) {
         CardFill
     } else {
-        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+        CardFill.copy(alpha = 0.5f)
     },
 )
 
@@ -551,7 +545,7 @@ fun kaiAdaptiveCardBorder(): BorderStroke? {
     return if (scheme.isOledFlavor || scheme == MidnightColorScheme) {
         BorderStroke(1.dp, BorderSoft)
     } else {
-        BorderStroke(1.dp, scheme.outlineVariant)
+        BorderStroke(1.dp, BorderSoft)
     }
 }
 
@@ -562,7 +556,7 @@ fun Modifier.kaiAdaptiveCardSurface(shape: Shape = CardDefaults.shape): Modifier
         if (MaterialTheme.colorScheme.isOledFlavor) {
             CardFill
         } else {
-            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+            CardFill.copy(alpha = 0.5f)
         },
         shape,
     )
@@ -650,7 +644,7 @@ fun KaiOutlinedTextField(
         singleLine = singleLine,
         minLines = minLines,
         maxLines = maxLines,
-        shape = RoundedCornerShape(12.dp),
+        shape = KaiShapes.row,
         colors = outlineTextFieldColors(),
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
@@ -688,7 +682,7 @@ fun KaiClearableTextField(
                 Icon(
                     imageVector = Icons.Default.Clear,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = TextSecondary,
                 )
             }
         },

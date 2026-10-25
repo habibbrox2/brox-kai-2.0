@@ -10,7 +10,6 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
@@ -31,6 +30,10 @@ import com.inspiredandroid.kai.linux.LinuxDistro
 import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.sandbox.SandboxProgressRow
 import com.inspiredandroid.kai.ui.sandbox.sandboxStatusText
+import com.inspiredandroid.kai.ui.DangerAlert
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.settings_sandbox_cancel
 import kai.composeapp.generated.resources.settings_sandbox_description
@@ -75,23 +78,23 @@ internal fun SandboxSettingsCard(
                 Text(
                     // Before install this names what would be installed; after, what is.
                     text = sandboxState.distro.displayName,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    style = KaiTypography.titleMedium,
+                    color = TextPrimary,
                 )
                 if (sandboxState.sandboxReady) {
                     if (sandboxState.sandboxDiskUsageMB > 0) {
                         Text(
                             text = stringResource(Res.string.settings_sandbox_disk_usage, sandboxState.sandboxDiskUsageMB),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = KaiTypography.bodySmall,
+                            color = TextSecondary,
                         )
                     }
                 } else {
                     Spacer(Modifier.height(4.dp))
                     Text(
                         text = stringResource(Res.string.settings_sandbox_description),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = KaiTypography.bodySmall,
+                        color = TextSecondary,
                     )
                 }
             }
@@ -121,8 +124,8 @@ internal fun SandboxSettingsCard(
             Spacer(Modifier.height(8.dp))
             Text(
                 text = statusText,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.error,
+                style = KaiTypography.bodySmall,
+                color = DangerAlert,
             )
         }
 
@@ -137,8 +140,8 @@ internal fun SandboxSettingsCard(
                     Res.string.settings_sandbox_migrate_title,
                     migration.from.displayName,
                 ),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground,
+                style = KaiTypography.bodyMedium,
+                color = TextPrimary,
             )
             Text(
                 text = stringResource(
@@ -146,8 +149,8 @@ internal fun SandboxSettingsCard(
                     migration.fileCount,
                     formatFileSize(migration.bytes),
                 ),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = KaiTypography.bodySmall,
+                color = TextSecondary,
             )
             Spacer(Modifier.height(8.dp))
             // Its own button rather than a third one in the action row below:
@@ -225,8 +228,8 @@ private fun DistroPicker(
     Spacer(Modifier.height(12.dp))
     Text(
         text = stringResource(Res.string.settings_sandbox_distro_title),
-        style = MaterialTheme.typography.labelLarge,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = KaiTypography.labelLarge,
+        color = TextSecondary,
     )
     Column(Modifier.selectableGroup()) {
         DistroOption(
@@ -279,13 +282,13 @@ private fun DistroOption(
         Column(Modifier.weight(1f)) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground,
+                style = KaiTypography.bodyMedium,
+                color = TextPrimary,
             )
             Text(
                 text = detail,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = KaiTypography.bodySmall,
+                color = TextSecondary,
             )
         }
     }

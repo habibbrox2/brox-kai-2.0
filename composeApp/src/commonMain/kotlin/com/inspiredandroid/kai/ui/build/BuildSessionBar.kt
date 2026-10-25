@@ -1,6 +1,7 @@
 package com.inspiredandroid.kai.ui.build
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -23,10 +24,8 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -98,11 +97,12 @@ internal fun BuildSessionBar(
         }
     }
 
-    Surface(
-        modifier = modifier.fillMaxWidth(),
-        color = com.inspiredandroid.kai.ui.BackgroundPrimary,
-        border = com.inspiredandroid.kai.ui.KaiBorders.soft,
-        shape = com.inspiredandroid.kai.ui.KaiShapes.card,
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(com.inspiredandroid.kai.ui.KaiShapes.card)
+            .background(com.inspiredandroid.kai.ui.BackgroundPrimary, com.inspiredandroid.kai.ui.KaiShapes.card)
+            .border(com.inspiredandroid.kai.ui.KaiBorders.soft, com.inspiredandroid.kai.ui.KaiShapes.card),
     ) {
         Row(
             modifier = Modifier
@@ -288,9 +288,9 @@ private fun TabPill(
     selected: Boolean,
     onSelect: () -> Unit,
     contentColor: Color = if (selected) {
-        MaterialTheme.colorScheme.primary
+        com.inspiredandroid.kai.ui.AccentPrimary
     } else {
-        MaterialTheme.colorScheme.onSurfaceVariant
+        com.inspiredandroid.kai.ui.TextSecondary
     },
     description: String? = null,
     trailing: @Composable (() -> Unit)? = null,

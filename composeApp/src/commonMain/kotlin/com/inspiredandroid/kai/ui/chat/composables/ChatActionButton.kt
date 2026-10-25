@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -20,6 +19,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
 import com.inspiredandroid.kai.ui.handCursor
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.TextSecondary
 
 /**
  * Reusable action button used across the chat workspace (top bar, message action
@@ -46,7 +47,7 @@ fun ChatActionButton(
             Icon(
                 imageVector = icon,
                 contentDescription = contentDescription,
-                tint = if (enabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                tint = if (enabled) TextSecondary else TextSecondary.copy(alpha = 0.38f),
             )
         }
     } else {
@@ -69,7 +70,7 @@ fun ChatActionButton(
             Spacer(Modifier.size(ChatSpacing.xs))
             Text(
                 text = label,
-                style = MaterialTheme.typography.labelLarge,
+                style = KaiTypography.labelLarge,
                 fontWeight = FontWeight.Medium,
             )
         }

@@ -24,7 +24,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
@@ -49,6 +48,11 @@ import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.mcp.PopularMcpServer
 import com.inspiredandroid.kai.mcp.authorizationHeaderValue
 import com.inspiredandroid.kai.mcp.popularMcpServers
+import com.inspiredandroid.kai.ui.CardFill
+import com.inspiredandroid.kai.ui.DangerAlert
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.KaiOutlinedTextField
 import com.inspiredandroid.kai.ui.components.CollectionEmptyState
 import com.inspiredandroid.kai.ui.components.OperationalStatus
@@ -99,14 +103,14 @@ internal fun McpServersSection(
 
         Text(
             text = stringResource(Res.string.settings_mcp_servers),
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onBackground,
+            style = KaiTypography.titleMedium,
+            color = TextPrimary,
         )
         Spacer(Modifier.height(4.dp))
         Text(
             text = stringResource(Res.string.settings_mcp_servers_description),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KaiTypography.bodySmall,
+            color = TextSecondary,
         )
 
         Spacer(Modifier.height(12.dp))
@@ -213,13 +217,13 @@ private fun McpServerCard(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = server.name,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onBackground,
+                        style = KaiTypography.titleMedium,
+                        color = TextPrimary,
                     )
                     Text(
                         text = server.url,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = KaiTypography.bodySmall,
+                        color = TextSecondary,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -235,7 +239,7 @@ private fun McpServerCard(
                 Icon(
                     imageVector = vectorResource(Res.drawable.ic_arrow_drop_down),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = TextSecondary,
                 )
             }
 
@@ -252,10 +256,10 @@ private fun McpServerCard(
                 if (statusText.isNotEmpty()) {
                     Text(
                         text = statusText,
-                        style = MaterialTheme.typography.bodySmall,
+                        style = KaiTypography.bodySmall,
                         color = when (server.connectionStatus) {
-                            McpConnectionStatus.Error -> MaterialTheme.colorScheme.error
-                            else -> MaterialTheme.colorScheme.onSurfaceVariant
+                            McpConnectionStatus.Error -> DangerAlert
+                            else -> TextSecondary
                         },
                     )
                     Spacer(Modifier.height(8.dp))
@@ -271,14 +275,14 @@ private fun McpServerCard(
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = tool.name,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onBackground,
+                                    style = KaiTypography.bodyMedium,
+                                    color = TextPrimary,
                                 )
                                 if (tool.description.isNotEmpty()) {
                                     Text(
                                         text = tool.description,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        style = KaiTypography.bodySmall,
+                                        color = TextSecondary,
                                     )
                                 }
                             }
@@ -291,8 +295,8 @@ private fun McpServerCard(
                 } else if (server.connectionStatus == McpConnectionStatus.Connected) {
                     Text(
                         text = stringResource(Res.string.settings_mcp_no_tools),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = KaiTypography.bodySmall,
+                        color = TextSecondary,
                     )
                 }
 
@@ -305,7 +309,7 @@ private fun McpServerCard(
                     TextButton(onClick = onRemove, modifier = Modifier.handCursor()) {
                         Text(
                             text = stringResource(Res.string.settings_mcp_remove),
-                            color = MaterialTheme.colorScheme.error,
+                            color = DangerAlert,
                         )
                     }
                 }
@@ -354,8 +358,8 @@ private fun AddMcpServerDialog(
             ) {
                 Text(
                     text = stringResource(Res.string.settings_mcp_add_server),
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    style = KaiTypography.headlineSmall,
+                    color = TextSecondary,
                 )
                 Spacer(Modifier.height(16.dp))
 
@@ -387,8 +391,8 @@ private fun AddMcpServerDialog(
                     Spacer(Modifier.height(4.dp))
                     Text(
                         text = stringResource(Res.string.settings_mcp_api_key_help),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = KaiTypography.bodySmall,
+                        color = TextSecondary,
                     )
                     Spacer(Modifier.height(12.dp))
                 } else {
@@ -485,8 +489,8 @@ private fun AddMcpServerDialog(
                     Spacer(Modifier.height(16.dp))
                     Text(
                         text = stringResource(Res.string.settings_mcp_popular_servers),
-                        style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.onSurface,
+                        style = KaiTypography.titleSmall,
+                        color = TextSecondary,
                     )
                     Spacer(Modifier.height(8.dp))
                     for (server in popularMcpServers) {
@@ -503,19 +507,19 @@ private fun AddMcpServerDialog(
                                 }
                                 .handCursor(),
                             colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                                containerColor = CardFill,
                             ),
                         ) {
                             Column(modifier = Modifier.padding(12.dp)) {
                                 Text(
                                     text = server.name,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurface,
+                                    style = KaiTypography.bodyMedium,
+                                    color = TextSecondary,
                                 )
                                 Text(
                                     text = server.description,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    style = KaiTypography.bodySmall,
+                                    color = TextSecondary,
                                 )
                             }
                         }

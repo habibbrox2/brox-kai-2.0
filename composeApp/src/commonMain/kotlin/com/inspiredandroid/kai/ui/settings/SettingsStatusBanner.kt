@@ -1,20 +1,29 @@
 package com.inspiredandroid.kai.ui.settings
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.BorderSoft
+import com.inspiredandroid.kai.ui.DangerAlert
+import com.inspiredandroid.kai.ui.InfoBlue
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.SuccessGreen
+import com.inspiredandroid.kai.ui.WarningAmber
 
 /** Severity of an inline settings status banner. */
 enum class SettingsBannerSeverity {
@@ -46,15 +55,17 @@ fun SettingsStatusBanner(
     action: (@Composable () -> Unit)? = null,
 ) {
     val (container, content) = when (severity) {
-        SettingsBannerSeverity.Info -> Color(0xFF2196F3) to Color(0xFF0D47A1)
-        SettingsBannerSeverity.Progress -> Color(0xFF00BCD4) to Color(0xFF006064)
-        SettingsBannerSeverity.Warning -> Color(0xFFFFB74D) to Color(0xFF5D4037)
-        SettingsBannerSeverity.Error -> Color(0xFFF44336) to Color(0xFFB71C1C)
+        SettingsBannerSeverity.Info -> InfoBlue to InfoBlue
+        SettingsBannerSeverity.Progress -> AccentPrimary to AccentPrimary
+        SettingsBannerSeverity.Warning -> WarningAmber to WarningAmber
+        SettingsBannerSeverity.Error -> DangerAlert to DangerAlert
     }
-    Surface(
-        modifier = modifier.fillMaxWidth(),
-        shape = SettingsShapes.row,
-        color = container.copy(alpha = 0.14f),
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(SettingsShapes.row)
+            .background(container.copy(alpha = 0.14f))
+            .border(BorderStroke(1.dp, BorderSoft), SettingsShapes.row),
     ) {
         Row(
             modifier = Modifier.padding(SettingsSpacing.md),
@@ -70,7 +81,7 @@ fun SettingsStatusBanner(
             }
             Text(
                 text = message,
-                style = MaterialTheme.typography.bodyMedium,
+                style = KaiTypography.bodyMedium,
                 color = content,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.weight(1f),

@@ -1,18 +1,25 @@
 package com.inspiredandroid.kai.ui.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.inspiredandroid.kai.ui.BorderSoft
+import com.inspiredandroid.kai.ui.CardFill
+import com.inspiredandroid.kai.ui.KaiShapes
+import com.inspiredandroid.kai.ui.SurfaceRaised
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
 import com.inspiredandroid.kai.ui.handCursor
 
@@ -29,21 +36,25 @@ fun KaiChip(
     enabled: Boolean = true,
     content: @Composable () -> Unit,
 ) {
-    val colorScheme = MaterialTheme.colorScheme
-    val containerColor = if (selected) colorScheme.secondaryContainer else colorScheme.surfaceContainer
+    val containerColor = if (selected) SurfaceRaised else CardFill
     val contentColor = when {
-        !enabled -> colorScheme.onSurface.copy(alpha = 0.38f)
-        selected -> colorScheme.onSecondaryContainer
-        else -> colorScheme.onSurfaceVariant
+        !enabled -> TextSecondary.copy(alpha = 0.38f)
+        selected -> TextPrimary
+        else -> TextSecondary
     }
     val borderColor = when {
-        !enabled -> colorScheme.outline.copy(alpha = 0.38f)
-        selected -> colorScheme.secondaryContainer
-        else -> colorScheme.outline
+        !enabled -> BorderSoft.copy(alpha = 0.38f)
+        selected -> SurfaceRaised
+        else -> BorderSoft
     }
-    val shape = RoundedCornerShape(8.dp)
+    val shape = KaiShapes.xs
     val border = BorderStroke(1.dp, borderColor)
     val sizeModifier = modifier.defaultMinSize(minHeight = 48.dp)
+
+    val cardModifier = Modifier
+        .clip(shape)
+        .background(containerColor, shape)
+        .border(border, shape)
 
     val chipContent: @Composable () -> Unit = {
         Box(
@@ -59,24 +70,21 @@ fun KaiChip(
     }
 
     if (onClick != null) {
-        Surface(
-            onClick = onClick,
-            enabled = enabled,
-            modifier = sizeModifier.handCursor(),
-            shape = shape,
-            color = containerColor,
-            contentColor = contentColor,
-            border = border,
-            content = chipContent,
-        )
+        Box(
+            modifier = sizeModifier
+                .handCursor()
+                .then(cardModifier)
+                .clickable(enabled = enabled, onClick = onClick),
+            contentAlignment = Alignment.Center,
+        ) {
+            chipContent()
+        }
     } else {
-        Surface(
-            modifier = sizeModifier,
-            shape = shape,
-            color = containerColor,
-            contentColor = contentColor,
-            border = border,
-            content = chipContent,
-        )
+        Box(
+            modifier = sizeModifier.then(cardModifier),
+            contentAlignment = Alignment.Center,
+        ) {
+            chipContent()
+        }
     }
 }

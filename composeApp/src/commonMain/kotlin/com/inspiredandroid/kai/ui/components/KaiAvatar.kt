@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,8 +18,11 @@ import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.BorderSoft
 import com.inspiredandroid.kai.ui.KaiShapes
+import com.inspiredandroid.kai.ui.KaiTypography
 import com.inspiredandroid.kai.ui.OledBlack
+import com.inspiredandroid.kai.ui.SurfaceElevated
 import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 import kai.composeapp.generated.resources.Res
 import org.jetbrains.compose.resources.vectorResource
 
@@ -42,20 +43,18 @@ fun KaiAvatar(
     statusColor: Color? = null,
     modifier: Modifier = Modifier,
 ) {
-    val colorScheme = MaterialTheme.colorScheme
-
     Box(
         modifier = modifier
             .size(size)
             .clip(CircleShape)
             .border(BorderStroke(1.dp, borderColor), CircleShape)
-            .background(colorScheme.surfaceContainerLow, CircleShape),
+            .background(SurfaceElevated, CircleShape),
         contentAlignment = Alignment.Center,
     ) {
         if (initials != null && initials.isNotEmpty()) {
             Text(
                 text = initials.take(2).uppercase(),
-                style = MaterialTheme.typography.labelMedium,
+                style = KaiTypography.labelMedium,
                 color = AccentPrimary,
                 modifier = Modifier.align(Alignment.Center),
             )
@@ -65,7 +64,7 @@ fun KaiAvatar(
                 modifier = Modifier
                     .size(size * 0.5f)
                     .clip(CircleShape)
-                    .background(colorScheme.onSurfaceVariant),
+                    .background(TextSecondary),
             )
         }
 
@@ -77,7 +76,7 @@ fun KaiAvatar(
                     .size(size * 0.25f)
                     .clip(CircleShape)
                     .background(statusColor)
-                    .border(BorderStroke(1.dp, colorScheme.background), CircleShape),
+                    .border(BorderStroke(1.dp, BorderSoft), CircleShape),
             )
         }
     }

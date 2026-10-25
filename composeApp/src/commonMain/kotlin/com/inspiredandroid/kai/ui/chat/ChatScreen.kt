@@ -33,7 +33,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -50,7 +49,6 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -85,7 +83,14 @@ import com.inspiredandroid.kai.data.Service
 import com.inspiredandroid.kai.data.supportsAgenticFlows
 import com.inspiredandroid.kai.getBackgroundDispatcher
 import com.inspiredandroid.kai.onDragAndDropEventDropped
+import com.inspiredandroid.kai.ui.BackgroundPrimary
+import com.inspiredandroid.kai.ui.CardFill
+import com.inspiredandroid.kai.ui.DangerAlert
+import com.inspiredandroid.kai.ui.KaiShapes
+import com.inspiredandroid.kai.ui.KaiTypography
 import com.inspiredandroid.kai.ui.OledBlack
+import com.inspiredandroid.kai.ui.SurfaceRaised
+import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.build.KaiBuildScreen
 import com.inspiredandroid.kai.ui.chat.composables.AppSidebar
 import com.inspiredandroid.kai.ui.chat.composables.BotMessage
@@ -340,10 +345,11 @@ private fun ChatModeScreen(
             drawerState = drawerState,
             gesturesEnabled = !expanded,
             drawerContent = {
-                Surface(
-                    modifier = Modifier.width(300.dp).fillMaxHeight(),
-                    color = MaterialTheme.colorScheme.surfaceContainerLow,
-                    tonalElevation = 2.dp,
+                Box(
+                    modifier = Modifier
+                        .width(300.dp)
+                        .fillMaxHeight()
+                        .background(SurfaceRaised),
                 ) {
                     sidebar()
                 }
@@ -405,8 +411,8 @@ private fun ChatModeScreen(
                     uiState.warning?.let { warning ->
                         Text(
                             text = stringResource(warning),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.error,
+                            style = KaiTypography.bodySmall,
+                            color = DangerAlert,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp, vertical = 8.dp),
@@ -521,11 +527,10 @@ private fun ChatModeScreen(
                                 exit = androidx.compose.animation.fadeOut() + androidx.compose.animation.scaleOut(),
                                 modifier = Modifier.align(Alignment.TopEnd).padding(16.dp),
                             ) {
-                                Surface(
-                                    shape = RoundedCornerShape(12.dp),
-                                    color = MaterialTheme.colorScheme.errorContainer,
-                                    tonalElevation = 4.dp,
-                                    shadowElevation = 8.dp,
+                                Box(
+                                    modifier = Modifier
+                                        .clip(KaiShapes.row)
+                                        .background(CardFill, KaiShapes.row),
                                 ) {
                                     Row(
                                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
@@ -534,8 +539,8 @@ private fun ChatModeScreen(
                                     ) {
                                         Text(
                                             text = uiErrorText(error),
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = MaterialTheme.colorScheme.onErrorContainer,
+                                            style = KaiTypography.bodySmall,
+                                            color = TextPrimary,
                                             modifier = Modifier.widthIn(max = 260.dp),
                                         )
                                         IconButton(
@@ -545,7 +550,7 @@ private fun ChatModeScreen(
                                             Icon(
                                                 imageVector = vectorResource(Res.drawable.ic_refresh),
                                                 contentDescription = "Retry",
-                                                tint = MaterialTheme.colorScheme.onErrorContainer,
+                                                tint = TextPrimary,
                                                 modifier = Modifier.size(16.dp),
                                             )
                                         }
@@ -568,8 +573,8 @@ private fun ChatModeScreen(
                         } else {
                             androidx.compose.ui.graphics.Brush.verticalGradient(
                                 colors = listOf(
-                                    MaterialTheme.colorScheme.background,
-                                    MaterialTheme.colorScheme.surfaceContainerLowest,
+                                    BackgroundPrimary,
+                                    OledBlack,
                                 ),
                             )
                         },

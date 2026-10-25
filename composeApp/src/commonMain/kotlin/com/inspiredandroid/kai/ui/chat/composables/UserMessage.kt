@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -37,7 +36,10 @@ import com.inspiredandroid.kai.decodeToImageBitmap
 import com.inspiredandroid.kai.ui.AccentGradientEnd
 import com.inspiredandroid.kai.ui.AccentGradientStart
 import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.CardFill
 import com.inspiredandroid.kai.ui.KaiShapes
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
 import com.inspiredandroid.kai.ui.components.LocalShowFullScreenImage
 import com.inspiredandroid.kai.ui.handCursor
@@ -107,7 +109,7 @@ internal fun UserMessage(
                             contentDescription = "Image attachment",
                             modifier = Modifier
                                 .widthIn(max = 200.dp)
-                                .clip(RoundedCornerShape(8.dp))
+                                .clip(KaiShapes.xs)
                                 .handCursor()
                                 .clickable { showFullScreen(imageBitmap) },
                             contentScale = ContentScale.FillWidth,
@@ -126,9 +128,9 @@ internal fun UserMessage(
                                     containerColor = if (isOled) {
                                         com.inspiredandroid.kai.ui.CardFill
                                     } else {
-                                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                                        CardFill
                                     },
-                                    labelColor = MaterialTheme.colorScheme.onSurface,
+                                    labelColor = TextPrimary,
                                 )
                                 SuggestionChip(
                                     onClick = {},
@@ -138,7 +140,7 @@ internal fun UserMessage(
                                             modifier = Modifier.size(ChatSpacing.lg),
                                             painter = painterResource(Res.drawable.ic_file),
                                             contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.onSurface,
+                                            tint = TextPrimary,
                                         )
                                     },
                                     label = { Text(truncateFileName(att.fileName ?: att.mimeType)) },
@@ -154,7 +156,7 @@ internal fun UserMessage(
                     Text(
                         text = message,
                         color = com.inspiredandroid.kai.ui.OledBlack,
-                        style = MaterialTheme.typography.bodyLarge,
+                        style = KaiTypography.bodyLarge,
                     )
                 }
             }

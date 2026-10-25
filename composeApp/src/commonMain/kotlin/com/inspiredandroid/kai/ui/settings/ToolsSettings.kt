@@ -37,6 +37,12 @@ import com.inspiredandroid.kai.ui.components.CollectionEmptyState
 import com.inspiredandroid.kai.ui.components.OperationalStatus
 import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.isOledFlavor
+import com.inspiredandroid.kai.ui.BorderSoft
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.SurfaceRaised
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
+import androidx.compose.foundation.BorderStroke
 import com.inspiredandroid.kai.ui.kaiAdaptiveCardBorder
 import com.inspiredandroid.kai.ui.kaiAdaptiveCardColors
 import kai.composeapp.generated.resources.Res
@@ -124,8 +130,8 @@ internal fun ToolsContent(
         // Native tools section
         Text(
             text = stringResource(Res.string.settings_tools_description),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = KaiTypography.bodySmall,
+            color = TextSecondary,
         )
 
         Spacer(Modifier.height(16.dp))
@@ -343,12 +349,12 @@ private fun ToolItem(
     val cardBg = if (isOled) {
         com.inspiredandroid.kai.ui.CardFill
     } else {
-        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+        SurfaceRaised.copy(alpha = 0.5f)
     }
     val cardBorder = if (isOled) {
         androidx.compose.foundation.BorderStroke(1.dp, com.inspiredandroid.kai.ui.BorderSoft)
     } else {
-        androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        BorderStroke(1.dp, BorderSoft)
     }
     val cardShape = com.inspiredandroid.kai.ui.settings.SettingsShapes.card
 
@@ -369,13 +375,13 @@ private fun ToolItem(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = tool.nameRes?.let { stringResource(it) } ?: tool.name,
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    style = KaiTypography.titleSmall,
+                    color = TextPrimary,
                 )
                 Text(
                     text = tool.descriptionRes?.let { stringResource(it) } ?: tool.description,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = KaiTypography.bodySmall,
+                    color = TextSecondary,
                 )
             }
 
@@ -387,8 +393,8 @@ private fun ToolItem(
                 colors = androidx.compose.material3.SwitchDefaults.colors(
                     checkedThumbColor = com.inspiredandroid.kai.ui.AccentPrimary,
                     checkedTrackColor = com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.3f),
-                    uncheckedThumbColor = if (isOled) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurfaceVariant,
-                    uncheckedTrackColor = if (isOled) com.inspiredandroid.kai.ui.BorderSoft else MaterialTheme.colorScheme.outlineVariant,
+                    uncheckedThumbColor = TextSecondary,
+                    uncheckedTrackColor = if (isOled) BorderSoft else BorderSoft.copy(alpha = 0.5f),
                 ),
             )
         }

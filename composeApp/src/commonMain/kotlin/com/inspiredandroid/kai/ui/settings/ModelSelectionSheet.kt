@@ -1,5 +1,8 @@
 package com.inspiredandroid.kai.ui.settings
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,16 +19,11 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
@@ -55,7 +53,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.inspiredandroid.kai.formatContextWindow
 import com.inspiredandroid.kai.formatReleaseDate
+import com.inspiredandroid.kai.ui.BorderSoft
+import com.inspiredandroid.kai.ui.CardFill
 import com.inspiredandroid.kai.ui.KaiOutlinedTextField
+import com.inspiredandroid.kai.ui.KaiShapes
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.SurfaceRaised
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.components.KaiSearchField
 import com.inspiredandroid.kai.ui.components.VerticalScrollbarForGrid
 import com.inspiredandroid.kai.ui.handCursor
@@ -96,7 +101,7 @@ internal fun ModelSelection(
                 label = {
                     Text(
                         stringResource(Res.string.settings_model_label),
-                        color = MaterialTheme.colorScheme.onBackground,
+                        color = TextPrimary,
                     )
                 },
                 trailingIcon = {
@@ -104,7 +109,7 @@ internal fun ModelSelection(
                         modifier = Modifier.handCursor(),
                         imageVector = vectorResource(Res.drawable.ic_arrow_drop_down),
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onBackground,
+                        tint = TextPrimary,
                     )
                 },
             )
@@ -213,8 +218,8 @@ internal fun ModelSelection(
                     if (sortedModels.isEmpty() && freeFilterOnly) {
                         Text(
                             text = stringResource(Res.string.model_free_empty),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = KaiTypography.bodyMedium,
+                            color = TextSecondary,
                             modifier = Modifier.padding(24.dp),
                         )
                     } else {
@@ -270,25 +275,22 @@ private fun ModelCard(model: SettingsModel, isSelected: Boolean, onClick: () -> 
         .joinToString("  ·  ").ifEmpty { null }
 
     val primaryColor = if (isSelected) {
-        MaterialTheme.colorScheme.onPrimaryContainer
+        TextPrimary
     } else {
-        MaterialTheme.colorScheme.onSurface
+        TextSecondary
     }
     val secondaryColor = if (isSelected) {
-        MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+        TextPrimary.copy(alpha = 0.7f)
     } else {
-        MaterialTheme.colorScheme.onSurfaceVariant
+        TextSecondary
     }
-    Card(
-        modifier = Modifier.handCursor().clip(CardDefaults.shape).clickable { onClick() },
-        shape = CardDefaults.shape,
-        colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) {
-                MaterialTheme.colorScheme.primaryContainer
-            } else {
-                MaterialTheme.colorScheme.surfaceContainerHigh
-            },
-        ),
+    Box(
+        modifier = Modifier
+            .handCursor()
+            .clip(KaiShapes.card)
+            .clickable { onClick() }
+            .background(if (isSelected) SurfaceRaised else CardFill, KaiShapes.card)
+            .border(BorderStroke(1.dp, BorderSoft), KaiShapes.card),
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -297,12 +299,12 @@ private fun ModelCard(model: SettingsModel, isSelected: Boolean, onClick: () -> 
                 TooltipBox(
                     modifier = Modifier.weight(1f),
                     positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
-                    tooltip = { Text(text = title, style = MaterialTheme.typography.bodyMedium) },
+                    tooltip = { Text(text = title, style = KaiTypography.bodyMedium) },
                     state = rememberTooltipState(),
                 ) {
                     Text(
                         text = title,
-                        style = MaterialTheme.typography.titleMedium,
+                        style = KaiTypography.titleMedium,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         color = primaryColor,
@@ -317,7 +319,7 @@ private fun ModelCard(model: SettingsModel, isSelected: Boolean, onClick: () -> 
                     Spacer(Modifier.width(8.dp))
                     Text(
                         text = "$score",
-                        style = MaterialTheme.typography.labelSmall,
+                        style = KaiTypography.labelSmall,
                         color = arenaScoreColor(score),
                     )
                 }
@@ -325,14 +327,14 @@ private fun ModelCard(model: SettingsModel, isSelected: Boolean, onClick: () -> 
             secondary?.let {
                 TooltipBox(
                     positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
-                    tooltip = { Text(text = it, style = MaterialTheme.typography.bodyMedium) },
+                    tooltip = { Text(text = it, style = KaiTypography.bodyMedium) },
                     state = rememberTooltipState(),
                 ) {
                     Text(
                         text = it,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.bodySmall,
+                        style = KaiTypography.bodySmall,
                         color = secondaryColor,
                     )
                 }
@@ -341,7 +343,7 @@ private fun ModelCard(model: SettingsModel, isSelected: Boolean, onClick: () -> 
                 Spacer(Modifier.height(6.dp))
                 Text(
                     text = it,
-                    style = MaterialTheme.typography.labelSmall,
+                    style = KaiTypography.labelSmall,
                     color = secondaryColor,
                 )
             }
@@ -360,22 +362,23 @@ private fun arenaScoreColor(score: Int): Color = when {
 @Composable
 private fun FreeTierBadge(isSelected: Boolean) {
     val background = if (isSelected) {
-        MaterialTheme.colorScheme.onPrimaryContainer
+        TextPrimary
     } else {
         Color(0xFF1B5E20)
     }
     val content = if (isSelected) {
-        MaterialTheme.colorScheme.primaryContainer
+        SurfaceRaised
     } else {
-        Color.White
+        TextPrimary
     }
-    Surface(
-        shape = RoundedCornerShape(4.dp),
-        color = background,
+    Box(
+        modifier = Modifier
+            .clip(KaiShapes.xs)
+            .background(background, KaiShapes.xs),
     ) {
         Text(
             text = stringResource(Res.string.model_free_badge),
-            style = MaterialTheme.typography.labelMedium,
+            style = KaiTypography.labelMedium,
             color = content,
             maxLines = 1,
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),

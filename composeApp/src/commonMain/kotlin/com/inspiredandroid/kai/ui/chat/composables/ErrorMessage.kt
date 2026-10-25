@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -14,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.network.UiError
 import com.inspiredandroid.kai.ui.handCursor
+import com.inspiredandroid.kai.ui.TextPrimary
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.ic_refresh
 import org.jetbrains.compose.resources.stringResource
@@ -38,7 +38,7 @@ internal fun ErrorMessage(
     ) {
         Text(
             text = text,
-            color = MaterialTheme.colorScheme.onBackground,
+            color = TextPrimary,
         )
         Spacer(Modifier.height(8.dp))
         IconButton(
@@ -48,7 +48,7 @@ internal fun ErrorMessage(
             Icon(
                 imageVector = vectorResource(Res.drawable.ic_refresh),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onBackground,
+                tint = TextPrimary,
             )
         }
     }
