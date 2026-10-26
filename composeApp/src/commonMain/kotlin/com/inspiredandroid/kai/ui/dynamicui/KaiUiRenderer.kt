@@ -310,12 +310,12 @@ fun KaiUiRenderer(
             Card(
                 modifier = modifier
                     .fillMaxWidth()
-                    .wrapContentHeight()
+                    .fillMaxHeight()
                     .semantics { liveRegion = LiveRegionMode.Polite },
                 colors = kaiAdaptiveCardColors(),
                 border = kaiAdaptiveCardBorder(),
             ) {
-                Column(Modifier.padding(12.dp).wrapContentHeight()) {
+                Column(Modifier.padding(12.dp).fillMaxHeight()) {
                     RenderNode(
                         node = node,
                         isInteractive = isInteractive,
@@ -330,7 +330,7 @@ fun KaiUiRenderer(
                 Column(
                     modifier = modifier
                         .fillMaxWidth()
-                        .wrapContentHeight()
+                        .fillMaxHeight()
                         .semantics { liveRegion = LiveRegionMode.Polite },
                 ) {
                     RenderNode(
@@ -430,9 +430,7 @@ private fun RenderColumn(
     depth: Int,
 ) {
     LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
+        modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(node.children) { child ->
@@ -473,12 +471,12 @@ private fun RenderCard(
     depth: Int,
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+        modifier = Modifier.fillMaxWidth().fillMaxHeight(),
         colors = kaiAdaptiveCardColors(),
         border = kaiAdaptiveCardBorder(),
     ) {
         LazyColumn(
-            modifier = Modifier.padding(16.dp).wrapContentHeight(),
+            modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(node.children) { child ->
@@ -827,6 +825,7 @@ private fun RenderList(
     depth: Int,
 ) {
     LazyColumn(
+        modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         itemsIndexed(node.items) { index, item ->
@@ -1515,8 +1514,8 @@ private fun RenderBox(
         }
     } else {
         LazyColumn(
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
         ) {
             items(node.children) { child ->
                 RenderNode(child, isInteractive, formState, toggleState, onCallback, depth + 1)
@@ -1606,8 +1605,8 @@ private fun RenderTabs(
         val selectedTab = node.tabs.getOrNull(selectedIndex)
         if (selectedTab != null) {
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 items(selectedTab.children) { child ->
                     RenderNode(child, isInteractive, formState, toggleState, onCallback, depth + 1)
@@ -1657,8 +1656,8 @@ private fun RenderAccordion(
                 exit = shrinkVertically(),
             ) {
                 LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxWidth().padding(start = 12.dp, end = 12.dp, bottom = 12.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     items(node.children) { child ->
                         RenderNode(child, isInteractive, formState, toggleState, onCallback, depth + 1)

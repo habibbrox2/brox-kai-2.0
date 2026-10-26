@@ -227,10 +227,11 @@ fun ChatTimeline(
         }
     }
 
-    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+    Box(modifier = modifier.fillMaxHeight(), contentAlignment = Alignment.Center) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
+                .fillMaxHeight()
                 .widthIn(max = 820.dp)
                 .semantics { liveRegion = LiveRegionMode.Polite },
             state = listState,

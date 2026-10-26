@@ -3,6 +3,8 @@
 package com.inspiredandroid.kai.screenshots
 
 import android.graphics.BitmapFactory
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ColorScheme
 import androidx.compose.runtime.Composable
@@ -61,9 +63,11 @@ class KaiUiScreenshotTest {
         unsafeUpdateConfig(theme = theme)
 
         snapshot {
-            CompositionLocalProvider(LocalInspectionMode provides true) {
-                Theme(colorScheme = colorScheme) {
-                    content()
+            Box(modifier = Modifier.fillMaxSize()) {
+                CompositionLocalProvider(LocalInspectionMode provides true) {
+                    Theme(colorScheme = colorScheme) {
+                        content()
+                    }
                 }
             }
         }
@@ -123,9 +127,11 @@ class KaiUiScreenshotTest {
         )
 
         snapshot {
-            CompositionLocalProvider(LocalInspectionMode provides true) {
-                Theme(colorScheme = colorScheme) {
-                    content()
+            Box(modifier = Modifier.fillMaxSize()) {
+                CompositionLocalProvider(LocalInspectionMode provides true) {
+                    Theme(colorScheme = colorScheme) {
+                        content()
+                    }
                 }
             }
         }
