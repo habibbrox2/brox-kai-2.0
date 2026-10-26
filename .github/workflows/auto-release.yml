@@ -85,7 +85,7 @@ jobs:
       - name: Build Foss APK
         run: ./gradlew :androidApp:assembleFossRelease --stacktrace
       - name: Sign APK
-        continue-on-error: true
+        if: ${{ secrets.KEYSTORE_B64 != '' && secrets.KEY_ALIAS != '' && secrets.KEYSTORE_PASSWORD != '' }}
         uses: r0adkll/sign-android-release@v1
         with:
           releaseDirectory: androidApp/build/outputs/apk/foss/release
