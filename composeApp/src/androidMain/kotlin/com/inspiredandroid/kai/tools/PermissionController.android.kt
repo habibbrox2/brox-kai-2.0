@@ -92,19 +92,21 @@ internal actual fun platformHasPermission(permission: AppPermission): Boolean = 
                 ContextCompat.checkSelfPermission(androidContext, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED) == PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(androidContext, Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED
         }
+
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
             ContextCompat.checkSelfPermission(androidContext, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(androidContext, Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED
         }
+
         else -> {
             ContextCompat.checkSelfPermission(androidContext, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
         }
     }
+
     else -> permissionsFor(permission).all {
         ContextCompat.checkSelfPermission(androidContext, it) == PackageManager.PERMISSION_GRANTED
     }
 }
-
 
 internal actual fun platformCanRequest(permission: AppPermission): Boolean = permissionsFor(permission).isNotEmpty()
 
