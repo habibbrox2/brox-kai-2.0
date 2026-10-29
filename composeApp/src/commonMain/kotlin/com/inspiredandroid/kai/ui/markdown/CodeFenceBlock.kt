@@ -37,12 +37,12 @@ import com.inspiredandroid.kai.ui.AccentGlow
 import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.BorderSoft
 import com.inspiredandroid.kai.ui.CardFill
-import com.inspiredandroid.kai.ui.OledBlack
-import com.inspiredandroid.kai.ui.chat.ChatSpacing
-import com.inspiredandroid.kai.ui.isOledFlavor
 import com.inspiredandroid.kai.ui.KaiShapes
 import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.OledBlack
 import com.inspiredandroid.kai.ui.TextSecondary
+import com.inspiredandroid.kai.ui.chat.ChatSpacing
+import com.inspiredandroid.kai.ui.isOledFlavor
 import com.inspiredandroid.kai.ui.rememberCopyToClipboard
 
 @Composable

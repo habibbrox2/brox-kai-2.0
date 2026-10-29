@@ -12,8 +12,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.network.UiError
-import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.handCursor
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.ic_refresh
 import org.jetbrains.compose.resources.stringResource

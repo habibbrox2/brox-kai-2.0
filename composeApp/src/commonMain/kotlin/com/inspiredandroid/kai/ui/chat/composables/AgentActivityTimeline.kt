@@ -29,18 +29,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.inspiredandroid.kai.ui.chat.activities.ActivityDetails
-import com.inspiredandroid.kai.ui.chat.activities.ActivityStatus
-import com.inspiredandroid.kai.ui.chat.activities.ActivityType
-import com.inspiredandroid.kai.ui.chat.activities.AgentActivity
 import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.CardFill
 import com.inspiredandroid.kai.ui.DangerAlert
-import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.KaiShapes
 import com.inspiredandroid.kai.ui.KaiTypography
 import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.TextSecondary
+import com.inspiredandroid.kai.ui.chat.activities.ActivityDetails
+import com.inspiredandroid.kai.ui.chat.activities.ActivityStatus
+import com.inspiredandroid.kai.ui.chat.activities.ActivityType
+import com.inspiredandroid.kai.ui.chat.activities.AgentActivity
+import com.inspiredandroid.kai.ui.handCursor
 
 @Composable
 fun AgentActivityTimeline(

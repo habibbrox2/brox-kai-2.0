@@ -27,13 +27,13 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.formatFileSize
 import com.inspiredandroid.kai.linux.LinuxDistro
-import com.inspiredandroid.kai.ui.handCursor
-import com.inspiredandroid.kai.ui.sandbox.SandboxProgressRow
-import com.inspiredandroid.kai.ui.sandbox.sandboxStatusText
 import com.inspiredandroid.kai.ui.DangerAlert
 import com.inspiredandroid.kai.ui.KaiTypography
 import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.TextSecondary
+import com.inspiredandroid.kai.ui.handCursor
+import com.inspiredandroid.kai.ui.sandbox.SandboxProgressRow
+import com.inspiredandroid.kai.ui.sandbox.sandboxStatusText
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.settings_sandbox_cancel
 import kai.composeapp.generated.resources.settings_sandbox_description

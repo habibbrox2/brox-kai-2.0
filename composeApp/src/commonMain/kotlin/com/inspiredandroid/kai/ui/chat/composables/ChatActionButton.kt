@@ -17,10 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.inspiredandroid.kai.ui.chat.ChatSpacing
-import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.KaiTypography
 import com.inspiredandroid.kai.ui.TextSecondary
+import com.inspiredandroid.kai.ui.chat.ChatSpacing
+import com.inspiredandroid.kai.ui.handCursor
 
 /**
  * Reusable action button used across the chat workspace (top bar, message action

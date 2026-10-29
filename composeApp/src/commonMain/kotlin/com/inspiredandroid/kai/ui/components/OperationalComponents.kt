@@ -1,5 +1,6 @@
 package com.inspiredandroid.kai.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -38,7 +39,6 @@ import com.inspiredandroid.kai.ui.isOledFlavor
 import com.inspiredandroid.kai.ui.kaiAdaptiveCardBorder
 import com.inspiredandroid.kai.ui.kaiAdaptiveCardColors
 import com.inspiredandroid.kai.ui.settings.SettingsSpacing
-import androidx.compose.foundation.BorderStroke
 
 /**
  * Shared operational status vocabulary (Plan 4, Phase 1) so MCP, skills,
@@ -95,19 +95,17 @@ data class OperationalStatusColors(
 }
 
 @Composable
-fun rememberOperationalStatusColors(): OperationalStatusColors {
-    return remember {
-        OperationalStatusColors(
-            connected = TextSecondary,
-            connecting = AccentPrimary,
-            disabled = TextSecondary,
-            installing = AccentPrimary,
-            needsSetup = TextTertiary,
-            error = DangerAlert,
-            active = TextSecondary,
-            ready = TextSecondary,
-        )
-    }
+fun rememberOperationalStatusColors(): OperationalStatusColors = remember {
+    OperationalStatusColors(
+        connected = TextSecondary,
+        connecting = AccentPrimary,
+        disabled = TextSecondary,
+        installing = AccentPrimary,
+        needsSetup = TextTertiary,
+        error = DangerAlert,
+        active = TextSecondary,
+        ready = TextSecondary,
+    )
 }
 
 /**

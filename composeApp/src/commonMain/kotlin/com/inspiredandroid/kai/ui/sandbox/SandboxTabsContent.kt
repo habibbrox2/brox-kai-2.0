@@ -1,8 +1,8 @@
 package com.inspiredandroid.kai.ui.sandbox
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -49,14 +49,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.inspiredandroid.kai.SandboxController
 import com.inspiredandroid.kai.TerminalLine
 import com.inspiredandroid.kai.linux.LinuxDistro
+import com.inspiredandroid.kai.ui.DangerAlert
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.components.OperationalStatus
 import com.inspiredandroid.kai.ui.components.StatusBadge
 import com.inspiredandroid.kai.ui.handCursor
-import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.settings.SandboxUiState
-import com.inspiredandroid.kai.ui.DangerAlert
-import com.inspiredandroid.kai.ui.KaiTypography
-import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.settings.SettingsCard
 import com.inspiredandroid.kai.ui.settings.TerminalContent
 import com.inspiredandroid.kai.ui.settings.TerminalDarkBg

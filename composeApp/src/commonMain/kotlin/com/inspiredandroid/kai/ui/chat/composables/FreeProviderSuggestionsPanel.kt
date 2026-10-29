@@ -30,12 +30,12 @@ import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.data.freeProviderSuggestions
 import com.inspiredandroid.kai.network.UiError
 import com.inspiredandroid.kai.ui.CardFill
-import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.KaiShapes
 import com.inspiredandroid.kai.ui.KaiTypography
 import com.inspiredandroid.kai.ui.SurfaceRaised
 import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.TextSecondary
+import com.inspiredandroid.kai.ui.handCursor
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.error_free_limit_body
 import kai.composeapp.generated.resources.error_free_limit_title

@@ -1,8 +1,6 @@
 package com.inspiredandroid.kai.ui.markdown
 
 import androidx.compose.runtime.Composable
-import com.inspiredandroid.kai.ui.AccentPrimary
-import com.inspiredandroid.kai.ui.CardFill
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -14,11 +12,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
+import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.CardFill
 
 @Composable
-internal fun List<InlineNode>.toAnnotatedString(): AnnotatedString {
-    return buildAnnotatedString { appendInlines(this@toAnnotatedString) }
-}
+internal fun List<InlineNode>.toAnnotatedString(): AnnotatedString = buildAnnotatedString { appendInlines(this@toAnnotatedString) }
 
 private fun AnnotatedString.Builder.appendInlines(nodes: List<InlineNode>) {
     for (n in nodes) appendInline(n)

@@ -21,11 +21,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import com.inspiredandroid.kai.ui.AccentPrimary
-import com.inspiredandroid.kai.ui.DangerAlert
-import com.inspiredandroid.kai.ui.KaiTypography
-import com.inspiredandroid.kai.ui.TextPrimary
-import com.inspiredandroid.kai.ui.TextSecondary
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +36,11 @@ import com.inspiredandroid.kai.data.ImportSection
 import com.inspiredandroid.kai.data.SharedJson
 import com.inspiredandroid.kai.data.detectImportSections
 import com.inspiredandroid.kai.saveFileToDevice
+import com.inspiredandroid.kai.ui.AccentPrimary
+import com.inspiredandroid.kai.ui.DangerAlert
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.TextPrimary
+import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.components.VerticalScrollbarForScroll
 import com.inspiredandroid.kai.ui.handCursor
 import io.github.vinceglb.filekit.dialogs.FileKitType
