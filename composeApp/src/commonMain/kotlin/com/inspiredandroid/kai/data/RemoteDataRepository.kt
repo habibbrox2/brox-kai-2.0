@@ -960,8 +960,7 @@ class RemoteDataRepository(
 
         val service = currentService()
         val configuredInstances = getConfiguredServiceInstances()
-        val selectedInstanceId = appSettings.getSelectedServiceInstanceId()
-            ?: configuredInstances.firstOrNull { it.serviceId == service.id }?.instanceId
+        val selectedInstanceId = configuredInstances.firstOrNull { it.serviceId == service.id }?.instanceId
             ?: service.id
 
         // Context window validation for selected provider
