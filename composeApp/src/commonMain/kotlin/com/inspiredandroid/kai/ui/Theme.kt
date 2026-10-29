@@ -1,4 +1,4 @@
-@file:Suppress("DEPRECATION")
+﻿@file:Suppress("DEPRECATION")
 
 package com.inspiredandroid.kai.ui
 
@@ -35,8 +35,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.TextStyle
@@ -107,111 +105,96 @@ val SuccessGreen = Color(0xFF10B981)
 val WarningAmber = Color(0xFFF59E0B)
 val InfoBlue = Color(0xFF3B82F6)
 
-// ─── KaiTypography — 2026 Modern Type Scale ───
+// KaiTypography - 2026 Modern Type Scale
 val KaiTypography = Typography(
     displayLarge = TextStyle(
         fontSize = 57.sp,
         fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
         letterSpacing = (-0.25).sp,
-        brush = SolidColor(TextPrimary),
         lineHeight = 64.sp,
     ),
     displayMedium = TextStyle(
         fontSize = 45.sp,
         fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
         letterSpacing = 0.sp,
-        brush = SolidColor(TextPrimary),
         lineHeight = 52.sp,
     ),
     displaySmall = TextStyle(
         fontSize = 36.sp,
         fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
         letterSpacing = 0.sp,
-        brush = SolidColor(TextPrimary),
         lineHeight = 44.sp,
     ),
     headlineLarge = TextStyle(
         fontSize = 32.sp,
         fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
         letterSpacing = 0.sp,
-        brush = SolidColor(TextPrimary),
         lineHeight = 40.sp,
     ),
     headlineMedium = TextStyle(
         fontSize = 28.sp,
         fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
         letterSpacing = 0.sp,
-        brush = SolidColor(TextPrimary),
         lineHeight = 36.sp,
     ),
     headlineSmall = TextStyle(
         fontSize = 24.sp,
         fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
         letterSpacing = 0.sp,
-        brush = SolidColor(TextPrimary),
         lineHeight = 32.sp,
     ),
     titleLarge = TextStyle(
         fontSize = 22.sp,
         fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
         letterSpacing = 0.sp,
-        brush = SolidColor(TextPrimary),
         lineHeight = 28.sp,
     ),
     titleMedium = TextStyle(
         fontSize = 16.sp,
         fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
         letterSpacing = 0.15.sp,
-        brush = SolidColor(TextPrimary),
         lineHeight = 24.sp,
     ),
     titleSmall = TextStyle(
         fontSize = 14.sp,
         fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
         letterSpacing = 0.1.sp,
-        brush = SolidColor(TextPrimary),
         lineHeight = 20.sp,
     ),
     bodyLarge = TextStyle(
         fontSize = 16.sp,
         fontWeight = androidx.compose.ui.text.font.FontWeight.Normal,
         letterSpacing = 0.5.sp,
-        brush = SolidColor(TextPrimary),
         lineHeight = 24.sp,
     ),
     bodyMedium = TextStyle(
         fontSize = 14.sp,
         fontWeight = androidx.compose.ui.text.font.FontWeight.Normal,
         letterSpacing = 0.25.sp,
-        brush = SolidColor(TextPrimary),
         lineHeight = 20.sp,
     ),
     bodySmall = TextStyle(
         fontSize = 12.sp,
         fontWeight = androidx.compose.ui.text.font.FontWeight.Normal,
         letterSpacing = 0.4.sp,
-        brush = SolidColor(TextSecondary),
         lineHeight = 16.sp,
     ),
     labelLarge = TextStyle(
         fontSize = 14.sp,
         fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
         letterSpacing = 0.1.sp,
-        brush = SolidColor(TextPrimary),
         lineHeight = 20.sp,
     ),
     labelMedium = TextStyle(
         fontSize = 12.sp,
         fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
         letterSpacing = 0.5.sp,
-        brush = SolidColor(TextSecondary),
         lineHeight = 16.sp,
     ),
     labelSmall = TextStyle(
         fontSize = 11.sp,
         fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
         letterSpacing = 0.5.sp,
-        brush = SolidColor(TextTertiary),
         lineHeight = 16.sp,
     ),
 )

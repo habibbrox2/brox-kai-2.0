@@ -1,4 +1,4 @@
-package com.inspiredandroid.kai.ui.settings
+﻿package com.inspiredandroid.kai.ui.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

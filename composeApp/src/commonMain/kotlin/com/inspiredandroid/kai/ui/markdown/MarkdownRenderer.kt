@@ -1,4 +1,4 @@
-package com.inspiredandroid.kai.ui.markdown
+﻿package com.inspiredandroid.kai.ui.markdown
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import com.inspiredandroid.kai.ui.BorderSoft
@@ -50,7 +51,7 @@ fun MarkdownContent(
     frozen: FrozenSubmission? = null,
     onOpenInEditor: ((String, String?) -> Unit)? = null,
 ) {
-    CompositionLocalProvider(LocalContentColor provides TextPrimary) {
+    CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
         Column(modifier) {
             for (block in document.blocks) {
                 BlockRenderer(block, isInteractive, onUiCallback, frozen, onOpenInEditor)

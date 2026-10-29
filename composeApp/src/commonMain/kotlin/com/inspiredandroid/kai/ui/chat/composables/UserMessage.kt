@@ -1,4 +1,4 @@
-package com.inspiredandroid.kai.ui.chat.composables
+﻿package com.inspiredandroid.kai.ui.chat.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,7 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.input.key.key
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.data.Attachment
@@ -91,7 +90,7 @@ internal fun UserMessage(
                         shape = com.inspiredandroid.kai.ui.KaiShapes.userBubble,
                     )
                     .padding(horizontal = ChatSpacing.xl, vertical = ChatSpacing.lg),
-                horizontalAlignment = Alignment.End,
+                horizontalAlignment = Alignment.Start,
             ) {
                 val images = attachments.filter { it.mimeType.startsWith("image/") }
                 val others = attachments.filter { !it.mimeType.startsWith("image/") }
@@ -139,7 +138,7 @@ internal fun UserMessage(
                                         Icon(
                                             modifier = Modifier.size(ChatSpacing.lg),
                                             painter = painterResource(Res.drawable.ic_file),
-                                            contentDescription = null,
+                                            contentDescription = "Attachment file",
                                             tint = TextPrimary,
                                         )
                                     },

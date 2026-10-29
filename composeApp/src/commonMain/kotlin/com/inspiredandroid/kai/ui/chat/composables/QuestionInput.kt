@@ -1,4 +1,4 @@
-package com.inspiredandroid.kai.ui.chat.composables
+﻿package com.inspiredandroid.kai.ui.chat.composables
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -164,7 +164,6 @@ internal fun TrailingIcon(
     }
     Box(
         modifier = modifier
-            .defaultMinSize(minHeight = 48.dp, minWidth = 48.dp)
             .size(44.dp)
             .clip(CircleShape)
             .background(
@@ -200,7 +199,6 @@ internal fun CircleIconButton(
 ) {
     Box(
         modifier = modifier
-            .defaultMinSize(minHeight = 48.dp, minWidth = 48.dp)
             .size(42.dp)
             .clip(CircleShape)
             .clickable { onClick() }
@@ -351,7 +349,7 @@ fun QuestionInput(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(max = 140.dp)
+                    .heightIn(max = maxComposerHeight)
                     .clip(com.inspiredandroid.kai.ui.KaiShapes.composer)
                     .background(inputPillBg, com.inspiredandroid.kai.ui.KaiShapes.composer)
                     .border(
@@ -367,7 +365,6 @@ fun QuestionInput(
                     onValueChange = onTextStateChange,
                     modifier = Modifier
                         .focusRequester(focusRequester)
-                        .padding(16.dp)
                         .heightIn(max = maxComposerHeight)
                         .fillMaxWidth(),
                     colors = outlineTextFieldColors(),

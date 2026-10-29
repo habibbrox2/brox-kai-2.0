@@ -15,7 +15,7 @@ android {
     ndkVersion = "29.0.14206865"
 
     defaultConfig {
-        applicationId = "com.brox.kai"
+        applicationId = "com.inspiredandroid.kai"
         minSdk =
             libs.versions.android.minSdk
                 .get()

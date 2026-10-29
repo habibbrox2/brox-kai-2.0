@@ -1,4 +1,4 @@
-package com.inspiredandroid.kai.ui.components
+﻿package com.inspiredandroid.kai.ui.components
 
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -41,7 +41,7 @@ fun KaiLoadingSpinner(
                 .align(androidx.compose.ui.Alignment.Center),
             strokeWidth = strokeWidth,
             color = color,
-            trackColor = color,
+            trackColor = color.copy(alpha = 0.2f),
         )
     }
 }

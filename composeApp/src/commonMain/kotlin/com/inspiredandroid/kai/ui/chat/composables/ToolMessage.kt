@@ -1,4 +1,4 @@
-package com.inspiredandroid.kai.ui.chat.composables
+﻿package com.inspiredandroid.kai.ui.chat.composables
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
@@ -207,7 +207,7 @@ internal fun PulsingStatusIndicator(
                 // actually doing — is pushed off the right edge at large font scales.
                 Text(
                     text = " · $toolSummary",
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f, fill = false),
                     color = textColor,
                     style = textStyle,
                     maxLines = 1,
