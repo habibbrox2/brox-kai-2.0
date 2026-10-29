@@ -36,10 +36,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -310,12 +308,11 @@ fun KaiUiRenderer(
             Card(
                 modifier = modifier
                     .fillMaxWidth()
-                    .fillMaxHeight()
                     .semantics { liveRegion = LiveRegionMode.Polite },
                 colors = kaiAdaptiveCardColors(),
                 border = kaiAdaptiveCardBorder(),
             ) {
-                Column(Modifier.padding(12.dp).fillMaxHeight()) {
+                Column(Modifier.padding(12.dp)) {
                     RenderNode(
                         node = node,
                         isInteractive = isInteractive,
@@ -326,21 +323,18 @@ fun KaiUiRenderer(
                 }
             }
         } else {
-            CompositionLocalProvider(LocalContentColor provides TextPrimary) {
-                Column(
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                        .semantics { liveRegion = LiveRegionMode.Polite },
-                ) {
-                    RenderNode(
-                        node = node,
-                        isInteractive = isInteractive,
-                        formState = formState,
-                        toggleState = toggleState,
-                        onCallback = safeCallback(onCallback),
-                    )
-                }
+            Column(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .semantics { liveRegion = LiveRegionMode.Polite },
+            ) {
+                RenderNode(
+                    node = node,
+                    isInteractive = isInteractive,
+                    formState = formState,
+                    toggleState = toggleState,
+                    onCallback = safeCallback(onCallback),
+                )
             }
         }
     }
@@ -429,11 +423,11 @@ private fun RenderColumn(
     onCallback: (String, Map<String, String>) -> Unit,
     depth: Int,
 ) {
-    LazyColumn(
+    Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        items(node.children) { child ->
+        node.children.forEach { child ->
             RenderNode(child, isInteractive, formState, toggleState, onCallback, depth + 1)
         }
     }
@@ -471,15 +465,15 @@ private fun RenderCard(
     depth: Int,
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+        modifier = Modifier.fillMaxWidth(),
         colors = kaiAdaptiveCardColors(),
         border = kaiAdaptiveCardBorder(),
     ) {
-        LazyColumn(
+        Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            items(node.children) { child ->
+            node.children.forEach { child ->
                 RenderNode(child, isInteractive, formState, toggleState, onCallback, depth + 1)
             }
         }
@@ -824,11 +818,11 @@ private fun RenderList(
     onCallback: (String, Map<String, String>) -> Unit,
     depth: Int,
 ) {
-    LazyColumn(
+    Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        itemsIndexed(node.items) { index, item ->
+        node.items.forEachIndexed { index, item ->
             Row {
                 val prefix = if (node.ordered == true) "${index + 1}. " else "\u2022 "
                 Text(prefix, style = KaiTypography.bodyLarge)
@@ -1513,11 +1507,11 @@ private fun RenderBox(
             }
         }
     } else {
-        LazyColumn(
+        Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            items(node.children) { child ->
+            node.children.forEach { child ->
                 RenderNode(child, isInteractive, formState, toggleState, onCallback, depth + 1)
             }
         }
@@ -1604,11 +1598,11 @@ private fun RenderTabs(
 
         val selectedTab = node.tabs.getOrNull(selectedIndex)
         if (selectedTab != null) {
-            LazyColumn(
+            Column(
                 modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                items(selectedTab.children) { child ->
+                selectedTab.children.forEach { child ->
                     RenderNode(child, isInteractive, formState, toggleState, onCallback, depth + 1)
                 }
             }
@@ -1655,11 +1649,11 @@ private fun RenderAccordion(
                 enter = expandVertically(),
                 exit = shrinkVertically(),
             ) {
-                LazyColumn(
+                Column(
                     modifier = Modifier.fillMaxWidth().padding(start = 12.dp, end = 12.dp, bottom = 12.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    items(node.children) { child ->
+                    node.children.forEach { child ->
                         RenderNode(child, isInteractive, formState, toggleState, onCallback, depth + 1)
                     }
                 }

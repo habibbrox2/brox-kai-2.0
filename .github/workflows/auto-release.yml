@@ -37,12 +37,13 @@ jobs:
         id: bump
         run: |
           set -euo pipefail
-          LATEST=$(git tag --list 'v2.0.*' --sort=-v:refname | head -n1)
+          LATEST=$(git tag --list 'v2.0.*' --sort=-v:refname | grep -E '^v2\.0\.[0-9]+$' | head -n1)
           if [ -z "$LATEST" ]; then
             echo "::error::No v2.0.* tag found — cannot derive the next Brox Kai 2.0 version"
             exit 1
           fi
           PATCH="${LATEST#v2.0.}"
+          PATCH="${PATCH%%[^0-9]*}"
           VERSION="2.0.$((PATCH + 1))"
           sed -i "s/^appVersion = .*/appVersion = \"${VERSION}\"/" gradle/libs.versions.toml
           CODE=$(grep -oP 'android-versionCode = "\K[0-9]+' gradle/libs.versions.toml)
