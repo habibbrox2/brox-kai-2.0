@@ -192,6 +192,12 @@ private fun AppContent(
                     modifier = Modifier.background(BackgroundPrimary),
                 ) {
                     composable<Dashboard> {
+                        PlatformBackHandler(true) {
+                            navController.navigate(Home) {
+                                popUpTo(Home)
+                                launchSingleTop = true
+                            }
+                        }
                         DashboardScreen(
                             chatUiState = chatUiState,
                             isBuildAvailable = currentPlatform is Platform.Mobile.Android,
@@ -253,6 +259,10 @@ private fun AppContent(
                         )
                     }
                     composable<Settings> { entry ->
+                        PlatformBackHandler(true) {
+                            chatViewModel.refreshSettings()
+                            navController.navigateUp()
+                        }
                         val initialTab = Settings.tabOf(entry.toRoute<Settings>())
                         DisposableEffect(Unit) {
                             onDispose {
@@ -268,6 +278,9 @@ private fun AppContent(
                         )
                     }
                     composable<Build> { entry ->
+                        PlatformBackHandler(true) {
+                            navController.navigateUp()
+                        }
                         val project = entry.toRoute<Build>().project
                         KaiBuildScreen(
                             initialProject = project,

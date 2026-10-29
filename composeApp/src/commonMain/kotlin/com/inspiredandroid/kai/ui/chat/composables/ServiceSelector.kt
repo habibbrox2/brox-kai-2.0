@@ -8,6 +8,7 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +23,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import com.inspiredandroid.kai.ui.components.KaiSearchField
+import com.inspiredandroid.kai.PlatformBackHandler
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -201,118 +208,137 @@ internal fun ServiceSelector(
         }
 
         if (expanded) {
-            val spacingPx = with(LocalDensity.current) { 8.dp.roundToPx() }
-            val isOled = MaterialTheme.colorScheme.isOledFlavor
-            val popupBg = if (isOled) {
-                com.inspiredandroid.kai.ui.CardFill
-            } else {
-                CardFill
+            PlatformBackHandler(enabled = true) {
+                expanded = false
             }
-            val popupBorder = BorderStroke(1.dp, BorderSoft)
 
-            Popup(
+            var searchQuery by remember { mutableStateOf("") }
+            val filteredModels = remember(models, searchQuery) {
+                if (searchQuery.isBlank()) models else models.filter {
+                    (it.displayName ?: it.id).contains(searchQuery, ignoreCase = true) || it.id.contains(searchQuery, ignoreCase = true)
+                }
+            }
+            val filteredServices = remember(services, searchQuery) {
+                if (searchQuery.isBlank()) services else services.filter {
+                    it.serviceName.contains(searchQuery, ignoreCase = true) || it.modelId.contains(searchQuery, ignoreCase = true)
+                }
+            }
+
+            // Bounded Modal Dialog with Solid Opaque Background (#0F172A) & Scrim Backdrop
+            Dialog(
                 onDismissRequest = { expanded = false },
-                properties = PopupProperties(focusable = true),
-                popupPositionProvider = remember(spacingPx) { AnchorAbovePositionProvider(spacingPx) },
+                properties = DialogProperties(usePlatformDefaultWidth = false),
             ) {
-                BoxWithConstraints {
-                    val maxMenuHeight = maxHeight - 24.dp // keep a margin from screen edges
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color(0x99000000))
+                        .clickable { expanded = false },
+                    contentAlignment = Alignment.Center,
+                ) {
                     Box(
                         modifier = Modifier
-                            .clip(KaiShapes.card)
-                            .background(popupBg, KaiShapes.card)
-                            .border(popupBorder, KaiShapes.card)
-                            .onKeyEvent { event ->
-                                if (event.key == Key.Escape) {
-                                    expanded = false
-                                    true
-                                } else if (event.key == Key.Tab || event.key == Key.DirectionDown || event.key == Key.DirectionUp) {
-                                    val direction = if (event.key == Key.DirectionUp) -1 else 1
-                                    focusedIndex = (focusedIndex + direction).coerceIn(0, focusableItemCount - 1)
-                                    true
-                                } else {
-                                    false
-                                }
-                            }
-                            .onFocusChanged { focused ->
-                                if (focused.isFocused) {
-                                    focusedIndex = 0
-                                }
-                            },
+                            .fillMaxWidth(0.92f)
+                            .widthIn(max = 440.dp)
+                            .heightIn(max = 540.dp)
+                            .clickable(enabled = false) {}
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Color(0xFF0F172A), RoundedCornerShape(16.dp))
+                            .border(BorderStroke(1.dp, Color(0xFF1E293B)), RoundedCornerShape(16.dp))
+                            .padding(16.dp),
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .heightIn(max = maxMenuHeight)
-                                .verticalScroll(rememberScrollState())
-                                .padding(vertical = 4.dp)
-                                .focusRequester(popupFocusRequester),
-                        ) {
-                            var itemIndex = 0
-                            // Models of the active service: the model that is loaded and the
-                            // alternatives the user can switch to.
-                            if (models.isNotEmpty()) {
-                                PickerSectionLabel(stringResource(Res.string.settings_model_label))
-                                models.forEach { model ->
-                                    val isCurrent = model.id == current.modelId
-                                    val index = itemIndex
-                                    ModelMenuItem(
-                                        model = model,
-                                        isCurrent = isCurrent,
-                                        onClick = {
-                                            expanded = false
-                                            if (!isCurrent) onSelectModel(model.id)
-                                        },
-                                        modifier = Modifier
-                                            .focusable()
-                                            .onFocusChanged { focus -> focusedIndex = if (focus.isFocused) index else focusedIndex }
-                                            .focusRequester(if (index == 0) popupFocusRequester else FocusRequester()),
-                                    )
-                                    itemIndex++
-                                }
-                                HorizontalDivider(
-                                    color = TextSecondary.copy(alpha = 0.12f),
-                                    modifier = Modifier.padding(vertical = 4.dp),
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            // Modal Header with Title & Close Button
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    text = "Select Model & Provider",
+                                    style = KaiTypography.titleMedium,
+                                    color = TextPrimary,
                                 )
-                            } else if (isLoadingModels) {
-                                PickerSectionLabel(stringResource(Res.string.settings_model_label))
-                                Row(
-                                    modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 8.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                androidx.compose.material3.IconButton(
+                                    onClick = { expanded = false },
+                                    modifier = Modifier.size(28.dp).handCursor(),
                                 ) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(14.dp),
-                                        strokeWidth = 2.dp,
-                                        color = AccentPrimary,
-                                    )
-                                    Text(
-                                        text = stringResource(Res.string.settings_model_loading),
-                                        style = KaiTypography.labelSmall,
-                                        color = TextSecondary,
+                                    Icon(
+                                        imageVector = Icons.Default.Close,
+                                        contentDescription = "Close",
+                                        tint = TextSecondary,
+                                        modifier = Modifier.size(16.dp),
                                     )
                                 }
                             }
 
-                            PickerSectionLabel(stringResource(Res.string.settings_tab_services))
-                            services.forEach { entry ->
-                                key(entry.instanceId) {
-                                    val isCurrent = entry.instanceId == current.instanceId
-                                    val index = itemIndex
-                                    ServiceMenuItem(
-                                        entry = entry,
-                                        isCurrent = isCurrent,
-                                        onClick = {
-                                            expanded = false
-                                            if (!isCurrent) {
-                                                onSelectService(entry.instanceId)
-                                            }
-                                        },
-                                        modifier = Modifier
-                                            .focusable()
-                                            .onFocusChanged { focus -> focusedIndex = if (focus.isFocused) index else focusedIndex }
-                                            .focusRequester(if (index == 0 && models.isEmpty() && !isLoadingModels) popupFocusRequester else FocusRequester()),
+                            // Sticky Search / Filter Input
+                            KaiSearchField(
+                                query = searchQuery,
+                                onQueryChange = { searchQuery = it },
+                                placeholder = "Search models...",
+                                modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
+                            )
+
+                            // Scrollable list of models and services
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f, fill = false)
+                                    .verticalScroll(rememberScrollState()),
+                            ) {
+                                if (filteredModels.isNotEmpty()) {
+                                    PickerSectionLabel(stringResource(Res.string.settings_model_label))
+                                    filteredModels.forEach { model ->
+                                        val isCurrent = model.id == current.modelId
+                                        ModelMenuItem(
+                                            model = model,
+                                            isCurrent = isCurrent,
+                                            onClick = {
+                                                expanded = false
+                                                if (!isCurrent) onSelectModel(model.id)
+                                            },
+                                        )
+                                    }
+                                    HorizontalDivider(
+                                        color = TextSecondary.copy(alpha = 0.12f),
+                                        modifier = Modifier.padding(vertical = 6.dp),
                                     )
-                                    itemIndex++
+                                } else if (isLoadingModels) {
+                                    PickerSectionLabel(stringResource(Res.string.settings_model_label))
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 8.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                    ) {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(14.dp),
+                                            strokeWidth = 2.dp,
+                                            color = AccentPrimary,
+                                        )
+                                        Text(
+                                            text = stringResource(Res.string.settings_model_loading),
+                                            style = KaiTypography.labelSmall,
+                                            color = TextSecondary,
+                                        )
+                                    }
+                                }
+
+                                PickerSectionLabel(stringResource(Res.string.settings_tab_services))
+                                filteredServices.forEach { entry ->
+                                    key(entry.instanceId) {
+                                        val isCurrent = entry.instanceId == current.instanceId
+                                        ServiceMenuItem(
+                                            entry = entry,
+                                            isCurrent = isCurrent,
+                                            onClick = {
+                                                expanded = false
+                                                if (!isCurrent) {
+                                                    onSelectService(entry.instanceId)
+                                                }
+                                            },
+                                        )
+                                    }
                                 }
                             }
                         }

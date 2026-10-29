@@ -113,7 +113,7 @@ class CalendarRepository(
             put(CalendarContract.Events.TITLE, title)
             put(CalendarContract.Events.DTSTART, startMillis)
             put(CalendarContract.Events.DTEND, endMillis)
-            put(CalendarContract.Events.EVENT_TIMEZONE, timeZone)
+            put(CalendarContract.Events.EVENT_TIMEZONE, if (allDay) "UTC" else timeZone)
             put(CalendarContract.Events.ALL_DAY, if (allDay) 1 else 0)
             description?.let { put(CalendarContract.Events.DESCRIPTION, it) }
             location?.let { put(CalendarContract.Events.EVENT_LOCATION, it) }

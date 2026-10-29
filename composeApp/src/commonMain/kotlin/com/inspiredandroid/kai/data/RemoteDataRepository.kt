@@ -439,11 +439,25 @@ class RemoteDataRepository(
             else -> {
                 if (service.modelsUrl != null) {
                     fetchModelsForInstance(service, instanceId) { creds, selectedModelId ->
-                        mapOpenAICompatibleModels(
-                            requests.getOpenAICompatibleModels(service, creds).getOrThrow().data,
-                            service,
-                            selectedModelId,
-                        )
+                        val remoteModels = try {
+                            requests.getOpenAICompatibleModels(service, creds).getOrNull()?.data
+                        } catch (_: Exception) {
+                            null
+                        }
+                        if (remoteModels != null && remoteModels.isNotEmpty()) {
+                            mapOpenAICompatibleModels(remoteModels, service, selectedModelId)
+                        } else if (service.defaultModels.isNotEmpty()) {
+                            service.defaultModels.map {
+                                SettingsModel(
+                                    id = it.id,
+                                    subtitle = it.subtitle,
+                                    descriptionRes = it.descriptionRes,
+                                    isSelected = it.id == selectedModelId,
+                                )
+                            }
+                        } else {
+                            emptyList()
+                        }
                     }
                 } else if (service.defaultModels.isNotEmpty()) {
                     val selectedModelId = appSettings.getInstanceModelId(instanceId)

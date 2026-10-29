@@ -330,6 +330,7 @@ object EmailTools {
 
         override suspend fun execute(args: Map<String, Any>): Any {
             val uid = (args["uid"] as? Number)?.toLong()
+                ?: (args["uid"] as? String)?.toLongOrNull()
                 ?: return mapOf("success" to false, "error" to "Missing uid")
             val accountId = args["account_id"]?.toString()
             val markRead = (args["mark_read"] as? Boolean) ?: false

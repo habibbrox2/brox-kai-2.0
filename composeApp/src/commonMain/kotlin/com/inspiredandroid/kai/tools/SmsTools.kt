@@ -81,6 +81,7 @@ object SmsTools {
                 return mapOf("success" to false, "error" to "SMS permission not granted")
             }
             val id = (args["id"] as? Number)?.toLong()
+                ?: (args["id"] as? String)?.toLongOrNull()
                 ?: return mapOf("success" to false, "error" to "Missing id")
             val msg = smsReader.readById(id)
                 ?: return mapOf("success" to false, "error" to "No SMS found with id $id")
@@ -241,6 +242,7 @@ object SmsTools {
                 )
             }
             val smsId = (args["sms_id"] as? Number)?.toLong()
+                ?: (args["sms_id"] as? String)?.toLongOrNull()
                 ?: return mapOf("success" to false, "error" to "Missing sms_id")
             val body = args["body"]?.toString()
             if (body.isNullOrEmpty()) return mapOf("success" to false, "error" to "Missing body")

@@ -17,16 +17,17 @@ class DownloadsStatusToolImpl : Tool {
 
         val sourcesInfo = accessState.sources
 
-        return DownloadsStatusResult(
-            overallCoverage = accessState.overallCoverage.displayName,
-            sources = sourcesInfo,
-            hasLegacyPermission = accessState.hasLegacyPermission,
-            canQueryDownloadManager = downloadsPermissionController.canQueryDownloadManager(),
-            canQueryMediaStore = downloadsPermissionController.canQueryMediaStoreDownloads(),
-            isSafAvailable = downloadsPermissionController.isSafAvailable(),
-            message = downloadsPermissionController.getAccessSummary(),
-            messageBengali = downloadsPermissionController.getAccessSummaryBengali(),
-            details = mapOf(
+        return mapOf(
+            "success" to true,
+            "overallCoverage" to accessState.overallCoverage.displayName,
+            "sources" to sourcesInfo.map { it.toMap() },
+            "hasLegacyPermission" to accessState.hasLegacyPermission,
+            "canQueryDownloadManager" to downloadsPermissionController.canQueryDownloadManager(),
+            "canQueryMediaStore" to downloadsPermissionController.canQueryMediaStoreDownloads(),
+            "isSafAvailable" to downloadsPermissionController.isSafAvailable(),
+            "message" to downloadsPermissionController.getAccessSummary(),
+            "messageBengali" to downloadsPermissionController.getAccessSummaryBengali(),
+            "details" to mapOf(
                 "source_details" to accessState.sources.map { source ->
                     mapOf(
                         "name" to source.name,

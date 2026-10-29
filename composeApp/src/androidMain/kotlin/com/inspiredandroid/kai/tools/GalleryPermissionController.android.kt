@@ -28,7 +28,7 @@ class GalleryPermissionController(private val context: Context) {
             sdk <= Build.VERSION_CODES.S_V2 -> hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
 
             sdk >= Build.VERSION_CODES.TIRAMISU ->
-                hasPermission(Manifest.permission.READ_MEDIA_IMAGES) &&
+                hasPermission(Manifest.permission.READ_MEDIA_IMAGES) ||
                     hasPermission(Manifest.permission.READ_MEDIA_VIDEO)
 
             else -> false
@@ -59,7 +59,7 @@ class GalleryPermissionController(private val context: Context) {
      * Checks if the app can query MediaStore for images.
      * This is the minimum requirement for gallery search functionality.
      */
-    fun canQueryMediaStore(): Boolean = hasBaseGalleryAccess()
+    fun canQueryMediaStore(): Boolean = hasBaseGalleryAccess() || hasSelectedPhotosAccess()
 
     /**
      * Checks if the app can access a specific media URI.

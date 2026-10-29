@@ -22,13 +22,13 @@ object GallerySearchTool : Tool {
         parameters = mapOf(
             "query" to ParameterSchema("string", "Optional text search (filename/display name)", false),
             "mimeType" to ParameterSchema("string", "Filter: image/*, video/*, or specific (e.g. image/jpeg)", false),
-            "dateFrom" to ParameterSchema("long", "Earliest DATE_ADDED (epoch ms)", false),
-            "dateTo" to ParameterSchema("long", "Latest DATE_ADDED (epoch ms)", false),
-            "minWidth" to ParameterSchema("int", "Minimum width in pixels", false),
-            "minHeight" to ParameterSchema("int", "Minimum height in pixels", false),
+            "dateFrom" to ParameterSchema("integer", "Earliest DATE_ADDED (epoch ms)", false),
+            "dateTo" to ParameterSchema("integer", "Latest DATE_ADDED (epoch ms)", false),
+            "minWidth" to ParameterSchema("integer", "Minimum width in pixels", false),
+            "minHeight" to ParameterSchema("integer", "Minimum height in pixels", false),
             "sortBy" to ParameterSchema("string", "Sort order: NEWEST, OLDEST, LARGEST, SMALLEST, NAME_A_TO_Z, NAME_Z_TO_A", false),
-            "limit" to ParameterSchema("int", "Max results (default 50, max 200)", false),
-            "offset" to ParameterSchema("int", "Pagination offset (default 0)", false),
+            "limit" to ParameterSchema("integer", "Max results (default 50, max 200)", false),
+            "offset" to ParameterSchema("integer", "Pagination offset (default 0)", false),
         ),
     )
 

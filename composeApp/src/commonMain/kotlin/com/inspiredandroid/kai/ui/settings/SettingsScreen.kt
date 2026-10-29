@@ -394,6 +394,13 @@ private fun TopBar(onNavigateBack: () -> Unit) {
                     tint = TextPrimary,
                 )
             }
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = "Settings",
+                style = KaiTypography.titleMedium,
+                color = TextPrimary,
+                fontWeight = FontWeight.SemiBold,
+            )
             Spacer(Modifier.weight(1f))
         }
     }
@@ -487,10 +494,11 @@ private fun SettingsTabSelector(
     ) {
         Row(
             modifier = Modifier
-                .padding(6.dp)
+                .padding(horizontal = 4.dp, vertical = 4.dp)
                 .height(44.dp)
                 .onSizeChanged { viewportWidth = it.width }
                 .horizontalScroll(scrollState),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             tabs.forEachIndexed { index, tab ->
                 val isSelected = currentTab == tab
@@ -557,7 +565,7 @@ private fun SettingsTabSelector(
                         focusedElevation = 0.dp,
                         hoveredElevation = 0.dp,
                     ),
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
                 ) {
                     Text(
                         text = when (tab) {
@@ -698,9 +706,9 @@ internal fun SettingsCard(
 ) {
     val isOled = MaterialTheme.colorScheme.isOledFlavor
     val cardBg = if (isOled) {
-        com.inspiredandroid.kai.ui.CardFill
+        com.inspiredandroid.kai.ui.OledBlack
     } else {
-        CardFill
+        androidx.compose.ui.graphics.Color(0xFF0F172A)
     }
     val cardBorder = if (isOled) {
         BorderStroke(1.dp, com.inspiredandroid.kai.ui.BorderSubtle)

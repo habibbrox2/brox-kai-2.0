@@ -14,7 +14,7 @@ class GallerySearchToolImpl : Tool {
 
     override val schema = GallerySearchTool.schema
 
-    override suspend fun execute(args: Map<String, Any>): Any {
+    override suspend fun execute(args: Map<String, Any>): Any = try {
         val query = args["query"] as? String
         val mimeType = args["mimeType"] as? String
         val dateFrom = (args["dateFrom"] as? Number)?.toLong()
@@ -45,7 +45,7 @@ class GallerySearchToolImpl : Tool {
         ).first()
 
         val totalCount = galleryRepository.count(
-            query = null,
+            query = query,
             mimeType = mimeType,
             dateFrom = dateFrom,
             dateTo = dateTo,
@@ -55,7 +55,7 @@ class GallerySearchToolImpl : Tool {
 
         val hasMore = offset + items.size < totalCount
 
-        return mapOf(
+        mapOf(
             "success" to true,
             "items" to items.map { it.toMap() },
             "totalCount" to totalCount,
@@ -64,6 +64,12 @@ class GallerySearchToolImpl : Tool {
             "hasMore" to hasMore,
             "message" to if (items.isEmpty()) "No media found matching criteria" else "Found ${items.size} of $totalCount items",
             "messageBengali" to if (items.isEmpty()) "প্রাসঙ্গিক মিডিয়া পাওয়া যায়নি" else "$totalCount টির মধ্যে ${items.size} টি ফলাফল পাওয়া গেছে",
+        )
+    } catch (e: Exception) {
+        mapOf(
+            "success" to false,
+            "error" to "Gallery search error: ${e.message}",
+            "messageBengali" to "গ্যালারি অনুসন্ধানে সমস্যা হয়েছে: ${e.message}",
         )
     }
 }

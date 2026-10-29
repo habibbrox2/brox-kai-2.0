@@ -170,6 +170,9 @@ actual fun PlatformBackHandler(enabled: Boolean, onBack: () -> Unit) {
     // iOS swipe-back is handled by the navigation controller
 }
 
+actual fun exitApp() {
+}
+
 actual suspend fun saveFileToDevice(bytes: ByteArray, baseName: String, extension: String) {
     val file = FileKit.openFileSaver(suggestedName = baseName, defaultExtension = extension)
     file?.write(bytes)

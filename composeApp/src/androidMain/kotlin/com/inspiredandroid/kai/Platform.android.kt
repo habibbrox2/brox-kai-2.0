@@ -366,6 +366,10 @@ actual fun PlatformBackHandler(enabled: Boolean, onBack: () -> Unit) {
     androidx.activity.compose.BackHandler(enabled = enabled, onBack = onBack)
 }
 
+actual fun exitApp() {
+    kotlin.system.exitProcess(0)
+}
+
 actual suspend fun saveFileToDevice(bytes: ByteArray, baseName: String, extension: String) {
     val file = FileKit.openFileSaver(suggestedName = baseName, defaultExtension = extension)
     file?.write(bytes)

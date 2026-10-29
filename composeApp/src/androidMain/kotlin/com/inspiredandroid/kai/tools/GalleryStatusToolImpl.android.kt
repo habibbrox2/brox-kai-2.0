@@ -16,26 +16,20 @@ class GalleryStatusToolImpl : Tool {
     override suspend fun execute(args: Map<String, Any>): Any {
         val accessState = galleryPermissionController.getGalleryAccessState()
 
-        return GalleryStatusResult(
-            permissionState = when (accessState) {
+        return mapOf(
+            "success" to true,
+            "permissionState" to when (accessState) {
                 GalleryAccessState.FULL -> "GRANTED"
                 GalleryAccessState.SELECTED_PHOTOS_ONLY -> "SELECTED_PHOTOS_ONLY"
                 GalleryAccessState.NONE -> "DENIED"
                 GalleryAccessState.REVOKED -> "REVOKED"
             },
-            accessScope = accessState.name,
-            androidVersion = Build.VERSION.SDK_INT,
-            canQueryMediaStore = galleryPermissionController.canQueryMediaStore(),
-            hasSelectedPhotosAccess = galleryPermissionController.hasSelectedPhotosAccess(),
-            message = galleryPermissionController.getAccessDescription(),
-            messageBengali = galleryPermissionController.getAccessDescriptionBengali(),
-            details = mapOf(
-                "media_permissions" to mapOf(
-                    "read_media_images" to (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU),
-                    "read_media_video" to (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU),
-                    "read_media_visual_user_selected" to (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE),
-                ),
-            ),
+            "accessScope" to accessState.name,
+            "androidVersion" to Build.VERSION.SDK_INT,
+            "canQueryMediaStore" to galleryPermissionController.canQueryMediaStore(),
+            "hasSelectedPhotosAccess" to galleryPermissionController.hasSelectedPhotosAccess(),
+            "message" to galleryPermissionController.getAccessDescription(),
+            "messageBengali" to galleryPermissionController.getAccessDescriptionBengali(),
         )
     }
 }

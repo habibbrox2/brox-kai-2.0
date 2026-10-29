@@ -179,27 +179,11 @@ private fun ThemeModeButton(
     onClick: () -> Unit,
     isOled: Boolean,
 ) {
-    val selectedBg = if (isOled) {
-        com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.2f)
-    } else {
-        AccentPrimary
-    }
-    val selectedText = if (isOled) {
-        com.inspiredandroid.kai.ui.AccentPrimary
-    } else {
-        TextPrimary
-    }
-    val unselectedBg = if (isOled) {
-        com.inspiredandroid.kai.ui.CardFill
-    } else {
-        CardFill
-    }
-    val unselectedText = TextSecondary
-    val unselectedBorder = if (isOled) {
-        com.inspiredandroid.kai.ui.BorderSoft
-    } else {
-        BorderSoft
-    }
+    val selectedBg = androidx.compose.ui.graphics.Color(0xFF22D3EE)
+    val selectedText = androidx.compose.ui.graphics.Color(0xFF0F172A)
+    val unselectedBg = androidx.compose.ui.graphics.Color(0xFF1E293B)
+    val unselectedText = androidx.compose.ui.graphics.Color(0xFFE2E8F0)
+    val unselectedBorder = androidx.compose.ui.graphics.Color(0xFF334155)
 
     Box(
         modifier = Modifier
@@ -211,7 +195,7 @@ private fun ThemeModeButton(
                 if (!isSelected) {
                     BorderStroke(1.dp, unselectedBorder)
                 } else {
-                    BorderStroke(1.dp, com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.4f))
+                    BorderStroke(1.dp, androidx.compose.ui.graphics.Color(0xFF22D3EE))
                 },
                 SettingsShapes.pill,
             ),
@@ -219,6 +203,8 @@ private fun ThemeModeButton(
         Text(
             text = label,
             style = KaiTypography.labelLarge,
+            fontWeight = if (isSelected) androidx.compose.ui.text.font.FontWeight.SemiBold else androidx.compose.ui.text.font.FontWeight.Normal,
+            color = if (isSelected) selectedText else unselectedText,
             maxLines = 1,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
         )

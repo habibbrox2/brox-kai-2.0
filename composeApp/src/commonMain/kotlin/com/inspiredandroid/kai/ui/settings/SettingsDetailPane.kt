@@ -63,15 +63,15 @@ fun SettingsDetailPane(
                     Modifier.widthIn(max = maxContentWidth).fillMaxWidth().padding(horizontal = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Box(
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .semantics { liveRegion = LiveRegionMode.Polite },
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
                         when (uiState.currentTab) {
                             SettingsTab.General -> {
                                 SettingsOverview(uiState = uiState, sandboxInstalled = sandboxState.sandboxInstalled)
-                                Spacer(Modifier.height(SettingsSpacing.md))
                                 GeneralContent(uiState = uiState, actions = actions)
                             }
 

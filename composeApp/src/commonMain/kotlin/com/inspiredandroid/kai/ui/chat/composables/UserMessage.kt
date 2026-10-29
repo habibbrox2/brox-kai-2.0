@@ -67,10 +67,16 @@ internal fun UserMessage(
                 .fillMaxWidth(),
         ) {
             Spacer(Modifier.weight(1f))
+            val userBubbleShape = androidx.compose.foundation.shape.RoundedCornerShape(
+                topStart = 18.dp,
+                topEnd = 18.dp,
+                bottomStart = 18.dp,
+                bottomEnd = 4.dp,
+            )
             Column(
                 modifier = Modifier
-                    .widthIn(max = 680.dp)
-                    .clip(com.inspiredandroid.kai.ui.KaiShapes.userBubble)
+                    .widthIn(min = 48.dp, max = 680.dp)
+                    .clip(userBubbleShape)
                     .background(
                         brush = androidx.compose.ui.graphics.Brush.linearGradient(
                             colors = listOf(
@@ -87,9 +93,9 @@ internal fun UserMessage(
                                 com.inspiredandroid.kai.ui.AccentGradientEnd.copy(alpha = 0.4f),
                             ),
                         ),
-                        shape = com.inspiredandroid.kai.ui.KaiShapes.userBubble,
+                        shape = userBubbleShape,
                     )
-                    .padding(horizontal = ChatSpacing.xl, vertical = ChatSpacing.lg),
+                    .padding(horizontal = 14.dp, vertical = 8.dp),
                 horizontalAlignment = Alignment.Start,
             ) {
                 val images = attachments.filter { it.mimeType.startsWith("image/") }

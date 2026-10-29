@@ -456,6 +456,8 @@ class ChatViewModel(
         val reordered = listOf(instanceId) + currentIds.filter { it != instanceId }
         dataRepository.reorderConfiguredServices(reordered)
         updateAvailableServices()
+        _state.update { it.copy(modelsLoadedInstanceId = null) }
+        loadModels()
     }
 
     private fun updateAvailableServices() {

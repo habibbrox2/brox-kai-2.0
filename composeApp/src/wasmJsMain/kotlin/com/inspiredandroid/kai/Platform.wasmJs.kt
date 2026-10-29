@@ -105,6 +105,9 @@ actual fun PlatformBackHandler(enabled: Boolean, onBack: () -> Unit) {
     // No system back gesture on web
 }
 
+actual fun exitApp() {
+}
+
 actual suspend fun saveFileToDevice(bytes: ByteArray, baseName: String, extension: String) {
     FileKit.download(bytes = bytes, fileName = "$baseName.$extension")
 }

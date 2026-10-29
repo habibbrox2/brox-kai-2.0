@@ -181,13 +181,19 @@ fun ChatScreenContent(
     }
 
     when {
-        isKaiBuildOpen -> KaiBuildScreen(onExit = { isKaiBuildOpen = false })
+        isKaiBuildOpen -> {
+            com.inspiredandroid.kai.PlatformBackHandler(true) { isKaiBuildOpen = false }
+            KaiBuildScreen(onExit = { isKaiBuildOpen = false })
+        }
 
-        isEditorOpen -> CodeEditorScreen(
-            code = editorCode,
-            language = editorLanguage,
-            onExit = { isEditorOpen = false },
-        )
+        isEditorOpen -> {
+            com.inspiredandroid.kai.PlatformBackHandler(true) { isEditorOpen = false }
+            CodeEditorScreen(
+                code = editorCode,
+                language = editorLanguage,
+                onExit = { isEditorOpen = false },
+            )
+        }
 
         else -> ChatModeScreen(
             uiState = uiState,
@@ -234,6 +240,40 @@ private fun ChatModeScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+
+    // 1. Close Sandbox if open
+    com.inspiredandroid.kai.PlatformBackHandler(enabled = isSandboxOpen) {
+        isSandboxOpen = false
+    }
+
+    // 2. Close Sidebar Drawer if open
+    com.inspiredandroid.kai.PlatformBackHandler(enabled = drawerState.isOpen) {
+        scope.launch { drawerState.close() }
+    }
+
+    // 3. Exit interactive mode if active
+    com.inspiredandroid.kai.PlatformBackHandler(enabled = uiState.isInteractiveMode) {
+        uiState.actions.setInteractiveMode(false)
+    }
+
+    // 4. Double-back to exit on root Chat screen
+    var lastBackPressTime by remember { mutableStateOf(0L) }
+    val isRootChatActive = !drawerState.isOpen && !isSandboxOpen && !uiState.isInteractiveMode
+    com.inspiredandroid.kai.PlatformBackHandler(enabled = isRootChatActive) {
+        val now = kotlin.time.Clock.System.now().toEpochMilliseconds()
+        if (now - lastBackPressTime < 2000L) {
+            com.inspiredandroid.kai.exitApp()
+        } else {
+            lastBackPressTime = now
+            scope.launch {
+                snackbarHostState.currentSnackbarData?.dismiss()
+                snackbarHostState.showSnackbar(
+                    message = "Press back again to exit",
+                    duration = SnackbarDuration.Short,
+                )
+            }
+        }
+    }
 
     LaunchedEffect(uiState.composerPrefill) {
         val prefill = uiState.composerPrefill ?: return@LaunchedEffect
@@ -349,6 +389,8 @@ private fun ChatModeScreen(
                     modifier = Modifier
                         .width(300.dp)
                         .fillMaxHeight()
+                        .statusBarsPadding()
+                        .navigationBarsPadding()
                         .background(SurfaceRaised),
                 ) {
                     sidebar()

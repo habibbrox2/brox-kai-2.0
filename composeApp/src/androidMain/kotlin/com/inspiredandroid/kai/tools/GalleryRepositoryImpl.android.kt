@@ -66,12 +66,18 @@ class GalleryRepositoryImpl(
         dateTo: Long?,
         minWidth: Int?,
         minHeight: Int?,
+        query: String? = null,
     ): Pair<String, Array<String>> {
         val clauses = mutableListOf<String>()
         val args = mutableListOf<String>()
 
         // শুধু ইমেজ এবং ভিডিও
         clauses.add("(${MediaStore.Files.FileColumns.MIME_TYPE} LIKE 'image/%' OR ${MediaStore.Files.FileColumns.MIME_TYPE} LIKE 'video/%')")
+
+        if (!query.isNullOrBlank()) {
+            clauses.add("${MediaStore.Files.FileColumns.DISPLAY_NAME} LIKE ?")
+            args.add("%$query%")
+        }
 
         // MIME টাইপ ফিল্টার
         mimeType?.let {
@@ -219,18 +225,29 @@ class GalleryRepositoryImpl(
         // কুইরি এক্সিকিউশন IO ডিসপ্যাচারে
         val items = withContext(kotlinx.coroutines.Dispatchers.IO) {
             queryMutex.withLock {
-                val (selection, selectionArgs) = buildSelection(mimeType, dateFrom, dateTo, minWidth, minHeight)
+                val (selection, selectionArgs) = buildSelection(mimeType, dateFrom, dateTo, minWidth, minHeight, query)
                 val orderBy = buildOrderBy(sortBy)
 
                 var cursor: Cursor? = null
                 try {
-                    cursor = contentResolver.query(
-                        baseUri,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        "$orderBy LIMIT $limit OFFSET $offset",
-                    )
+                    cursor = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                        val queryArgs = android.os.Bundle().apply {
+                            putInt(android.content.ContentResolver.QUERY_ARG_LIMIT, limit)
+                            putInt(android.content.ContentResolver.QUERY_ARG_OFFSET, offset)
+                            putString(android.content.ContentResolver.QUERY_ARG_SQL_SORT_ORDER, orderBy)
+                            putString(android.content.ContentResolver.QUERY_ARG_SQL_SELECTION, selection)
+                            putStringArray(android.content.ContentResolver.QUERY_ARG_SQL_SELECTION_ARGS, selectionArgs)
+                        }
+                        contentResolver.query(baseUri, projection, queryArgs, null)
+                    } else {
+                        contentResolver.query(
+                            baseUri,
+                            projection,
+                            selection,
+                            selectionArgs,
+                            "$orderBy LIMIT $limit OFFSET $offset",
+                        )
+                    }
 
                     if (cursor != null) {
                         val items = mutableListOf<GalleryMediaItem>()

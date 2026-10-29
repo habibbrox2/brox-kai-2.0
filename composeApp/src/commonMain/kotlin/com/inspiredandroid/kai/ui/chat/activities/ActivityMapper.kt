@@ -152,7 +152,7 @@ object ActivityMapper {
     private fun parseShellResult(details: ActivityDetails.ShellCommand, resultJson: String): ActivityDetails.ShellCommand = try {
         val stdoutMatch = Regex("\"stdout\"\\s*:\\s*\"([^\"]*)\"").find(resultJson)
         val stderrMatch = Regex("\"stderr\"\\s*:\\s*\"([^\"]*)\"").find(resultJson)
-        val exitCodeMatch = Regex("\"exitCode\"\\s*:\\s*(-?\\d+)").find(resultJson)
+        val exitCodeMatch = Regex("\"(?:exitCode|exit_code)\"\\s*:\\s*(-?\\d+)").find(resultJson)
         details.copy(
             stdout = stdoutMatch?.groupValues?.get(1)?.replace("\\n", "\n"),
             stderr = stderrMatch?.groupValues?.get(1)?.replace("\\n", "\n"),

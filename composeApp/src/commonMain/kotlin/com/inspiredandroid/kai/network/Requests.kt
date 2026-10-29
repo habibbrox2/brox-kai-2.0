@@ -510,10 +510,14 @@ class Requests {
 
     // region Helpers
 
-    private fun resolveUrl(service: Service, credentials: ServiceCredentials, path: String): String = if (service == Service.OpenAICompatible) {
-        "${Service.normalizeOpenAICompatibleBaseUrl(credentials.baseUrl)}$path"
-    } else {
-        path
+    private fun resolveUrl(service: Service, credentials: ServiceCredentials, path: String): String {
+        val customBase = credentials.baseUrl.trim()
+        if (customBase.isNotEmpty()) {
+            val base = Service.normalizeOpenAICompatibleBaseUrl(customBase)
+            val relPath = if (path.startsWith("/")) path else "/$path"
+            return "$base$relPath"
+        }
+        return path
     }
 
     private fun getApiKeyOrThrow(service: Service, credentials: ServiceCredentials): String? {

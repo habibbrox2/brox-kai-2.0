@@ -225,8 +225,6 @@ private fun ReasoningBlockquote(
     modifier: Modifier = Modifier,
 ) {
     var expanded by remember { mutableStateOf(false) }
-    // Preview always reflects the MOST RECENT thinking segment so the user gets a
-    // visual update each time a new reasoning phase starts, without expanding.
     val preview = remember(segments) {
         segments.lastOrNull()
             ?.lineSequence()
@@ -235,30 +233,52 @@ private fun ReasoningBlockquote(
             .orEmpty()
     }
 
-    Column(modifier = modifier) {
+    // Claude Code Style Collapsible Execution Log:
+    // border-left: 2px solid #06B6D4, subtle monospace status text, expandable
+    Column(
+        modifier = modifier
+            .padding(vertical = 4.dp)
+            .clip(androidx.compose.foundation.shape.RoundedCornerShape(0.dp, 8.dp, 8.dp, 0.dp))
+            .background(androidx.compose.ui.graphics.Color(0xFF0A0E14))
+            .border(
+                androidx.compose.foundation.BorderStroke(1.dp, androidx.compose.ui.graphics.Color(0xFF1E293B)),
+                androidx.compose.foundation.shape.RoundedCornerShape(0.dp, 8.dp, 8.dp, 0.dp),
+            ),
+    ) {
         Row(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .clickable { expanded = !expanded }
-                .handCursor(),
+                .handCursor()
+                .padding(horizontal = 10.dp, vertical = 7.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            // Left accent bar
+            Box(
+                modifier = Modifier
+                    .size(width = 3.dp, height = 16.dp)
+                    .background(androidx.compose.ui.graphics.Color(0xFF06B6D4), androidx.compose.foundation.shape.RoundedCornerShape(2.dp)),
+            )
+            Spacer(Modifier.size(8.dp))
             Icon(
                 imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                 contentDescription = stringResource(Res.string.bot_message_thinking_expand_content_description),
-                tint = TextSecondary,
+                tint = androidx.compose.ui.graphics.Color(0xFF06B6D4),
                 modifier = Modifier.size(16.dp),
             )
             Spacer(Modifier.size(6.dp))
             Text(
-                text = stringResource(Res.string.bot_message_thinking_label),
-                style = KaiTypography.labelMedium,
-                color = TextSecondary,
+                text = if (segments.size > 1) "Thinking (${segments.size} steps)" else stringResource(Res.string.bot_message_thinking_label),
+                style = KaiTypography.labelSmall,
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                color = androidx.compose.ui.graphics.Color(0xFF94A3B8),
             )
             if (!expanded && preview.isNotEmpty()) {
                 Text(
                     text = " · $preview",
                     style = KaiTypography.bodySmall,
-                    color = TextSecondary,
+                    fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                    color = androidx.compose.ui.graphics.Color(0xFF64748B),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f).padding(start = 4.dp),
@@ -271,24 +291,20 @@ private fun ReasoningBlockquote(
             exit = shrinkVertically(),
         ) {
             Column(
-                modifier = Modifier.padding(top = 6.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 for (segment in segments) {
-                    Row(modifier = Modifier.height(IntrinsicSize.Min)) {
-                        VerticalDivider(
-                            thickness = 2.dp,
-                            color = com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.6f),
-                            modifier = Modifier.fillMaxHeight(),
+                    SelectionContainer {
+                        Text(
+                            text = segment,
+                            color = androidx.compose.ui.graphics.Color(0xFFCBD5E1),
+                            style = KaiTypography.bodySmall,
+                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                            lineHeight = KaiTypography.bodySmall.lineHeight * 1.25f,
                         )
-                        SelectionContainer(modifier = Modifier.padding(start = 12.dp)) {
-                            Text(
-                                text = segment,
-                                color = TextSecondary,
-                                style = KaiTypography.bodySmall,
-                                lineHeight = KaiTypography.bodySmall.lineHeight * 1.2f,
-                            )
-                        }
                     }
                 }
             }

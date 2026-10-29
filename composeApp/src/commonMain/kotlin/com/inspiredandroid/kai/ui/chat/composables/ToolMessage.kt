@@ -14,6 +14,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -73,7 +75,6 @@ internal fun WaitingResponseRow(
     statusText: String? = null,
 ) {
     val summary = statusText ?: toolSummaryText(executingTools)
-    val effectiveStatusOnly = isStatusOnly || statusText != null
     val waitingCd = stringResource(Res.string.waiting_content_description)
 
     Row(
@@ -81,25 +82,32 @@ internal fun WaitingResponseRow(
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clipToBounds(),
     ) {
-        Box(
+        // Claude Code Style inline execution status indicator
+        Row(
             modifier = Modifier
-                .background(
-                    CardFill,
-                    KaiShapes.xs,
+                .clip(androidx.compose.foundation.shape.RoundedCornerShape(8.dp))
+                .background(androidx.compose.ui.graphics.Color(0xFF0A0E14))
+                .border(
+                    androidx.compose.foundation.BorderStroke(1.dp, androidx.compose.ui.graphics.Color(0xFF1E293B)),
+                    androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
                 )
-                .animateContentSize(
-                    animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing),
-                )
-                .padding(12.dp)
+                .padding(horizontal = 12.dp, vertical = 8.dp)
                 .semantics { contentDescription = waitingCd },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp),
         ) {
-            PulsingStatusIndicator(
-                toolSummary = summary,
-                isStatusOnly = effectiveStatusOnly,
-                dotSize = 16.dp,
-                dotColor = TextSecondary,
-                textColor = TextSecondary,
-                textStyle = KaiTypography.bodyMedium,
+            androidx.compose.material3.CircularProgressIndicator(
+                modifier = Modifier.size(13.dp),
+                strokeWidth = 2.dp,
+                color = androidx.compose.ui.graphics.Color(0xFF22D3EE),
+            )
+            Text(
+                text = summary ?: stringResource(Res.string.waiting_thinking),
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                style = KaiTypography.labelSmall,
+                color = androidx.compose.ui.graphics.Color(0xFFCBD5E1),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }

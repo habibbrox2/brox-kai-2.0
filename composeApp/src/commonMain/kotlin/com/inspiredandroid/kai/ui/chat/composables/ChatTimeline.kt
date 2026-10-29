@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -227,18 +228,19 @@ fun ChatTimeline(
         }
     }
 
-    Box(modifier = modifier.fillMaxHeight(), contentAlignment = Alignment.Center) {
+    Box(modifier = modifier.fillMaxHeight().clipToBounds(), contentAlignment = Alignment.Center) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
                 .widthIn(max = 820.dp)
+                .clipToBounds()
                 .semantics { liveRegion = LiveRegionMode.Polite },
             state = listState,
             horizontalAlignment = Alignment.CenterHorizontally,
             contentPadding = androidx.compose.foundation.layout.PaddingValues(
-                top = com.inspiredandroid.kai.ui.chat.ChatSpacing.lg,
-                bottom = com.inspiredandroid.kai.ui.chat.ChatSpacing.xl,
+                top = 12.dp,
+                bottom = 16.dp,
             ),
         ) {
             items(uiState.history, key = { it.id }, contentType = { it.role }) { history ->

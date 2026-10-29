@@ -36,8 +36,8 @@ class ParameterExtractionToolImpl : Tool {
     override val schema = ParameterExtractionTool.schema
 
     override suspend fun execute(args: Map<String, Any>): Any {
-        val text = args["text"] as? String ?: return mapOf("success" to false, "error" to "text is required")
-        val toolSchemaJson = args["toolSchema"] as? String ?: return mapOf("success" to false, "error" to "toolSchema is required")
+        val text = args["text"]?.toString() ?: return mapOf("success" to false, "error" to "text is required")
+        val toolSchema = args["toolSchema"] ?: return mapOf("success" to false, "error" to "toolSchema is required")
 
         // Placeholder - full implementation would use LLM to extract parameters
         return mapOf(
@@ -58,7 +58,7 @@ class ResultSummarizationToolImpl : Tool {
 
     override suspend fun execute(args: Map<String, Any>): Any {
         val toolName = args["toolName"] as? String ?: return mapOf("success" to false, "error" to "toolName is required")
-        val resultJson = args["result"] as? String ?: return mapOf("success" to false, "error" to "result is required")
+        val resultData = args["result"] ?: return mapOf("success" to false, "error" to "result is required")
         val context = args["context"] as? String
 
         // Placeholder - full implementation would use LLM to summarize
