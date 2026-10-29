@@ -9,7 +9,7 @@ name: Auto Release
 #      is the fixed brand name, only the 2.0.x version changes per release.
 # The bump commit is pushed with the workflow GITHUB_TOKEN, which does not
 # retrigger workflows, so there is no release loop.
-# APK signing is optional — if keystore secrets are not set, an unsigned APK is produced.
+# APK signing: if release keystore secrets are not set, the APK is signed with the debug keystore fallback so it installs cleanly on Android devices.
 
 on:
   push:
@@ -93,6 +93,8 @@ jobs:
       - name: Sign APK
         if: env.KEYSTORE_B64 != '' && env.KEY_ALIAS != '' && env.KEYSTORE_PASSWORD != ''
         uses: r0adkll/sign-android-release@v1
+        env:
+          BUILD_TOOLS_VERSION: "36.0.0"
         with:
           releaseDirectory: androidApp/build/outputs/apk/foss/release
           signingKeyBase64: ${{ secrets.KEYSTORE_B64 }}
@@ -162,8 +164,12 @@ jobs:
           if [ -f androidApp-foss-release-signed.apk ]; then
             mv androidApp-foss-release-signed.apk "Brox-Kai-2.0-v${VERSION}-Android.apk"
             rm -f androidApp-foss-release*.apk
+          elif [ -f androidApp-foss-release.apk ]; then
+            mv androidApp-foss-release.apk "Brox-Kai-2.0-v${VERSION}-Android.apk"
+            rm -f androidApp-foss-release*.apk
           else
-            mv androidApp-foss-release*.apk "Brox-Kai-2.0-v${VERSION}-Android.apk"
+            echo "::error::No signed APK found! Android will reject an unsigned APK as an invalid package."
+            exit 1
           fi
           mv *.msi "Brox-Kai-2.0-v${VERSION}-Windows-x64.msi"
           ls -la

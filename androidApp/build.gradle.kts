@@ -72,7 +72,9 @@ android {
             val ksFile = System.getenv("KEYSTORE_FILE")
             val ksPassword = System.getenv("KEYSTORE_PASSWORD")
             val ksAlias = System.getenv("KEY_ALIAS")
-            if (ksFile == null || ksPassword == null || ksAlias == null) {
+            if (ksFile != null && ksPassword != null && ksAlias != null) {
+                signingConfig = signingConfigs.getByName("release")
+            } else {
                 // Only enforce for CI/release workflows or when explicitly requested
                 val enforceSigning = System.getenv("ENFORCE_RELEASE_SIGNING") == "true"
                 if (enforceSigning) {
@@ -80,8 +82,8 @@ android {
                         "Release builds require KEYSTORE_FILE, KEYSTORE_PASSWORD, and KEY_ALIAS environment variables for release signing. Use release.yml workflow or provide signing credentials.",
                     )
                 }
-            } else {
-                signingConfig = signingConfigs.getByName("release")
+                // Fallback to debug keystore so release builds are always signed and installable on Android devices
+                signingConfig = signingConfigs.getByName("debug")
             }
         }
     }
