@@ -8,10 +8,10 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -20,15 +20,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
-import com.inspiredandroid.kai.ui.components.KaiSearchField
-import com.inspiredandroid.kai.PlatformBackHandler
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -59,9 +55,12 @@ import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.window.PopupProperties
+import com.inspiredandroid.kai.PlatformBackHandler
 import com.inspiredandroid.kai.data.ServiceEntry
 import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.BorderSoft
@@ -71,6 +70,7 @@ import com.inspiredandroid.kai.ui.KaiTypography
 import com.inspiredandroid.kai.ui.SurfaceRaised
 import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.TextSecondary
+import com.inspiredandroid.kai.ui.components.KaiSearchField
 import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.isOledFlavor
 import com.inspiredandroid.kai.ui.settings.SettingsModel
@@ -218,13 +218,21 @@ internal fun ServiceSelector(
 
             var searchQuery by remember { mutableStateOf("") }
             val filteredModels = remember(models, searchQuery) {
-                if (searchQuery.isBlank()) models else models.filter {
-                    (it.displayName ?: it.id).contains(searchQuery, ignoreCase = true) || it.id.contains(searchQuery, ignoreCase = true)
+                if (searchQuery.isBlank()) {
+                    models
+                } else {
+                    models.filter {
+                        (it.displayName ?: it.id).contains(searchQuery, ignoreCase = true) || it.id.contains(searchQuery, ignoreCase = true)
+                    }
                 }
             }
             val filteredServices = remember(services, searchQuery) {
-                if (searchQuery.isBlank()) services else services.filter {
-                    it.serviceName.contains(searchQuery, ignoreCase = true) || it.modelId.contains(searchQuery, ignoreCase = true)
+                if (searchQuery.isBlank()) {
+                    services
+                } else {
+                    services.filter {
+                        it.serviceName.contains(searchQuery, ignoreCase = true) || it.modelId.contains(searchQuery, ignoreCase = true)
+                    }
                 }
             }
 
