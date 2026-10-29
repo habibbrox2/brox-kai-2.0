@@ -127,7 +127,7 @@ internal fun CodeFenceBlock(
                     if (onOpenInEditor != null) {
                         IconButton(
                             onClick = { onOpenInEditor(code, language) },
-                            modifier = Modifier.size(28.dp).handCursor(),
+                            modifier = Modifier.size(32.dp).handCursor(),
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Edit,
@@ -141,7 +141,7 @@ internal fun CodeFenceBlock(
                         TextButton(
                             onClick = onRunInSandbox,
                             modifier = Modifier
-                                .height(26.dp)
+                                .height(30.dp)
                                 .padding(horizontal = 6.dp)
                                 .handCursor(),
                             colors = ButtonDefaults.textButtonColors(
@@ -189,7 +189,7 @@ internal fun CodeFenceBlock(
                                 copyToClipboard(code)
                                 isCopied = true
                             },
-                            modifier = Modifier.size(28.dp).handCursor(),
+                            modifier = Modifier.size(32.dp).handCursor(),
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.ContentCopy,

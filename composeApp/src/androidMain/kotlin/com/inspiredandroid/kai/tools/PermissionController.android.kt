@@ -85,9 +85,26 @@ private fun permissionsFor(permission: AppPermission): Array<String> = when (per
 
 private val androidContext: Context by inject(Context::class.java)
 
-internal actual fun platformHasPermission(permission: AppPermission): Boolean = permissionsFor(permission).all {
-    ContextCompat.checkSelfPermission(androidContext, it) == PackageManager.PERMISSION_GRANTED
+internal actual fun platformHasPermission(permission: AppPermission): Boolean = when (permission) {
+    AppPermission.GALLERY -> when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> {
+            ContextCompat.checkSelfPermission(androidContext, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(androidContext, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED) == PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(androidContext, Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED
+        }
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+            ContextCompat.checkSelfPermission(androidContext, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(androidContext, Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED
+        }
+        else -> {
+            ContextCompat.checkSelfPermission(androidContext, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+        }
+    }
+    else -> permissionsFor(permission).all {
+        ContextCompat.checkSelfPermission(androidContext, it) == PackageManager.PERMISSION_GRANTED
+    }
 }
+
 
 internal actual fun platformCanRequest(permission: AppPermission): Boolean = permissionsFor(permission).isNotEmpty()
 
@@ -110,7 +127,12 @@ actual fun SetupPermissionHandler(controller: PermissionController) {
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
     ) { permissions ->
-        controller.onPermissionResult(permissions.values.all { it })
+        val granted = if (controller.permission == AppPermission.GALLERY) {
+            permissions.values.any { it }
+        } else {
+            permissions.values.all { it }
+        }
+        controller.onPermissionResult(granted)
     }
 
     LaunchedEffect(permissionRequested) {

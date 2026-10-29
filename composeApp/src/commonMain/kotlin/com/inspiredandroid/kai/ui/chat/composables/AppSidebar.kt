@@ -137,8 +137,6 @@ fun AppSidebar(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .statusBarsPadding()
-            .navigationBarsPadding()
             .background(sidebarBg)
             .border(
                 if (isOled) {

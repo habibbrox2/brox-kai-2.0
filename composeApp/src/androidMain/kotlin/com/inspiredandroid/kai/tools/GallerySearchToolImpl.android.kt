@@ -2,7 +2,9 @@ package com.inspiredandroid.kai.tools
 
 import com.inspiredandroid.kai.data.GalleryMediaItem
 import com.inspiredandroid.kai.network.tools.Tool
+import com.inspiredandroid.kai.permissionQualifier
 import kotlinx.coroutines.flow.first
+import org.koin.java.KoinJavaComponent
 import org.koin.java.KoinJavaComponent.inject
 
 /**
@@ -11,10 +13,23 @@ import org.koin.java.KoinJavaComponent.inject
  */
 class GallerySearchToolImpl : Tool {
     private val galleryRepository: GalleryRepository by inject(GalleryRepository::class.java)
+    private val galleryPermissionController: GalleryPermissionController by inject(GalleryPermissionController::class.java)
+    private val permissionController: PermissionController =
+        KoinJavaComponent.get(PermissionController::class.java, permissionQualifier(AppPermission.GALLERY))
 
     override val schema = GallerySearchTool.schema
 
     override suspend fun execute(args: Map<String, Any>): Any = try {
+        if (!galleryPermissionController.canQueryMediaStore()) {
+            val granted = permissionController.requestPermission()
+            if (!granted) {
+                return mapOf(
+                    "success" to false,
+                    "error" to "Gallery permission not granted. Please allow photo and media access.",
+                    "messageBengali" to "গ্যালারির অনুমতি প্রদান করা হয়নি। দয়া করে ছবির অনুমতি দিন।",
+                )
+            }
+        }
         val query = args["query"] as? String
         val mimeType = args["mimeType"] as? String
         val dateFrom = (args["dateFrom"] as? Number)?.toLong()

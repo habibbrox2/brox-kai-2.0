@@ -277,19 +277,21 @@ actual fun getAvailableTools(): List<Tool> {
         } else {
             null
         }
-        if (smsReaderForTools != null && appSettings.isSmsEnabled() && smsReaderForTools.hasPermission()) {
+        if (smsReaderForTools != null && appSettings.isSmsEnabled()) {
             val smsStore: SmsStore by inject(SmsStore::class.java)
-            addAll(SmsTools.getSmsReadTools(smsStore, smsReaderForTools))
+            val smsPermissionController: PermissionController =
+                KoinJavaComponent.get(PermissionController::class.java, permissionQualifier(AppPermission.READ_SMS))
+            addAll(SmsTools.getSmsReadTools(smsStore, smsReaderForTools, smsPermissionController))
         }
 
-        // SMS send tools: independently gated on the Send toggle + SEND_SMS permission.
+        // SMS send tools: independently gated on the Send toggle.
         // These only *stage* drafts — actual sending is user-triggered via the review banner.
         if (smsReaderForTools != null && appSettings.isSmsSendEnabled()) {
             val smsSender: SmsSender by inject(SmsSender::class.java)
-            if (smsSender.hasPermission()) {
-                val smsDraftStore: SmsDraftStore by inject(SmsDraftStore::class.java)
-                addAll(SmsTools.getSmsSendTools(smsDraftStore, smsReaderForTools, smsSender))
-            }
+            val smsDraftStore: SmsDraftStore by inject(SmsDraftStore::class.java)
+            val smsSendPermissionController: PermissionController =
+                KoinJavaComponent.get(PermissionController::class.java, permissionQualifier(AppPermission.SEND_SMS))
+            addAll(SmsTools.getSmsSendTools(smsDraftStore, smsReaderForTools, smsSender, smsSendPermissionController))
         }
 
         // Notification tools: triple-gated. `isNotificationsSupported` is FOSS-only
@@ -309,10 +311,8 @@ actual fun getAvailableTools(): List<Tool> {
         // Downloads status tool - always available for permission status checking
         add(DownloadsStatusToolImpl())
 
-        // Gallery search tool - available when gallery permission is granted
-        if (galleryPermissionController.hasBaseGalleryAccess()) {
-            add(GallerySearchToolImpl())
-        }
+        // Gallery search tool - always available, requests runtime permission if needed
+        add(GallerySearchToolImpl())
 
         // OCR tool - always available on Android with ML Kit
         val ocrTool = OcrToolImpl()

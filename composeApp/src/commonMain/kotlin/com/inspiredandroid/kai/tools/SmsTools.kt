@@ -36,7 +36,7 @@ object SmsTools {
         "is_read" to msg.read,
     )
 
-    fun checkSmsTool(smsStore: SmsStore, smsReader: SmsReader) = object : Tool {
+    fun checkSmsTool(smsStore: SmsStore, smsReader: SmsReader, permissionController: PermissionController? = null) = object : Tool {
         override val schema = ToolSchema(
             name = "check_sms",
             description = "List recently received SMS messages that the user hasn't been shown yet. " +
@@ -50,10 +50,13 @@ object SmsTools {
                 return mapOf("success" to false, "error" to "SMS is not available on this build")
             }
             if (!smsReader.hasPermission()) {
-                return mapOf(
-                    "success" to false,
-                    "error" to "SMS permission not granted. Ask the user to enable SMS in Settings.",
-                )
+                val granted = permissionController?.requestPermission() ?: false
+                if (!granted) {
+                    return mapOf(
+                        "success" to false,
+                        "error" to "SMS permission not granted. Ask the user to enable SMS in Settings.",
+                    )
+                }
             }
             val pending = smsStore.getPending()
             return mapOf(
@@ -64,7 +67,7 @@ object SmsTools {
         }
     }
 
-    fun readSmsTool(smsReader: SmsReader) = object : Tool {
+    fun readSmsTool(smsReader: SmsReader, permissionController: PermissionController? = null) = object : Tool {
         override val schema = ToolSchema(
             name = "read_sms",
             description = "Read the full body of a specific SMS by its id. Use check_sms or search_sms first to find an id.",
@@ -78,7 +81,10 @@ object SmsTools {
                 return mapOf("success" to false, "error" to "SMS is not available on this build")
             }
             if (!smsReader.hasPermission()) {
-                return mapOf("success" to false, "error" to "SMS permission not granted")
+                val granted = permissionController?.requestPermission() ?: false
+                if (!granted) {
+                    return mapOf("success" to false, "error" to "SMS permission not granted")
+                }
             }
             val id = (args["id"] as? Number)?.toLong()
                 ?: (args["id"] as? String)?.toLongOrNull()
@@ -96,7 +102,7 @@ object SmsTools {
         }
     }
 
-    fun searchSmsTool(smsReader: SmsReader) = object : Tool {
+    fun searchSmsTool(smsReader: SmsReader, permissionController: PermissionController? = null) = object : Tool {
         override val schema = ToolSchema(
             name = "search_sms",
             description = "Search SMS messages by sender (phone number) or body text. Returns newest-first, up to 20 matches.",
@@ -110,7 +116,10 @@ object SmsTools {
                 return mapOf("success" to false, "error" to "SMS is not available on this build")
             }
             if (!smsReader.hasPermission()) {
-                return mapOf("success" to false, "error" to "SMS permission not granted")
+                val granted = permissionController?.requestPermission() ?: false
+                if (!granted) {
+                    return mapOf("success" to false, "error" to "SMS permission not granted")
+                }
             }
             val query = args["query"]?.toString()?.trim()
             if (query.isNullOrBlank()) {
@@ -174,14 +183,14 @@ object SmsTools {
     val smsSendToolDefinitions = listOf(sendSmsToolInfo, replySmsToolInfo)
     val smsToolDefinitions = smsReadToolDefinitions + smsSendToolDefinitions
 
-    fun getSmsReadTools(smsStore: SmsStore, smsReader: SmsReader): List<Tool> = listOf(
-        checkSmsTool(smsStore, smsReader),
-        readSmsTool(smsReader),
-        searchSmsTool(smsReader),
+    fun getSmsReadTools(smsStore: SmsStore, smsReader: SmsReader, permissionController: PermissionController? = null): List<Tool> = listOf(
+        checkSmsTool(smsStore, smsReader, permissionController),
+        readSmsTool(smsReader, permissionController),
+        searchSmsTool(smsReader, permissionController),
     )
 
     @OptIn(ExperimentalUuidApi::class, ExperimentalTime::class)
-    fun sendSmsTool(smsDraftStore: SmsDraftStore, smsSender: SmsSender) = object : Tool {
+    fun sendSmsTool(smsDraftStore: SmsDraftStore, smsSender: SmsSender, permissionController: PermissionController? = null) = object : Tool {
         override val schema = ToolSchema(
             name = "send_sms",
             description = "Draft an outgoing SMS. The draft is staged in a banner at the top of the chat " +
@@ -195,10 +204,13 @@ object SmsTools {
 
         override suspend fun execute(args: Map<String, Any>): Any {
             if (!smsSender.hasPermission()) {
-                return mapOf(
-                    "success" to false,
-                    "error" to "SMS send permission not granted. Ask the user to enable 'Send SMS' in Settings.",
-                )
+                val granted = permissionController?.requestPermission() ?: false
+                if (!granted) {
+                    return mapOf(
+                        "success" to false,
+                        "error" to "SMS send permission not granted. Ask the user to enable 'Send SMS' in Settings.",
+                    )
+                }
             }
             val to = args["to"]?.toString()?.trim()
             val body = args["body"]?.toString()
@@ -223,7 +235,7 @@ object SmsTools {
     }
 
     @OptIn(ExperimentalUuidApi::class, ExperimentalTime::class)
-    fun replySmsTool(smsDraftStore: SmsDraftStore, smsReader: SmsReader, smsSender: SmsSender) = object : Tool {
+    fun replySmsTool(smsDraftStore: SmsDraftStore, smsReader: SmsReader, smsSender: SmsSender, permissionController: PermissionController? = null) = object : Tool {
         override val schema = ToolSchema(
             name = "reply_sms",
             description = "Draft a reply to a received SMS. Looks up the original by id to pick the sender, then stages a draft " +
@@ -236,10 +248,13 @@ object SmsTools {
 
         override suspend fun execute(args: Map<String, Any>): Any {
             if (!smsSender.hasPermission()) {
-                return mapOf(
-                    "success" to false,
-                    "error" to "SMS send permission not granted. Ask the user to enable 'Send SMS' in Settings.",
-                )
+                val granted = permissionController?.requestPermission() ?: false
+                if (!granted) {
+                    return mapOf(
+                        "success" to false,
+                        "error" to "SMS send permission not granted. Ask the user to enable 'Send SMS' in Settings.",
+                    )
+                }
             }
             val smsId = (args["sms_id"] as? Number)?.toLong()
                 ?: (args["sms_id"] as? String)?.toLongOrNull()
@@ -276,9 +291,10 @@ object SmsTools {
         smsDraftStore: SmsDraftStore,
         smsReader: SmsReader,
         smsSender: SmsSender,
+        permissionController: PermissionController? = null,
     ): List<Tool> = listOf(
-        sendSmsTool(smsDraftStore, smsSender),
-        replySmsTool(smsDraftStore, smsReader, smsSender),
+        sendSmsTool(smsDraftStore, smsSender, permissionController),
+        replySmsTool(smsDraftStore, smsReader, smsSender, permissionController),
     )
 
     private const val SEARCH_LIMIT = 20

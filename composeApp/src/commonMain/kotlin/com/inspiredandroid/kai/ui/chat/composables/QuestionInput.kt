@@ -199,7 +199,7 @@ internal fun CircleIconButton(
 ) {
     Box(
         modifier = modifier
-            .size(42.dp)
+            .size(48.dp)
             .clip(CircleShape)
             .clickable { onClick() }
             .handCursor(),
@@ -367,7 +367,14 @@ fun QuestionInput(
                         .focusRequester(focusRequester)
                         .heightIn(max = maxComposerHeight)
                         .fillMaxWidth(),
-                    colors = outlineTextFieldColors(),
+                    colors = outlineTextFieldColors().copy(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        disabledContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                    ),
                     placeholder = {
                         Text(
                             stringResource(Res.string.prompt_ask_question),

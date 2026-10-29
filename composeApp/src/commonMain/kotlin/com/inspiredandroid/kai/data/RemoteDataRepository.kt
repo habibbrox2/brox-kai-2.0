@@ -391,7 +391,9 @@ class RemoteDataRepository(
             Service.Free -> { /* Always valid */ }
 
             Service.OpenRouter -> {
-                requests.validateOpenRouterApiKey(creds).getOrThrow()
+                if (creds.apiKey.isNotEmpty()) {
+                    requests.validateOpenRouterApiKey(creds).getOrThrow()
+                }
                 fetchInstanceModels(service, instanceId)
             }
 
@@ -445,7 +447,16 @@ class RemoteDataRepository(
                             null
                         }
                         if (remoteModels != null && remoteModels.isNotEmpty()) {
-                            mapOpenAICompatibleModels(remoteModels, service, selectedModelId)
+                            val mapped = mapOpenAICompatibleModels(remoteModels, service, selectedModelId)
+                            val defaultModelsToAdd = service.defaultModels.filter { def -> mapped.none { it.id == def.id } }.map {
+                                SettingsModel(
+                                    id = it.id,
+                                    subtitle = it.subtitle,
+                                    descriptionRes = it.descriptionRes,
+                                    isSelected = it.id == selectedModelId,
+                                )
+                            }
+                            defaultModelsToAdd + mapped
                         } else if (service.defaultModels.isNotEmpty()) {
                             service.defaultModels.map {
                                 SettingsModel(

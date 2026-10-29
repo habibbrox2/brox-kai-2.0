@@ -29,7 +29,8 @@ class GalleryPermissionController(private val context: Context) {
 
             sdk >= Build.VERSION_CODES.TIRAMISU ->
                 hasPermission(Manifest.permission.READ_MEDIA_IMAGES) ||
-                    hasPermission(Manifest.permission.READ_MEDIA_VIDEO)
+                    hasPermission(Manifest.permission.READ_MEDIA_VIDEO) ||
+                    (sdk >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE && hasPermission(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED))
 
             else -> false
         }
