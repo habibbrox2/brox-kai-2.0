@@ -32,6 +32,8 @@ internal object FreeTierModels {
         "nvidia/nemotron-nano-9b-v2:free",
         "openai/gpt-oss-20b:free",
         "openrouter/free",
+        "openrouter/auto",
+        "auto",
         "poolside/laguna-s-2.1:free",
         "poolside/laguna-xs-2.1:free",
     )

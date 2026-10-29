@@ -44,7 +44,7 @@ class ParameterExtractionToolImpl : Tool {
             "success" to false,
             "error" to "Parameter extraction requires LLM integration. Received text: $text",
             "receivedText" to text,
-            "receivedSchema" to toolSchemaJson,
+            "receivedSchema" to toolSchema.toString(),
         )
     }
 }
@@ -67,7 +67,7 @@ class ResultSummarizationToolImpl : Tool {
             "error" to "Result summarization requires LLM integration. Tool: $toolName",
             "toolName" to toolName,
             "context" to context,
-            "resultPreview" to resultJson.take(200),
+            "resultPreview" to resultData.toString().take(200),
         )
     }
 }

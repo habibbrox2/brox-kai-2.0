@@ -35,6 +35,8 @@ internal data class CuratedModelInfo(
 internal object ModelCatalog {
 
     private val baseEntries: Map<String, CuratedModelInfo> = mapOf(
+        "openrouter/auto" to CuratedModelInfo("Auto", 128_000, "2025-01"),
+        "auto" to CuratedModelInfo("Auto", 128_000, "2025-01"),
         // ==============================================================
         // Anthropic Claude
         // ==============================================================

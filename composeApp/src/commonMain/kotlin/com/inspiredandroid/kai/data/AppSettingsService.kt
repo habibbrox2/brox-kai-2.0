@@ -150,13 +150,12 @@ fun AppSettings.generateInstanceId(serviceId: String): String {
  * anything. Kilo comes first: it is the widest free catalogue of the two.
  */
 private val DEFAULT_SERVICE_INSTANCES = listOf(
-    ServiceInstance(instanceId = Service.Kilo.id, serviceId = Service.Kilo.id),
-    ServiceInstance(instanceId = Service.OpenCode.id, serviceId = Service.OpenCode.id),
+    ServiceInstance(instanceId = Service.OpenRouter.id, serviceId = Service.OpenRouter.id),
 )
 
 /**
  * Seeds the default providers on a bare install so chatting works without any setup.
- *
+ * OpenRouter serves as the hidden default gateway with the "Auto" free models alias.
  * Runs once per install (guarded by [KEY_DEFAULT_SERVICES_SEEDED]). An
  * install that already has services keeps exactly what it has — the defaults are a starting
  * point, not something that overrides the user's own setup.
@@ -168,7 +167,6 @@ fun AppSettings.seedDefaultServicesIfNeeded() {
     if (getConfiguredServiceInstances().isNotEmpty()) return
 
     setConfiguredServiceInstances(DEFAULT_SERVICE_INSTANCES)
-    // Preselect each provider's free model, so the very first message already has one.
-    setInstanceModelId(Service.Kilo.id, Service.Kilo.defaultModel.orEmpty())
-    setInstanceModelId(Service.OpenCode.id, Service.OpenCode.defaultModel.orEmpty())
+    // Preselect OpenRouter with "openrouter/auto" alias for free models
+    setInstanceModelId(Service.OpenRouter.id, "openrouter/auto")
 }

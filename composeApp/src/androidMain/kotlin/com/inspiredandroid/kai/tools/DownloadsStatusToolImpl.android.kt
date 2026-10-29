@@ -20,7 +20,7 @@ class DownloadsStatusToolImpl : Tool {
         return mapOf(
             "success" to true,
             "overallCoverage" to accessState.overallCoverage.displayName,
-            "sources" to sourcesInfo.map { it.toMap() },
+            "sources" to sourcesInfo.map { mapOf("name" to it.name, "isAvailable" to it.isAvailable, "coverage" to it.coverage.name) },
             "hasLegacyPermission" to accessState.hasLegacyPermission,
             "canQueryDownloadManager" to downloadsPermissionController.canQueryDownloadManager(),
             "canQueryMediaStore" to downloadsPermissionController.canQueryMediaStoreDownloads(),

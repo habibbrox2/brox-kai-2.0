@@ -243,19 +243,15 @@ class AppSettingsTest {
     // region Default provider seeding
 
     @Test
-    fun `a bare install starts with the keyless free providers and their free models selected`() {
+    fun `a bare install starts with the default provider and auto model selected`() {
         val appSettings = AppSettings(MapSettings())
 
         appSettings.seedDefaultServicesIfNeeded()
 
         val instances = appSettings.getConfiguredServiceInstances()
-        assertEquals(listOf(Service.Kilo.id, Service.OpenCode.id), instances.map { it.serviceId })
-        // Both serve free models without a key, so chatting works before any setup.
-        assertFalse(Service.Kilo.requiresApiKey)
-        assertFalse(Service.OpenCode.requiresApiKey)
-        // The free model of each provider is pre-selected.
-        assertEquals("kilo-auto/free", appSettings.getInstanceModelId(Service.Kilo.id))
-        assertEquals("big-pickle", appSettings.getInstanceModelId(Service.OpenCode.id))
+        assertEquals(listOf(Service.OpenRouter.id), instances.map { it.serviceId })
+        assertFalse(Service.OpenRouter.requiresApiKey)
+        assertEquals("openrouter/auto", appSettings.getInstanceModelId(Service.OpenRouter.id))
     }
 
     @Test
@@ -275,7 +271,7 @@ class AppSettingsTest {
         val appSettings = AppSettings(MapSettings())
 
         appSettings.seedDefaultServicesIfNeeded()
-        assertEquals(2, appSettings.getConfiguredServiceInstances().size)
+        assertEquals(1, appSettings.getConfiguredServiceInstances().size)
 
         appSettings.setConfiguredServiceInstances(
             listOf(ServiceInstance(Service.OpenCode.id, Service.OpenCode.id)),

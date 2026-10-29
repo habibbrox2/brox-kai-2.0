@@ -100,9 +100,13 @@ internal fun ServiceSelector(
     // The model the chat will actually use: the effective id of the active instance, shown
     // under the name the provider gives it when the list is loaded.
     val currentModelLabel = remember(current.modelId, models) {
-        models.firstOrNull { it.id == current.modelId }?.let { model ->
-            model.displayName?.takeIf { it.isNotBlank() } ?: model.id
-        } ?: current.modelId
+        if (current.modelId == "openrouter/auto" || current.modelId == "auto") {
+            "Auto"
+        } else {
+            models.firstOrNull { it.id == current.modelId }?.let { model ->
+                model.displayName?.takeIf { it.isNotBlank() } ?: model.id
+            } ?: current.modelId
+        }
     }
 
     // Ask for the provider's model list when the picker opens, so the choices are complete

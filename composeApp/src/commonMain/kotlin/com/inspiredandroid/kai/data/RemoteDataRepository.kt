@@ -958,75 +958,37 @@ class RemoteDataRepository(
         val messages = chatHistory.value
         val systemPrompt = getActiveSystemPrompt()
 
-        val fallbackEntries = getOrderedFallbackEntries().filter { hasValidInstanceApiKey(it.instanceId, it.service) }
+        val service = currentService()
+        val configuredInstances = getConfiguredServiceInstances()
+        val selectedInstanceId = appSettings.getSelectedServiceInstanceId()
+            ?: configuredInstances.firstOrNull { it.serviceId == service.id }?.instanceId
+            ?: service.id
 
-        val historyChars = messages.sumOf { it.content.length } + (systemPrompt?.length ?: 0)
-
-        var lastException: Exception? = null
-        var fallbackServiceName: String? = null
-
-        try {
-            for ((index, entry) in fallbackEntries.withIndex()) {
-                // Skip fallback services whose context window is too small for the current history
-                // On-device models handle their own context limits, so skip this check for them
-                if (!entry.service.isOnDevice) {
-                    val creds = instanceCredentials(entry.instanceId, entry.service)
-                    val entryWindowChars = ModelCatalog.estimateContextWindow(creds.modelId) * ESTIMATED_CHARS_PER_TOKEN
-                    if (historyChars > entryWindowChars) {
-                        lastException = ContextWindowExceededException()
-                        _fallbackStatus.value = FallbackStatus(
-                            serviceName = entry.service.displayName,
-                            errorReason = ContextWindowExceededException().toUiError(),
-                            nextServiceName = fallbackEntries.getOrNull(index + 1)?.service?.displayName,
-                        )
-                        continue
-                    }
-                }
-
-                // No retry wrapper here: each network call retries inside askWithService.
-                // Retrying the whole call would re-enter the tool loop against a chat
-                // history already mutated by the failed attempt.
-                val turn = try {
-                    askWithService(entry.service, messages, systemPrompt, entry.instanceId)
-                } catch (e: Exception) {
-                    if (e is kotlinx.coroutines.CancellationException) throw e
-                    // On-device services should not silently fall back — surface the error
-                    if (entry.service.isOnDevice) throw e
-                    lastException = e
-                    _fallbackStatus.value = FallbackStatus(
-                        serviceName = entry.service.displayName,
-                        errorReason = e.toUiError(),
-                        nextServiceName = fallbackEntries.getOrNull(index + 1)?.service?.displayName,
-                    )
-                    continue
-                }
-                if (index > 0) {
-                    fallbackServiceName = entry.service.displayName
-                }
-                chatHistory.update {
-                    it.toMutableList().apply {
-                        add(
-                            History(
-                                role = History.Role.ASSISTANT,
-                                content = turn.content,
-                                reasoningContent = turn.reasoningContent,
-                                fallbackServiceName = fallbackServiceName,
-                            ),
-                        )
-                    }
-                }
-                saveCurrentConversation()
-                return
+        // Context window validation for selected provider
+        if (!service.isOnDevice) {
+            val creds = instanceCredentials(selectedInstanceId, service)
+            val entryWindowChars = ModelCatalog.estimateContextWindow(creds.modelId) * ESTIMATED_CHARS_PER_TOKEN
+            val historyChars = messages.sumOf { it.content.length } + (systemPrompt?.length ?: 0)
+            if (historyChars > entryWindowChars) {
+                throw ContextWindowExceededException()
             }
-
-            throw if (fallbackEntries.size > 1 && lastException != null) {
-                AllServicesFailedException()
-            } else {
-                lastException ?: OpenAICompatibleEmptyResponseException()
-            }
-        } finally {
-            _fallbackStatus.value = null
         }
+
+        // Never attempt fallback in chat UI: directly invoke selected provider and cleanly surface any errors
+        val turn = askWithService(service, messages, systemPrompt, selectedInstanceId)
+
+        chatHistory.update {
+            it.toMutableList().apply {
+                add(
+                    History(
+                        role = History.Role.ASSISTANT,
+                        content = turn.content,
+                        reasoningContent = turn.reasoningContent,
+                    ),
+                )
+            }
+        }
+        saveCurrentConversation()
     }
 
     private suspend fun handleOpenAICompatibleChatWithTools(
@@ -1833,7 +1795,12 @@ class RemoteDataRepository(
     }
 
     override suspend fun getActiveSystemPrompt(variant: SystemPromptVariant): String? {
-        val soul = appSettings.getSoulText().ifEmpty { getString(Res.string.default_soul) }
+        val baseSoul = appSettings.getSoulText().ifEmpty { getString(Res.string.default_soul) }
+        val soul = if (!baseSoul.contains("Brox Kai 2.0")) {
+            "You are Brox Kai 2.0. If asked \"তুমি কে\" or who you are, introduce yourself gracefully and beautifully as Brox Kai 2.0, state the current model name you are running on (provided in ## Context), and describe your capabilities warmly and politely in the user's language (Bengali if asked in Bengali, English if asked in English).\n\n$baseSoul"
+        } else {
+            baseSoul
+        }
         val memoryEnabled = appSettings.isMemoryEnabled()
         val schedulingEnabled = appSettings.isSchedulingEnabled()
 
