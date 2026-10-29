@@ -222,6 +222,7 @@ class ChatViewModel(
     private fun askInternal(question: String?, uiSubmission: UiSubmission?) {
         // Atomic check-and-set to prevent concurrent requests (race on double-send)
         val before = _state.value
+        val files = before.files
         val started = _state.updateAndGet { current ->
             if (current.isLoading) {
                 current
@@ -236,9 +237,6 @@ class ChatViewModel(
             }
         }
         if (started === before) return // another call already won
-
-        // Capture files before launching coroutine to avoid race with files being cleared
-        val files = _state.value.files
 
         val (strippedQuestion, activeSkillId) = parseSkillInvocation(question)
 

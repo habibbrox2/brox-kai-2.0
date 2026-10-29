@@ -53,7 +53,8 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add gradle/libs.versions.toml
           git commit -m "chore(release): v${VERSION}"
-          git tag "v${VERSION}"
+          git pull --rebase origin main
+          git tag -f "v${VERSION}"
           git push origin HEAD:main "v${VERSION}"
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "Released v${VERSION} (versionCode ${NEW_CODE})"

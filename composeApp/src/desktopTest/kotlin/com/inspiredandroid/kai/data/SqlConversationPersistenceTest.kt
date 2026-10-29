@@ -92,7 +92,7 @@ class SqlConversationPersistenceTest {
         persistence.saveShellTranscript(updated, emptyList())
 
         val loaded = persistence.loadAll().single()
-        assertEquals(listOf<TerminalLine>(TerminalLine.Output("new output")), loaded.shellTranscript)
+        assertEquals(updated.shellTranscript, loaded.shellTranscript)
         assertEquals(2, loaded.messages.size)
     }
 

@@ -49,7 +49,7 @@ private fun formatDecimal(value: Double): String {
  * Formats a file size in bytes to a human-readable string.
  */
 fun formatFileSize(bytes: Long): String = when {
-    bytes >= 1_000_000_000 -> "${formatDecimal(bytes / 100_000_000.0 / 10)} GB"
+    bytes >= 1_000_000_000 -> "${(bytes / 100_000_000).toDouble() / 10} GB"
     bytes >= 1_000_000 -> "${bytes / 1_000_000} MB"
     bytes >= 1_000 -> "${bytes / 1_000} KB"
     else -> "$bytes B"
