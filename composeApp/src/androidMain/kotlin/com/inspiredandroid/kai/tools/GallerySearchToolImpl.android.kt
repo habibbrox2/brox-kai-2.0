@@ -44,8 +44,8 @@ class GallerySearchToolImpl : Tool {
             "NAME_Z_TO_A" -> GallerySortBy.NAME_Z_TO_A
             else -> GallerySortBy.NEWEST
         }
-        val limit = ((args["limit"] as? Number)?.toInt() ?: 50).coerceIn(1, 200)
-        val offset = (args["offset"] as? Number)?.toInt() ?: 0
+        val limit = ((args["limit"] as? Number)?.toInt() ?: (args["limit"] as? String)?.toIntOrNull() ?: 50).coerceIn(1, 200)
+        val offset = ((args["offset"] as? Number)?.toInt() ?: (args["offset"] as? String)?.toIntOrNull() ?: 0).coerceAtLeast(0)
 
         val items = galleryRepository.search(
             query = query,

@@ -22,7 +22,7 @@ object WorkflowTool : Tool {
                 required = true,
             ),
             "maxSteps" to ParameterSchema(
-                type = "int",
+                type = "integer",
                 description = "Maximum number of tool steps to execute (default 5, max 10)",
                 required = false,
             ),

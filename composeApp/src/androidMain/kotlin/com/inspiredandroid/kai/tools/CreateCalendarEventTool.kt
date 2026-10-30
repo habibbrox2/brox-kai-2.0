@@ -43,8 +43,10 @@ object CreateCalendarEventTool {
             val endTime = args["end_time"] as? String
             val description = args["description"] as? String
             val location = args["location"] as? String
-            val allDay = (args["all_day"] as? Boolean) ?: false
-            val reminderMinutes = (args["reminder_minutes"] as? Number)?.toInt() ?: 15
+            val allDay = (args["all_day"] as? Boolean) ?: (args["all_day"]?.toString()?.lowercase() == "true")
+            val reminderMinutes = (args["reminder_minutes"] as? Number)?.toInt()
+                ?: (args["reminder_minutes"] as? String)?.toIntOrNull()
+                ?: 15
 
             return when (
                 val result = calendarRepository.createEvent(

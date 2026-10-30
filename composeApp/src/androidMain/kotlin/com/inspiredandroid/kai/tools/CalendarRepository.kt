@@ -97,15 +97,20 @@ class CalendarRepository(
         val timeZone = TimeZone.getDefault().id
 
         try {
-            startMillis = parseIsoDateTimeToEpochMs(startTimeIso)
+            startMillis = parseIsoDateTimeToEpochMs(startTimeIso, allDay)
             endMillis = if (endTimeIso != null) {
-                parseIsoDateTimeToEpochMs(endTimeIso)
+                parseIsoDateTimeToEpochMs(endTimeIso, allDay)
+            } else if (allDay) {
+                startMillis + 24 * 60 * 60 * 1000L
             } else {
-                // Default to 1 hour after start
-                startMillis + 60 * 60 * 1000
+                startMillis + 60 * 60 * 1000L
             }
         } catch (e: DateTimeParseException) {
             return CalendarResult.Error("Invalid date format. Please use ISO 8601 format (e.g., 2024-03-15T14:30:00)")
+        }
+
+        if (endMillis < startMillis) {
+            return CalendarResult.Error("end_time must be after start_time")
         }
 
         val values = ContentValues().apply {
@@ -148,7 +153,7 @@ class CalendarRepository(
         context.contentResolver.insert(CalendarContract.Reminders.CONTENT_URI, reminderValues)
     }
 
-    private fun parseIsoDateTimeToEpochMs(isoString: String): Long {
+    private fun parseIsoDateTimeToEpochMs(isoString: String, allDay: Boolean = false): Long {
         val trimmed = isoString.trim()
 
         // Offset-qualified inputs (e.g. "2024-03-15T14:30:00+02:00" or "...Z") must
@@ -162,6 +167,14 @@ class CalendarRepository(
         }
         try {
             return Instant.parse(trimmed).toEpochMilli()
+        } catch (_: DateTimeParseException) {
+        }
+
+        // Date-only inputs (e.g. "2025-06-15")
+        try {
+            val localDate = java.time.LocalDate.parse(trimmed)
+            val zone = if (allDay) ZoneId.of("UTC") else ZoneId.systemDefault()
+            return localDate.atStartOfDay(zone).toInstant().toEpochMilli()
         } catch (_: DateTimeParseException) {
         }
 

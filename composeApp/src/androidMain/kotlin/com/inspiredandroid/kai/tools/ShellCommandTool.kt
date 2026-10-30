@@ -117,7 +117,9 @@ object ShellCommandTool : Tool {
                 append("cd ").append(shellSingleQuote(workingDir)).append(" && ")
             }
             envMap.forEach { (k, v) ->
-                append(shellSingleQuote(k)).append('=').append(shellSingleQuote(v)).append(' ')
+                if (k.matches(Regex("^[a-zA-Z_][a-zA-Z0-9_]*$"))) {
+                    append(k).append('=').append(shellSingleQuote(v)).append(' ')
+                }
             }
         }
         val wrapped = if (prefix.isEmpty()) command else "$prefix$command"

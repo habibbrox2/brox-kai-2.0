@@ -36,18 +36,24 @@ object SetAlarmTool {
         )
 
         override suspend fun execute(args: Map<String, Any>): Any {
-            val hour = (args["hour"] as? Number)?.toInt()
-            val minutes = (args["minutes"] as? Number)?.toInt()
+            val hour = (args["hour"] as? Number)?.toInt() ?: (args["hour"] as? String)?.toIntOrNull()
+            val minutes = (args["minutes"] as? Number)?.toInt() ?: (args["minutes"] as? String)?.toIntOrNull()
             val label = args["label"] as? String
-            val durationSeconds = (args["duration_seconds"] as? Number)?.toInt()
+            val durationSeconds = (args["duration_seconds"] as? Number)?.toInt() ?: (args["duration_seconds"] as? String)?.toIntOrNull()
 
             val intent = if (durationSeconds != null) {
+                if (durationSeconds <= 0) {
+                    return mapOf("success" to false, "error" to "duration_seconds must be greater than 0")
+                }
                 Intent(AlarmClock.ACTION_SET_TIMER).apply {
                     putExtra(AlarmClock.EXTRA_LENGTH, durationSeconds)
                     if (label != null) putExtra(AlarmClock.EXTRA_MESSAGE, label)
                     putExtra(AlarmClock.EXTRA_SKIP_UI, true)
                 }
             } else if (hour != null && minutes != null) {
+                if (hour !in 0..23 || minutes !in 0..59) {
+                    return mapOf("success" to false, "error" to "Invalid time: hour must be 0-23 and minutes 0-59")
+                }
                 Intent(AlarmClock.ACTION_SET_ALARM).apply {
                     putExtra(AlarmClock.EXTRA_HOUR, hour)
                     putExtra(AlarmClock.EXTRA_MINUTES, minutes)

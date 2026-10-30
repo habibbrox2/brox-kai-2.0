@@ -26,7 +26,9 @@ class NotificationHelper(
     }
 
     init {
-        createNotificationChannel()
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            createNotificationChannel()
+        }
     }
 
     private fun createNotificationChannel() {
@@ -57,13 +59,13 @@ class NotificationHelper(
         return try {
             val notificationId = notificationIdCounter.incrementAndGet()
 
-            val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)?.apply {
+            val launchIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)?.apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            }
+            } ?: Intent()
             val pendingIntent = PendingIntent.getActivity(
                 context,
                 notificationId,
-                intent,
+                launchIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
             )
 

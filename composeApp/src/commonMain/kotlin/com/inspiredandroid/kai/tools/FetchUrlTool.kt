@@ -168,8 +168,11 @@ internal fun isBlockedFetchHost(host: String): Boolean {
     if (h == "localhost" || h.endsWith(".localhost")) return true
     if (':' in h) return isBlockedIpv6(h)
     val octets = h.split(".")
-    if (octets.size == 4 && octets.all { (it.toIntOrNull() ?: -1) in 0..255 }) {
-        return isBlockedIpv4(octets.map { it.toInt() })
+    if (octets.size == 4) {
+        if (octets.any { it.length > 1 && it.startsWith('0') }) return true // Block octal IPv4 notation
+        if (octets.all { (it.toIntOrNull() ?: -1) in 0..255 }) {
+            return isBlockedIpv4(octets.map { it.toInt() })
+        }
     }
     // Shortened (127.1), single-integer (2130706433) or hex/octal forms: not a normal hostname,
     // and resolvers map them onto arbitrary IPv4 addresses.

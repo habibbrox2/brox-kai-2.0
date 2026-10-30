@@ -19,20 +19,39 @@ class OcrToolImpl : Tool {
     override val schema = OcrTool.schema
 
     override suspend fun execute(args: Map<String, Any>): Any {
-        val imageUriString = args["imageUri"] as? String
+        val imageUriString = (args["imageUri"] as? String)?.trim()
             ?: return mapOf("success" to false, "error" to "imageUri is required")
         val languageStr = args["language"] as? String ?: "AUTO"
-        val returnBlocks = (args["returnBlocks"] as? Boolean) ?: false
+        val returnBlocks = (args["returnBlocks"] as? Boolean)
+            ?: (args["returnBlocks"]?.toString()?.lowercase() == "true")
 
         val language = runCatching { OcrLanguage.valueOf(languageStr.uppercase()) }
             .getOrElse { return mapOf("success" to false, "error" to "Unknown language: $languageStr") }
 
         return withContext(Dispatchers.IO) {
+            var bitmap: android.graphics.Bitmap? = null
             try {
-                val uri = Uri.parse(imageUriString)
-                val bitmap = context.contentResolver.openInputStream(uri)?.use { stream ->
-                    BitmapFactory.decodeStream(stream)
-                } ?: throw IllegalArgumentException("Failed to decode image")
+                val openStream = {
+                    if (imageUriString.startsWith("/")) {
+                        java.io.File(imageUriString).inputStream()
+                    } else {
+                        context.contentResolver.openInputStream(Uri.parse(imageUriString))
+                    }
+                }
+
+                // Decode bounds first to avoid OutOfMemoryError on large images
+                val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+                openStream()?.use { BitmapFactory.decodeStream(it, null, options) }
+
+                val maxDimension = 2048
+                var sampleSize = 1
+                while (options.outWidth / sampleSize > maxDimension || options.outHeight / sampleSize > maxDimension) {
+                    sampleSize *= 2
+                }
+
+                val decodeOptions = BitmapFactory.Options().apply { inSampleSize = sampleSize }
+                bitmap = openStream()?.use { BitmapFactory.decodeStream(it, null, decodeOptions) }
+                    ?: throw IllegalArgumentException("Failed to decode image from: $imageUriString")
 
                 val ocrEngine = OcrEngine(context)
                 val result = try {
@@ -85,11 +104,13 @@ class OcrToolImpl : Tool {
                     "confidence" to result.confidence,
                     "blocks" to if (returnBlocks) blocks else emptyList<Map<String, Any>>(),
                 )
-            } catch (e: Exception) {
+            } catch (t: Throwable) {
                 mapOf(
                     "success" to false,
-                    "error" to "OCR failed: ${e.message}",
+                    "error" to "OCR failed: ${t.message ?: t::class.simpleName}",
                 )
+            } finally {
+                bitmap?.recycle()
             }
         }
     }

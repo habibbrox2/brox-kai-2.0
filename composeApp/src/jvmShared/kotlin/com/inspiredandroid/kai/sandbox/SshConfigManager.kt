@@ -45,6 +45,14 @@ class SshConfigManager(private val homeDir: File) {
         require(hostname.isNotBlank()) { "hostname must not be blank" }
         require(hostname.none { it.isWhitespace() }) { "hostname must not contain whitespace" }
         if (port != null) require(port in 1..65535) { "port must be in 1..65535" }
+        if (user != null) {
+            require(user.isNotBlank()) { "user must not be blank" }
+            require(user.none { it.isWhitespace() }) { "user must not contain whitespace" }
+        }
+        if (identityFile != null) {
+            require(identityFile.isNotBlank()) { "identityFile must not be blank" }
+            require(identityFile.none { it == '\r' || it == '\n' }) { "identityFile must not contain newlines" }
+        }
 
         ensureSshDir()
         val current = readConfig()

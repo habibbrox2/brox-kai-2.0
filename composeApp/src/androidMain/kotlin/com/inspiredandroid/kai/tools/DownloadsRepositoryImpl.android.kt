@@ -34,16 +34,18 @@ class DownloadsRepositoryImpl(
         context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
     private val baseUri: Uri = MediaStore.Files.getContentUri("external")
 
-    private val mediaStoreProjection = arrayOf(
-        MediaStore.Files.FileColumns._ID,
-        MediaStore.Files.FileColumns.DISPLAY_NAME,
-        MediaStore.Files.FileColumns.MIME_TYPE,
-        MediaStore.Files.FileColumns.SIZE,
-        MediaStore.Files.FileColumns.DATE_ADDED,
-        MediaStore.Files.FileColumns.DATE_MODIFIED,
-        MediaStore.Files.FileColumns.DATE_TAKEN,
-        MediaStore.Files.FileColumns.RELATIVE_PATH,
-    )
+    private val mediaStoreProjection = buildList {
+        add(MediaStore.Files.FileColumns._ID)
+        add(MediaStore.Files.FileColumns.DISPLAY_NAME)
+        add(MediaStore.Files.FileColumns.MIME_TYPE)
+        add(MediaStore.Files.FileColumns.SIZE)
+        add(MediaStore.Files.FileColumns.DATE_ADDED)
+        add(MediaStore.Files.FileColumns.DATE_MODIFIED)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            add(MediaStore.Files.FileColumns.RELATIVE_PATH)
+            add(MediaStore.Files.FileColumns.IS_PENDING)
+        }
+    }.toTypedArray()
 
     // ============ DownloadsRepository ইন্টারফেস ইমপ্লিমেন্টেশন ============
 

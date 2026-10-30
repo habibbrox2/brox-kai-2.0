@@ -38,8 +38,10 @@ object WebSearchTool : Tool {
     }
 
     override suspend fun execute(args: Map<String, Any>): Any {
-        val query = args["query"]?.toString()
-            ?: return mapOf("success" to false, "error" to "Query is required")
+        val query = args["query"]?.toString()?.trim()
+        if (query.isNullOrBlank()) {
+            return mapOf("success" to false, "error" to "Query is required")
+        }
 
         return try {
             val encoded = query.encodeURLQueryComponent()
@@ -55,6 +57,7 @@ object WebSearchTool : Tool {
                 mapOf("success" to true, "results" to results)
             }
         } catch (e: Exception) {
+            if (e is kotlinx.coroutines.CancellationException) throw e
             mapOf("success" to false, "error" to "Search failed: ${e.message}")
         }
     }
@@ -102,7 +105,8 @@ object WebSearchTool : Tool {
         return if (href.startsWith("//")) "https:$href" else href
     }
 
-    private fun decodeURLComponent(encoded: String): String = buildString {
+    private fun decodeURLComponent(encoded: String): String {
+        val bytes = mutableListOf<Byte>()
         var i = 0
         while (i < encoded.length) {
             when {
@@ -110,25 +114,26 @@ object WebSearchTool : Tool {
                     val hex = encoded.substring(i + 1, i + 3)
                     val byte = hex.toIntOrNull(16)
                     if (byte != null) {
-                        append(byte.toChar())
+                        bytes.add(byte.toByte())
                         i += 3
                     } else {
-                        append(encoded[i])
+                        bytes.addAll(encoded[i].toString().encodeToByteArray().toList())
                         i++
                     }
                 }
 
                 encoded[i] == '+' -> {
-                    append(' ')
+                    bytes.add(' '.code.toByte())
                     i++
                 }
 
                 else -> {
-                    append(encoded[i])
+                    bytes.addAll(encoded[i].toString().encodeToByteArray().toList())
                     i++
                 }
             }
         }
+        return bytes.toByteArray().decodeToString()
     }
 
     private fun String.stripHtml(): String = replace(htmlTagRegex, "")

@@ -149,6 +149,9 @@ class DownloadsPermissionController(private val context: Context) {
      * Tests if MediaStore can be queried for Downloads folder media.
      */
     suspend fun testMediaStoreDownloadsAccess(): Boolean = withContext(Dispatchers.IO) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            return@withContext hasLegacyStoragePermission()
+        }
         try {
             val resolver: ContentResolver = context.contentResolver
             val projection = arrayOf(MediaStore.MediaColumns._ID)

@@ -53,7 +53,7 @@ object SchedulingTools {
             // Models often send unused optional triggers as empty defaults (`"cron": ""`); treat those as absent.
             val executeAt = args["execute_at"]?.toString()?.takeIf { it.isNotBlank() }
             val cron = args["cron"]?.toString()?.takeIf { it.isNotBlank() }
-            val onHeartbeat = args["on_heartbeat"] as? Boolean ?: false
+            val onHeartbeat = args["on_heartbeat"] == true || args["on_heartbeat"]?.toString()?.lowercase() == "true"
 
             val triggerCount = listOf(executeAt != null, cron != null, onHeartbeat).count { it }
             if (triggerCount == 0) {
@@ -208,13 +208,20 @@ object SchedulingTools {
     )
 
     private fun parseIso8601ToEpochMs(isoString: String): Long {
+        val trimmed = isoString.trim().replace(' ', 'T')
         // Try parsing as Instant first (with timezone offset)
         return try {
-            Instant.parse(isoString).toEpochMilliseconds()
-        } catch (e: Exception) {
-            // Fall back to LocalDateTime (no timezone) and use system default
-            val localDateTime = LocalDateTime.parse(isoString)
-            localDateTime.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+            Instant.parse(trimmed).toEpochMilliseconds()
+        } catch (_: Exception) {
+            try {
+                // Fall back to LocalDateTime (no timezone) and use system default
+                val localDateTime = LocalDateTime.parse(trimmed)
+                localDateTime.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+            } catch (_: Exception) {
+                // Date-only fallback (e.g. "2026-11-01")
+                val localDate = LocalDate.parse(trimmed)
+                localDate.atTime(0, 0).toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+            }
         }
     }
 }

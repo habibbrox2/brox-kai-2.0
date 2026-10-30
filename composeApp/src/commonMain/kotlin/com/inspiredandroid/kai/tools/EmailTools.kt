@@ -175,10 +175,10 @@ object EmailTools {
             val detected = ServerAutoDetect.detect(email)
             val imapHost = args["imap_host"]?.toString() ?: detected?.imapHost
                 ?: return mapOf("success" to false, "error" to "Cannot auto-detect server for this email. Please provide imap_host and smtp_host.")
-            val imapPort = (args["imap_port"] as? Number)?.toInt() ?: detected?.imapPort ?: 993
+            val imapPort = (args["imap_port"] as? Number)?.toInt() ?: (args["imap_port"] as? String)?.toIntOrNull() ?: detected?.imapPort ?: 993
             val smtpHost = args["smtp_host"]?.toString() ?: detected?.smtpHost
                 ?: return mapOf("success" to false, "error" to "Cannot auto-detect SMTP server. Please provide smtp_host.")
-            val smtpPort = (args["smtp_port"] as? Number)?.toInt() ?: detected?.smtpPort ?: 587
+            val smtpPort = (args["smtp_port"] as? Number)?.toInt() ?: (args["smtp_port"] as? String)?.toIntOrNull() ?: detected?.smtpPort ?: 587
 
             // Test IMAP connection
             val imap = ImapClient(imapHost, imapPort)
@@ -509,12 +509,19 @@ object EmailTools {
 
             return try {
                 withImapSession(account, emailStore) { imap ->
-                    val uids = when {
-                        fromQuery != null -> imap.searchByFrom(fromQuery)
-                        subjectQuery != null -> imap.searchBySubject(subjectQuery)
-                        sinceDate != null -> imap.searchSince(sinceDate)
-                        else -> emptyList()
+                    var matchingUids: Set<Long>? = null
+                    if (fromQuery != null) {
+                        matchingUids = imap.searchByFrom(fromQuery).toSet()
                     }
+                    if (subjectQuery != null) {
+                        val subjectUids = imap.searchBySubject(subjectQuery).toSet()
+                        matchingUids = matchingUids?.intersect(subjectUids) ?: subjectUids
+                    }
+                    if (sinceDate != null) {
+                        val sinceUids = imap.searchSince(sinceDate).toSet()
+                        matchingUids = matchingUids?.intersect(sinceUids) ?: sinceUids
+                    }
+                    val uids = matchingUids?.toList() ?: emptyList()
                     val messages = imap.fetchHeaders(uids.takeLast(20), account.id)
                     mapOf(
                         "success" to true,

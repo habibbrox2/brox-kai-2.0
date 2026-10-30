@@ -44,20 +44,23 @@ class GalleryRepositoryImpl(
     private val baseUri = MediaStore.Files.getContentUri("external")
 
     /** প্রজেকশন — শুধু প্রয়োজনীয় কলামগুলোকে সিলেক্ট করে পারফরম্যান্স বাড়াতে */
-    private val projection = arrayOf(
-        MediaStore.Files.FileColumns._ID,
-        MediaStore.Files.FileColumns.DISPLAY_NAME,
-        MediaStore.Files.FileColumns.MIME_TYPE,
-        MediaStore.Files.FileColumns.WIDTH,
-        MediaStore.Files.FileColumns.HEIGHT,
-        MediaStore.Files.FileColumns.SIZE,
-        MediaStore.Files.FileColumns.DATE_ADDED,
-        MediaStore.Files.FileColumns.DATE_MODIFIED,
-        MediaStore.Files.FileColumns.DATE_TAKEN,
-        MediaStore.Files.FileColumns.RELATIVE_PATH,
-        MediaStore.Files.FileColumns.IS_PENDING,
-        MediaStore.Files.FileColumns.IS_FAVORITE,
-    )
+    private val projection = buildList {
+        add(MediaStore.Files.FileColumns._ID)
+        add(MediaStore.Files.FileColumns.DISPLAY_NAME)
+        add(MediaStore.Files.FileColumns.MIME_TYPE)
+        add(MediaStore.Files.FileColumns.WIDTH)
+        add(MediaStore.Files.FileColumns.HEIGHT)
+        add(MediaStore.Files.FileColumns.SIZE)
+        add(MediaStore.Files.FileColumns.DATE_ADDED)
+        add(MediaStore.Files.FileColumns.DATE_MODIFIED)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            add(MediaStore.Files.FileColumns.RELATIVE_PATH)
+            add(MediaStore.Files.FileColumns.IS_PENDING)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            add(MediaStore.Files.FileColumns.IS_FAVORITE)
+        }
+    }.toTypedArray()
 
     /** সেলেকশন বিল্ডার — ফিল্টার শর্ত অনুযায়ী WHERE ক্লauses তৈরি করে */
     private fun buildSelection(
@@ -155,14 +158,13 @@ class GalleryRepositoryImpl(
             null
         }
 
-        // IS_PENDING, IS_FAVORITE (API 29+)
         val isPending = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.IS_PENDING)) != 0
+            getIntOrNull(cursor, MediaStore.Files.FileColumns.IS_PENDING) == 1
         } else {
             false
         }
 
-        val isFavorite = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        val isFavorite = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             getIntOrNull(cursor, MediaStore.Files.FileColumns.IS_FAVORITE) == 1
         } else {
             false
@@ -175,21 +177,13 @@ class GalleryRepositoryImpl(
             mimeType = mimeType,
             width = width,
             height = height,
-            sizeBytes = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.SIZE)),
+            sizeBytes = getLongOrNull(cursor, MediaStore.Files.FileColumns.SIZE) ?: 0L,
             dateAdded = dateAddedSec * 1000L, // epoch ms
-            dateModified = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_MODIFIED)) * 1000L,
+            dateModified = (getLongOrNull(cursor, MediaStore.Files.FileColumns.DATE_MODIFIED) ?: 0L) * 1000L,
             dateTaken = dateTaken,
-            relativePath = getStringOrNull(cursor, MediaStore.Files.FileColumns.RELATIVE_PATH),
-            isPending = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.IS_PENDING)) != 0
-            } else {
-                false
-            },
-            isFavorite = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.IS_FAVORITE)) == 1
-            } else {
-                false
-            },
+            relativePath = relativePath,
+            isPending = isPending,
+            isFavorite = isFavorite,
         )
     }
 
@@ -279,7 +273,7 @@ class GalleryRepositoryImpl(
         minHeight: Int?,
     ): Int = kotlinx.coroutines.runBlocking(kotlinx.coroutines.Dispatchers.IO) {
         queryMutex.withLock {
-            val (selection, selectionArgs) = buildSelection(mimeType, dateFrom, dateTo, minWidth, minHeight)
+            val (selection, selectionArgs) = buildSelection(mimeType, dateFrom, dateTo, minWidth, minHeight, query)
             var cursor: Cursor? = null
             try {
                 cursor = contentResolver.query(

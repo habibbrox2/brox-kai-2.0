@@ -39,7 +39,8 @@ object OpenFileTool : Tool {
         val path = (args["path"] as? String)?.trim()
             ?: return mapOf("success" to false, "error" to "path is required")
 
-        val file = resolveSandboxFile(sandboxManager.homePath, path)
+        val cleanPath = path.removePrefix("/root").removePrefix("root").trimStart('/', '\\')
+        val file = resolveSandboxFile(sandboxManager.homePath, cleanPath)
             ?: return mapOf("success" to false, "error" to "Invalid path: must be relative to /root, no leading / or .. segments")
 
         if (!file.exists()) {
@@ -53,7 +54,7 @@ object OpenFileTool : Tool {
         return if (result.success) {
             mapOf(
                 "success" to true,
-                "path" to path,
+                "path" to cleanPath,
                 "mime_type" to result.mimeType,
                 "content_uri" to (result.contentUri ?: ""),
             )
