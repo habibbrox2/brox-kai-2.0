@@ -137,7 +137,7 @@ object ActivityMapper {
         return activities
     }
 
-    private fun parseShellCommand(argsJson: String): ActivityDetails.ShellCommand = try {
+    internal fun parseShellCommand(argsJson: String): ActivityDetails.ShellCommand = try {
         // Simple parsing - in real implementation would use proper JSON parsing
         val commandMatch = Regex("\"command\"\\s*:\\s*\"([^\"]+)\"").find(argsJson)
         val cwdMatch = Regex("\"working_dir\"\\s*:\\s*\"([^\"]+)\"").find(argsJson)
@@ -149,7 +149,7 @@ object ActivityMapper {
         ActivityDetails.ShellCommand(command = argsJson)
     }
 
-    private fun parseShellResult(details: ActivityDetails.ShellCommand, resultJson: String): ActivityDetails.ShellCommand = try {
+    internal fun parseShellResult(details: ActivityDetails.ShellCommand, resultJson: String): ActivityDetails.ShellCommand = try {
         val stdoutMatch = Regex("\"stdout\"\\s*:\\s*\"([^\"]*)\"").find(resultJson)
         val stderrMatch = Regex("\"stderr\"\\s*:\\s*\"([^\"]*)\"").find(resultJson)
         val exitCodeMatch = Regex("\"(?:exitCode|exit_code)\"\\s*:\\s*(-?\\d+)").find(resultJson)

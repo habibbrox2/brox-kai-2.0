@@ -50,6 +50,7 @@ import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
 import com.inspiredandroid.kai.ui.chat.ChatUiState
 import com.inspiredandroid.kai.ui.chat.History
+import com.inspiredandroid.kai.ui.chat.activities.ActivityDetails
 import com.inspiredandroid.kai.ui.chat.activities.ActivityMapper
 import com.inspiredandroid.kai.ui.chat.lastRenderedAssistant
 import com.inspiredandroid.kai.ui.components.LogoAnimation
@@ -310,32 +311,63 @@ fun ChatTimeline(
                     }
 
                     History.Role.TOOL_EXECUTING -> {
-                        // Rendered in WaitingResponseRow below
+                        val isShell = history.content == "execute_shell_command" || history.toolName == "execute_shell_command"
+                        if (isShell) {
+                            val cmd = history.toolName.takeUnless { it == "execute_shell_command" } ?: history.content
+                            ShellExecutionCard(
+                                command = cmd,
+                                isRunning = true,
+                            )
+                        } else {
+                            ToolExecutionCard(
+                                toolName = history.toolName ?: history.content,
+                                isRunning = true,
+                            )
+                        }
                     }
 
                     History.Role.TOOL -> {
-                        // Don't show completed tool results in UI
+                        val isShell = history.toolName == "execute_shell_command"
+                        if (isShell) {
+                            val matchingToolCall = uiState.history.firstNotNullOfOrNull { h ->
+                                h.toolCalls?.firstOrNull { it.id == history.toolCallId || it.name == "execute_shell_command" }
+                            }
+                            val shellDetails = if (matchingToolCall != null) {
+                                val parsedCmd = ActivityMapper.parseShellCommand(matchingToolCall.arguments)
+                                ActivityMapper.parseShellResult(parsedCmd, history.content)
+                            } else {
+                                ActivityMapper.parseShellResult(
+                                    ActivityDetails.ShellCommand(command = "execute_shell_command"),
+                                    history.content,
+                                )
+                            }
+                            ShellExecutionCard(
+                                command = shellDetails.command.ifEmpty { "execute_shell_command" },
+                                workingDirectory = shellDetails.workingDirectory,
+                                stdout = shellDetails.stdout,
+                                stderr = shellDetails.stderr,
+                                exitCode = shellDetails.exitCode,
+                                isRunning = false,
+                            )
+                        } else {
+                            val matchingToolCall = uiState.history.firstNotNullOfOrNull { h ->
+                                h.toolCalls?.firstOrNull { it.id == history.toolCallId }
+                            }
+                            val isError = history.content.contains("\"success\":false") || history.content.contains("\"error\"")
+                            ToolExecutionCard(
+                                toolName = history.toolName ?: "tool",
+                                arguments = matchingToolCall?.arguments,
+                                result = history.content,
+                                isRunning = false,
+                                isError = isError,
+                            )
+                        }
                     }
                 }
             }
-            // Show agent activity timeline for tool executions and agent actions
-            // Temporarily disabled to fix crash
-            // val hasAgentActivity = !uiState.isLoading && uiState.history.any {
-            //     it.role == History.Role.TOOL ||
-            //     (it.role == History.Role.ASSISTANT && it.toolCalls?.isNotEmpty() == true)
-            // }
-            // if (hasAgentActivity) {
-            //     item(key = "agent-activity-timeline") {
-            //         val activities = remember(uiState.history) {
-            //             ActivityMapper.historyToActivities(uiState.history)
-            //         }
-            //         if (activities.isNotEmpty()) {
-            //             AgentActivityTimeline(activities = activities)
-            //         }
-            //     }
-            // }
             val showWaitingRow = uiState.isLoading &&
-                (frozenByAssistantId.values.none { it.isPending } || executingToolsState.tools.isNotEmpty())
+                frozenByAssistantId.values.none { it.isPending } &&
+                uiState.history.none { it.role == History.Role.TOOL_EXECUTING }
             if (showWaitingRow) {
                 item(key = "loading") {
                     WaitingResponseRow(
