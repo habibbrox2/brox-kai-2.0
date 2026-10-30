@@ -41,7 +41,8 @@ private fun AnnotatedString.Builder.appendInline(node: InlineNode) {
         is InlineCode -> withStyle(
             SpanStyle(
                 fontFamily = FontFamily.Monospace,
-                background = CardFill,
+                background = androidx.compose.ui.graphics.Color(0xFF222B38),
+                color = AccentPrimary,
             ),
         ) {
             append(node.code)

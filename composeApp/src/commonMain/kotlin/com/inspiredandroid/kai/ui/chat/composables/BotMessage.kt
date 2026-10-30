@@ -111,27 +111,31 @@ internal fun BotMessage(
         bottomStart = 4.dp,
         bottomEnd = 18.dp,
     )
+    val botBubbleBg = Color(0xFF161B22)
+    val botBubbleBorder = Color(0xFF232B39)
+    val botTextColor = Color(0xFFECEAE4)
+    val botMutedColor = Color(0xFF94A3B8)
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = ChatSpacing.lg, vertical = ChatSpacing.sm),
     ) {
-        // Message Content Box
+        // Message Content Box - ChatGPT Dark Style
         Box(
             modifier = Modifier
                 .widthIn(min = 48.dp, max = 680.dp)
                 .shadow(
                     elevation = 3.dp,
                     shape = botBubbleShape,
-                    ambientColor = Color(0x330E0F12),
-                    spotColor = Color(0x330E0F12),
+                    ambientColor = Color(0x33000000),
+                    spotColor = Color(0x33000000),
                 )
                 .clip(botBubbleShape)
-                .background(WarmPaperBubble)
+                .background(botBubbleBg)
                 .border(
                     width = 1.dp,
-                    color = Color(0x1F0E0F12),
+                    color = botBubbleBorder,
                     shape = botBubbleShape,
                 )
                 .padding(horizontal = 14.dp, vertical = 12.dp),
@@ -147,7 +151,7 @@ internal fun BotMessage(
                         Text(
                             text = "Brox Kai 2.0",
                             style = KaiTypography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                            color = DarkText,
+                            color = botTextColor,
                         )
                     }
                 }
@@ -167,7 +171,7 @@ internal fun BotMessage(
                 if (message.isNotEmpty()) {
                     val answerTopPadding = if (nonBlankSegments.isNotEmpty()) 8.dp else 2.dp
                     CompositionLocalProvider(
-                        androidx.compose.material3.LocalContentColor provides DarkText,
+                        androidx.compose.material3.LocalContentColor provides botTextColor,
                     ) {
                         SelectionContainer {
                             MarkdownContent(
@@ -207,7 +211,7 @@ internal fun BotMessage(
                     Icon(
                         painter = painterResource(Res.drawable.ic_copy),
                         contentDescription = stringResource(Res.string.bot_message_copy_content_description),
-                        tint = if (isCopiedInside) SuccessGreen else DarkText.copy(alpha = 0.5f),
+                        tint = if (isCopiedInside) SuccessGreen else botMutedColor,
                         modifier = Modifier.size(15.dp),
                     )
                 }
