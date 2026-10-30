@@ -14,7 +14,9 @@ import kai.composeapp.generated.resources.tool_list_tasks_description
 import kai.composeapp.generated.resources.tool_list_tasks_name
 import kai.composeapp.generated.resources.tool_schedule_task_description
 import kai.composeapp.generated.resources.tool_schedule_task_name
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlin.time.Clock
@@ -220,7 +222,8 @@ object SchedulingTools {
             } catch (_: Exception) {
                 // Date-only fallback (e.g. "2026-11-01")
                 val localDate = LocalDate.parse(trimmed)
-                localDate.atTime(0, 0).toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+                val localDateTime = LocalDateTime(localDate, LocalTime(0, 0, 0, 0))
+                localDateTime.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
             }
         }
     }
