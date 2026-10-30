@@ -58,7 +58,7 @@ object ChatShapes {
     val quickStartCard = RoundedCornerShape(16.dp)
 
     /** Composer container. */
-    val composer = RoundedCornerShape(28.dp)
+    val composer = RoundedCornerShape(14.dp)
 
     /** Compact pill (status pills, chips). */
     val pill = RoundedCornerShape(999.dp)

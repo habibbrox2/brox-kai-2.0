@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -39,16 +40,21 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.BorderSoft
+import com.inspiredandroid.kai.ui.ChatDarkBackground
 import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.QuickOptionGreen
 import com.inspiredandroid.kai.ui.SurfaceRaised
 import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.TextSecondary
+import com.inspiredandroid.kai.ui.UserBubbleBlue
 import com.inspiredandroid.kai.ui.chat.ChatShapes
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
 import com.inspiredandroid.kai.ui.components.LogoAnimation
@@ -61,11 +67,9 @@ import kai.composeapp.generated.resources.privacy_policy
 import org.jetbrains.compose.resources.stringResource
 
 /**
- * Premium empty state for the chat workspace (Plan 7, Phase 2).
- *
- * Chat-first, minimal: a small animated mark, a light greeting, and a 2x2 grid
- * of quick-start cards with title + subtext. Interactive UI and Kai Build no
- * longer live here — they moved to the sidebar (Plan 7, Phase 1).
+ * Empty state for Brox Kai 2.0 workspace.
+ * Features prominent Quick Options with Bengali + English mix,
+ * green Search Web option, and larger Ask a Question / Set Reminder cards.
  */
 @Composable
 internal fun EmptyState(
@@ -97,14 +101,14 @@ internal fun EmptyState(
             val prefixText = stringResource(Res.string.privacy_agree_prefix)
             val policyText = stringResource(Res.string.privacy_policy)
             val annotatedString = remember(prefixText, policyText, linkColor) {
-                androidx.compose.ui.text.buildAnnotatedString {
+                buildAnnotatedString {
                     append(prefixText)
                     withLink(
-                        androidx.compose.ui.text.LinkAnnotation.Url(
+                        LinkAnnotation.Url(
                             url = "https://schubert-simon.de/privacy/kai.txt",
                         ),
                     ) {
-                        withStyle(style = androidx.compose.ui.text.SpanStyle(color = linkColor)) {
+                        withStyle(style = SpanStyle(color = linkColor)) {
                             append(policyText)
                         }
                     }
@@ -126,15 +130,45 @@ private data class QuickStartItem(
     val subtext: String,
     val prompt: String,
     val icon: ImageVector,
+    val isProminent: Boolean = false,
+    val accentColor: Color? = null,
 )
 
 @Composable
 private fun QuickStartCards(onQuickStart: (String) -> Unit) {
     val items = listOf(
-        QuickStartItem("Write", "Drafts, emails & copy", "Help me write a short, engaging blog post about AI assistants.", Icons.Default.Edit),
-        QuickStartItem("Code", "Write & debug code", "Write a Kotlin function that retries an HTTP call with exponential backoff.", Icons.Default.Code),
-        QuickStartItem("Research", "Summarize & explore", "Summarize the latest trends in on-device AI in 2026.", Icons.Default.Search),
-        QuickStartItem("Build", "Design a UI", "Help me design a small Compose screen with a list and a FAB.", Icons.Default.Build),
+        QuickStartItem(
+            label = "Ask a Question",
+            subtext = "প্রশ্ন জিজ্ঞাসা করো",
+            prompt = "তুমি কে এবং তোমার মডেলের নাম কি?",
+            icon = Icons.Default.Edit,
+            isProminent = true,
+            accentColor = UserBubbleBlue,
+        ),
+        QuickStartItem(
+            label = "Set Reminder",
+            subtext = "রিমাইন্ডার সেট করো",
+            prompt = "Set a reminder for me in 10 minutes",
+            icon = Icons.Default.Build,
+            isProminent = true,
+            accentColor = UserBubbleBlue,
+        ),
+        QuickStartItem(
+            label = "Search Web",
+            subtext = "ওয়েব সার্চ করো",
+            prompt = "Search the web for latest AI news",
+            icon = Icons.Default.Search,
+            isProminent = false,
+            accentColor = QuickOptionGreen,
+        ),
+        QuickStartItem(
+            label = "Code",
+            subtext = "একটা কোড লেখো",
+            prompt = "একটা কোড লেখো",
+            icon = Icons.Default.Code,
+            isProminent = false,
+            accentColor = UserBubbleBlue,
+        ),
     )
     androidx.compose.foundation.layout.FlowRow(
         modifier = Modifier
@@ -162,23 +196,21 @@ private fun QuickStartCard(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
-    val isOled = MaterialTheme.colorScheme.isOledFlavor
+    val cardColor = item.accentColor ?: UserBubbleBlue
 
-    val cardBg = if (isOled) {
-        com.inspiredandroid.kai.ui.CardFill
-    } else {
-        SurfaceRaised
-    }
+    val cardBg = ChatDarkBackground
     val cardBorder = if (isHovered) {
-        androidx.compose.foundation.BorderStroke(1.dp, com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.5f))
-    } else if (isOled) {
-        androidx.compose.foundation.BorderStroke(1.dp, com.inspiredandroid.kai.ui.BorderSoft)
+        BorderStroke(1.dp, cardColor)
     } else {
-        androidx.compose.foundation.BorderStroke(1.dp, BorderSoft.copy(alpha = 0.4f))
+        BorderStroke(1.dp, cardColor.copy(alpha = if (item.isProminent) 0.6f else 0.4f))
     }
+
+    val cardPadding = if (item.isProminent) 16.dp else ChatSpacing.md
+    val minHeight = if (item.isProminent) 76.dp else 60.dp
 
     Box(
         modifier = modifier
+            .defaultMinSize(minHeight = minHeight)
             .handCursor()
             .hoverable(interactionSource)
             .clickable(onClick = onClick)
@@ -187,21 +219,21 @@ private fun QuickStartCard(
             .border(cardBorder, ChatShapes.quickStartCard),
     ) {
         Row(
-            modifier = Modifier.padding(ChatSpacing.md),
+            modifier = Modifier.padding(cardPadding),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(ChatSpacing.sm),
         ) {
             Icon(
                 imageVector = item.icon,
                 contentDescription = item.label,
-                tint = if (isHovered) com.inspiredandroid.kai.ui.AccentPrimary else AccentPrimary,
-                modifier = Modifier.size(20.dp),
+                tint = if (isHovered) cardColor else cardColor.copy(alpha = 0.9f),
+                modifier = Modifier.size(if (item.isProminent) 24.dp else 20.dp),
             )
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(
                     text = item.label,
-                    style = KaiTypography.labelLarge,
-                    color = TextPrimary,
+                    style = if (item.isProminent) KaiTypography.labelLarge.copy(fontWeight = FontWeight.Bold) else KaiTypography.labelLarge,
+                    color = if (item.accentColor == QuickOptionGreen) QuickOptionGreen else TextPrimary,
                 )
                 Text(
                     text = item.subtext,

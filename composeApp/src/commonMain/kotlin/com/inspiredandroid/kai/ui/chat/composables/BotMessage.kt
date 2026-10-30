@@ -89,6 +89,7 @@ internal fun BotMessage(
     onResubmit: ((event: String, data: Map<String, String>) -> Unit)? = null,
     reasoningSegments: ImmutableList<String> = persistentListOf(),
     onOpenInEditor: ((String, String?) -> Unit)? = null,
+    isFirstMessage: Boolean = false,
 ) {
     val document = remember(message) { parseMarkdown(message) }
     var isEditing by remember(frozen) { mutableStateOf(false) }
@@ -103,47 +104,118 @@ internal fun BotMessage(
         onUiCallback ?: { _, _ -> }
     }
 
+    val copyToClipboard = rememberCopyToClipboard()
+    val botBubbleShape = androidx.compose.foundation.shape.RoundedCornerShape(
+        topStart = 18.dp,
+        topEnd = 18.dp,
+        bottomStart = 4.dp,
+        bottomEnd = 18.dp,
+    )
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = com.inspiredandroid.kai.ui.chat.ChatSpacing.lg, vertical = com.inspiredandroid.kai.ui.chat.ChatSpacing.md),
     ) {
-        Column(
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .widthIn(max = 680.dp)
-                .clip(com.inspiredandroid.kai.ui.KaiShapes.assistantSurface)
-                .background(com.inspiredandroid.kai.ui.CardFill)
+                .widthIn(min = 48.dp, max = 680.dp)
+                .androidx.compose.ui.draw.shadow(
+                    elevation = 3.dp,
+                    shape = botBubbleShape,
+                    ambientColor = androidx.compose.ui.graphics.Color(0x330E0F12),
+                    spotColor = androidx.compose.ui.graphics.Color(0x330E0F12),
+                )
+                .clip(botBubbleShape)
+                .background(com.inspiredandroid.kai.ui.WarmPaperBubble)
                 .border(
                     width = 1.dp,
-                    color = com.inspiredandroid.kai.ui.BorderSoft,
-                    shape = com.inspiredandroid.kai.ui.KaiShapes.assistantSurface,
+                    color = androidx.compose.ui.graphics.Color(0x1F0E0F12),
+                    shape = botBubbleShape,
                 )
-                .padding(horizontal = com.inspiredandroid.kai.ui.chat.ChatSpacing.xl, vertical = com.inspiredandroid.kai.ui.chat.ChatSpacing.lg),
+                .padding(horizontal = 14.dp, vertical = 12.dp),
         ) {
-            val nonBlankSegments = remember(reasoningSegments) {
-                reasoningSegments.filter { it.isNotBlank() }.toImmutableList()
-            }
-            if (nonBlankSegments.isNotEmpty()) {
-                ReasoningBlockquote(
-                    segments = nonBlankSegments,
-                    modifier = Modifier.fillMaxWidth(),
-                )
+            Column(modifier = Modifier.fillMaxWidth()) {
+                if (isFirstMessage) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(bottom = 6.dp),
+                    ) {
+                        Text("🤖", style = KaiTypography.titleSmall)
+                        Spacer(Modifier.size(6.dp))
+                        Text(
+                            text = "Brox Kai 2.0",
+                            style = KaiTypography.labelSmall.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Bold),
+                            color = com.inspiredandroid.kai.ui.DarkText,
+                        )
+                    }
+                }
+                val nonBlankSegments = remember(reasoningSegments) {
+                    reasoningSegments.filter { it.isNotBlank() }.toImmutableList()
+                }
+                if (nonBlankSegments.isNotEmpty()) {
+                    ReasoningBlockquote(
+                        segments = nonBlankSegments,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+                if (message.isNotEmpty()) {
+                    val answerTopPadding = if (nonBlankSegments.isNotEmpty()) 8.dp else 2.dp
+                    androidx.compose.runtime.CompositionLocalProvider(
+                        androidx.compose.material3.LocalContentColor provides com.inspiredandroid.kai.ui.DarkText,
+                    ) {
+                        SelectionContainer {
+                            MarkdownContent(
+                                document = document,
+                                isInteractive = effectiveInteractive,
+                                onUiCallback = kaiUiCallback,
+                                frozen = effectiveFrozen,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = answerTopPadding, end = if (message.isNotEmpty()) 24.dp else 0.dp),
+                                onOpenInEditor = onOpenInEditor,
+                            )
+                        }
+                    }
+                }
+                if (onRegenerate != null) {
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 8.dp)
+                            .clip(androidx.compose.foundation.shape.RoundedCornerShape(8.dp))
+                            .clickable { onRegenerate() }
+                            .handCursor()
+                            .padding(horizontal = 8.dp, vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        Icon(
+                            painter = painterResource(Res.drawable.ic_refresh),
+                            contentDescription = stringResource(Res.string.bot_message_regenerate_content_description),
+                            tint = com.inspiredandroid.kai.ui.DarkText.copy(alpha = 0.7f),
+                            modifier = Modifier.size(14.dp),
+                        )
+                        Text(
+                            text = "Regenerate",
+                            style = KaiTypography.labelSmall,
+                            color = com.inspiredandroid.kai.ui.DarkText.copy(alpha = 0.8f),
+                        )
+                    }
+                }
             }
             if (message.isNotEmpty()) {
-                // When reasoning is shown above, the Thinking row already provides
-                // the visual gap to the answer — drop the duplicated top inset.
-                val answerTopPadding = if (nonBlankSegments.isNotEmpty()) com.inspiredandroid.kai.ui.chat.ChatSpacing.sm else com.inspiredandroid.kai.ui.chat.ChatSpacing.xs
-                SelectionContainer {
-                    MarkdownContent(
-                        document = document,
-                        isInteractive = effectiveInteractive,
-                        onUiCallback = kaiUiCallback,
-                        frozen = effectiveFrozen,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = answerTopPadding),
-                        onOpenInEditor = onOpenInEditor,
+                androidx.compose.material3.IconButton(
+                    onClick = { copyToClipboard(message) },
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .size(28.dp)
+                        .handCursor(),
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.ic_copy),
+                        contentDescription = stringResource(Res.string.bot_message_copy_content_description),
+                        tint = com.inspiredandroid.kai.ui.DarkText.copy(alpha = 0.6f),
+                        modifier = Modifier.size(15.dp),
                     )
                 }
             }
@@ -174,7 +246,6 @@ internal fun BotMessage(
     if (message.isEmpty()) return
     var thumbsUp by remember { mutableStateOf(false) }
     var thumbsDown by remember { mutableStateOf(false) }
-    val copyToClipboard = rememberCopyToClipboard()
     val componentScope = rememberCoroutineScope()
     val uriHandler = LocalUriHandler.current
     MessageActionRow(

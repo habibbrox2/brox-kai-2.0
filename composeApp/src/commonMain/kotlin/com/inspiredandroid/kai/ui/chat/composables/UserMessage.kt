@@ -1,4 +1,4 @@
-﻿package com.inspiredandroid.kai.ui.chat.composables
+package com.inspiredandroid.kai.ui.chat.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -76,26 +76,20 @@ internal fun UserMessage(
             Column(
                 modifier = Modifier
                     .widthIn(min = 48.dp, max = 680.dp)
-                    .clip(userBubbleShape)
-                    .background(
-                        brush = androidx.compose.ui.graphics.Brush.linearGradient(
-                            colors = listOf(
-                                com.inspiredandroid.kai.ui.AccentGradientStart.copy(alpha = 0.95f),
-                                com.inspiredandroid.kai.ui.AccentGradientEnd.copy(alpha = 0.9f),
-                            ),
-                        ),
+                    .androidx.compose.ui.draw.shadow(
+                        elevation = 2.dp,
+                        shape = userBubbleShape,
+                        ambientColor = androidx.compose.ui.graphics.Color(0x26000000),
+                        spotColor = androidx.compose.ui.graphics.Color(0x26000000),
                     )
+                    .clip(userBubbleShape)
+                    .background(com.inspiredandroid.kai.ui.UserBubbleBlue)
                     .border(
                         width = 1.dp,
-                        brush = androidx.compose.ui.graphics.Brush.linearGradient(
-                            colors = listOf(
-                                com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.6f),
-                                com.inspiredandroid.kai.ui.AccentGradientEnd.copy(alpha = 0.4f),
-                            ),
-                        ),
+                        color = com.inspiredandroid.kai.ui.UserBubbleBlue.copy(alpha = 0.7f),
                         shape = userBubbleShape,
                     )
-                    .padding(horizontal = 14.dp, vertical = 8.dp),
+                    .padding(horizontal = 14.dp, vertical = 12.dp),
                 horizontalAlignment = Alignment.Start,
             ) {
                 val images = attachments.filter { it.mimeType.startsWith("image/") }
@@ -160,8 +154,8 @@ internal fun UserMessage(
                 if (message.isNotEmpty()) {
                     Text(
                         text = message,
-                        color = com.inspiredandroid.kai.ui.OledBlack,
-                        style = KaiTypography.bodyLarge,
+                        color = androidx.compose.ui.graphics.Color.White,
+                        style = KaiTypography.bodyLarge.copy(color = androidx.compose.ui.graphics.Color.White),
                     )
                 }
             }

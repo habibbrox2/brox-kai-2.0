@@ -243,15 +243,13 @@ class AppSettingsTest {
     // region Default provider seeding
 
     @Test
-    fun `a bare install starts with the default provider and auto model selected`() {
+    fun `a bare install starts with no default provider active`() {
         val appSettings = AppSettings(MapSettings())
 
         appSettings.seedDefaultServicesIfNeeded()
 
         val instances = appSettings.getConfiguredServiceInstances()
-        assertEquals(listOf(Service.OpenRouter.id), instances.map { it.serviceId })
-        assertFalse(Service.OpenRouter.requiresApiKey)
-        assertEquals("openrouter/auto", appSettings.getInstanceModelId(Service.OpenRouter.id))
+        assertTrue(instances.isEmpty())
     }
 
     @Test
@@ -267,11 +265,11 @@ class AppSettingsTest {
     }
 
     @Test
-    fun `seeding runs once so a deleted default provider stays deleted`() {
+    fun `seeding runs once so default remains empty`() {
         val appSettings = AppSettings(MapSettings())
 
         appSettings.seedDefaultServicesIfNeeded()
-        assertEquals(1, appSettings.getConfiguredServiceInstances().size)
+        assertEquals(0, appSettings.getConfiguredServiceInstances().size)
 
         appSettings.setConfiguredServiceInstances(
             listOf(ServiceInstance(Service.OpenCode.id, Service.OpenCode.id)),

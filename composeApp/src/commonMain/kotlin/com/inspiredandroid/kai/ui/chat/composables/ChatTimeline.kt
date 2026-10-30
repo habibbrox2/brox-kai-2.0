@@ -221,6 +221,9 @@ fun ChatTimeline(
         byAnswerId to suppressed
     }
 
+    val firstAssistantId = remember(uiState.history) {
+        uiState.history.firstOrNull { it.role == History.Role.ASSISTANT && it.content.isNotEmpty() && !it.isThinking }?.id
+    }
     val showScrollToBottom by remember {
         derivedStateOf {
             val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
@@ -279,6 +282,7 @@ fun ChatTimeline(
                                 },
                                 reasoningSegments = reasoningSegmentsByAssistantId[history.id] ?: persistentListOf(),
                                 onOpenInEditor = onOpenInEditor,
+                                isFirstMessage = history.id == firstAssistantId,
                             )
                             if (history.fallbackServiceName != null) {
                                 Text(
@@ -300,6 +304,7 @@ fun ChatTimeline(
                                 reasoningSegments = reasoningSegmentsByAssistantId[history.id]
                                     ?: persistentListOf(history.content),
                                 onOpenInEditor = onOpenInEditor,
+                                isFirstMessage = history.id == firstAssistantId,
                             )
                         }
                     }

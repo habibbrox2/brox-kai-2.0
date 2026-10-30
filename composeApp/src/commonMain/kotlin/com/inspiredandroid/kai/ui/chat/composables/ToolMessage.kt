@@ -1,4 +1,4 @@
-﻿package com.inspiredandroid.kai.ui.chat.composables
+package com.inspiredandroid.kai.ui.chat.composables
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
@@ -13,15 +13,22 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,11 +41,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -49,23 +59,104 @@ import com.inspiredandroid.kai.ui.KaiShapes
 import com.inspiredandroid.kai.ui.KaiTypography
 import com.inspiredandroid.kai.ui.TextSecondary
 import kai.composeapp.generated.resources.Res
-import kai.composeapp.generated.resources.tools_count
 import kai.composeapp.generated.resources.waiting_brewing
 import kai.composeapp.generated.resources.waiting_content_description
 import kai.composeapp.generated.resources.waiting_thinking
 import kai.composeapp.generated.resources.waiting_working
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
-import kotlin.time.Duration.Companion.seconds
+
+private fun toolSummaryText(executingTools: ImmutableList<Pair<String, String>>): String? {
+    if (executingTools.isEmpty()) return null
+    return executingTools.joinToString(", ") { (_, summary) -> summary }
+}
 
 @Composable
-internal fun toolSummaryText(
-    executingTools: ImmutableList<Pair<String, String>>,
-): String? = when {
-    executingTools.isEmpty() -> null
-    executingTools.size == 1 -> executingTools.first().second
-    else -> stringResource(Res.string.tools_count, executingTools.size)
+internal fun AnimatedTypingDots(
+    modifier: Modifier = Modifier,
+    dotColor: Color = Color(0xFF22D3EE),
+) {
+    val transition = rememberInfiniteTransition(label = "typingDots")
+    val dot1Alpha by transition.animateFloat(
+        initialValue = 0.25f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(600, delayMillis = 0, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse,
+        ),
+        label = "dot1",
+    )
+    val dot2Alpha by transition.animateFloat(
+        initialValue = 0.25f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(600, delayMillis = 200, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse,
+        ),
+        label = "dot2",
+    )
+    val dot3Alpha by transition.animateFloat(
+        initialValue = 0.25f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(600, delayMillis = 400, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse,
+        ),
+        label = "dot3",
+    )
+
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(3.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(Modifier.size(5.dp).clip(CircleShape).background(dotColor.copy(alpha = dot1Alpha)))
+        Box(Modifier.size(5.dp).clip(CircleShape).background(dotColor.copy(alpha = dot2Alpha)))
+        Box(Modifier.size(5.dp).clip(CircleShape).background(dotColor.copy(alpha = dot3Alpha)))
+    }
+}
+
+@Composable
+internal fun AnimatedLoadingBar(
+    modifier: Modifier = Modifier,
+    color: Color = Color(0xFF22D3EE),
+) {
+    val transition = rememberInfiniteTransition(label = "loadingBar")
+    val offsetFraction by transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1400, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart,
+        ),
+        label = "barOffset",
+    )
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(2.dp)
+            .clip(RoundedCornerShape(1.dp))
+            .background(Color(0xFF1E293B)),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth(0.4f)
+                .align(Alignment.CenterStart)
+                .graphicsLayer {
+                    translationX = offsetFraction * 240f
+                }
+                .background(
+                    Brush.horizontalGradient(
+                        colors = listOf(
+                            color.copy(alpha = 0f),
+                            color,
+                            color.copy(alpha = 0f),
+                        ),
+                    ),
+                ),
+        )
+    }
 }
 
 @Composable
@@ -82,33 +173,40 @@ internal fun WaitingResponseRow(
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clipToBounds(),
     ) {
-        // Claude Code Style inline execution status indicator
-        Row(
+        Column(
             modifier = Modifier
-                .clip(androidx.compose.foundation.shape.RoundedCornerShape(8.dp))
-                .background(androidx.compose.ui.graphics.Color(0xFF0A0E14))
+                .clip(RoundedCornerShape(12.dp))
+                .background(Color(0xFF0E0F12))
                 .border(
-                    androidx.compose.foundation.BorderStroke(1.dp, androidx.compose.ui.graphics.Color(0xFF1E293B)),
-                    androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
+                    BorderStroke(1.dp, Color(0xFF1E293B)),
+                    RoundedCornerShape(12.dp),
                 )
-                .padding(horizontal = 12.dp, vertical = 8.dp)
                 .semantics { contentDescription = waitingCd },
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp),
         ) {
-            androidx.compose.material3.CircularProgressIndicator(
-                modifier = Modifier.size(13.dp),
-                strokeWidth = 2.dp,
-                color = androidx.compose.ui.graphics.Color(0xFF22D3EE),
-            )
-            Text(
-                text = summary ?: stringResource(Res.string.waiting_thinking),
-                fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
-                style = KaiTypography.labelSmall,
-                color = androidx.compose.ui.graphics.Color(0xFFCBD5E1),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+            Row(
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                AnimatedTypingDots(dotColor = Color(0xFF22D3EE))
+                Text(
+                    text = "Thinking",
+                    style = KaiTypography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                    color = Color(0xFF22D3EE),
+                    fontFamily = FontFamily.Monospace,
+                )
+                if (!summary.isNullOrBlank()) {
+                    Text(
+                        text = "· $summary",
+                        fontFamily = FontFamily.Monospace,
+                        style = KaiTypography.labelSmall,
+                        color = Color(0xFFCBD5E1),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            }
+            AnimatedLoadingBar(color = Color(0xFF22D3EE))
         }
     }
 }
@@ -210,9 +308,6 @@ internal fun PulsingStatusIndicator(
                 )
             }
             if (toolSummary != null) {
-                // Weighted: the animated status text ahead of this takes what it needs,
-                // and without a weight the summary — the only hint of what the agent is
-                // actually doing — is pushed off the right edge at large font scales.
                 Text(
                     text = " · $toolSummary",
                     modifier = Modifier.weight(1f, fill = false),

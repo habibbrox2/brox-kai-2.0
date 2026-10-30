@@ -406,9 +406,10 @@ private fun StringBuilder.appendDynamicUiSection() {
 private fun StringBuilder.appendInteractiveUiSection() {
     append("\n## Interactive UI Mode (ACTIVE)\n")
     append("The user turned on interactive UI, so your answer is rendered as an interactive screen inside the chat. ")
-    append("Put the screen in a single ```kai-ui code fence. Text outside the fence is shown as normal chat text, so keep the prose to a minimum and let the screen carry the content.\n\n")
+    append("Your ENTIRE response MUST be a single ```kai-ui code fence containing valid JSON. Absolutely NO text before or after the code fence. No conversational intro, no outro, no markdown outside the ```kai-ui fence. Just the single ```kai-ui block.\n\n")
     append(KAI_UI_COMPONENT_CATALOG)
     append("Rules:\n")
+    append("- Output ONLY a single ```kai-ui code fence containing valid JSON. Absolutely NO text outside the code fence.\n")
     append("- Each response is a COMPLETE screen layout. Include all content and actions in one kai-ui block.\n")
     append("- Always include clear primary action buttons so the user can proceed.\n")
     append("- Every screen MUST have at least one interactive element with a callback action (button, countdown with expiry action, etc.). A screen without any callback is a dead end the user cannot proceed from.\n")

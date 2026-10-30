@@ -535,6 +535,7 @@ private fun ChatModeScreen(
                             onTextStateChange = { questionInputText = it },
                             isSandboxOpen = isSandboxOpen,
                             availableServices = pickerServices,
+                            modifier = Modifier.navigationBarsPadding().padding(bottom = 20.dp),
                         )
                     }
                 },

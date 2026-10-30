@@ -149,24 +149,12 @@ fun AppSettings.generateInstanceId(serviceId: String): String {
  * Zen ships free "stealth" models — so a fresh install can chat before the user configures
  * anything. Kilo comes first: it is the widest free catalogue of the two.
  */
-private val DEFAULT_SERVICE_INSTANCES = listOf(
-    ServiceInstance(instanceId = Service.OpenRouter.id, serviceId = Service.OpenRouter.id),
-)
+private val DEFAULT_SERVICE_INSTANCES = emptyList<ServiceInstance>()
 
 /**
- * Seeds the default providers on a bare install so chatting works without any setup.
- * OpenRouter serves as the hidden default gateway with the "Auto" free models alias.
- * Runs once per install (guarded by [KEY_DEFAULT_SERVICES_SEEDED]). An
- * install that already has services keeps exactly what it has — the defaults are a starting
- * point, not something that overrides the user's own setup.
+ * Does not seed any services by default per user specification.
  */
 fun AppSettings.seedDefaultServicesIfNeeded() {
     if (settings.getBoolean(KEY_DEFAULT_SERVICES_SEEDED, false)) return
     settings.putBoolean(KEY_DEFAULT_SERVICES_SEEDED, true)
-
-    if (getConfiguredServiceInstances().isNotEmpty()) return
-
-    setConfiguredServiceInstances(DEFAULT_SERVICE_INSTANCES)
-    // Preselect OpenRouter with "openrouter/auto" alias for free models
-    setInstanceModelId(Service.OpenRouter.id, "openrouter/auto")
 }

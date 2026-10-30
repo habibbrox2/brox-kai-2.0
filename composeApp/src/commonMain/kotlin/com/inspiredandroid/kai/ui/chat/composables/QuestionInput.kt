@@ -1,4 +1,4 @@
-﻿package com.inspiredandroid.kai.ui.chat.composables
+package com.inspiredandroid.kai.ui.chat.composables
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -349,7 +349,8 @@ fun QuestionInput(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(max = maxComposerHeight)
+                    .defaultMinSize(minHeight = 56.dp)
+                    .heightIn(min = 56.dp, max = maxComposerHeight)
                     .clip(com.inspiredandroid.kai.ui.KaiShapes.composer)
                     .background(inputPillBg, com.inspiredandroid.kai.ui.KaiShapes.composer)
                     .border(
@@ -365,7 +366,8 @@ fun QuestionInput(
                     onValueChange = onTextStateChange,
                     modifier = Modifier
                         .focusRequester(focusRequester)
-                        .heightIn(max = maxComposerHeight)
+                        .defaultMinSize(minHeight = 56.dp)
+                    .heightIn(min = 56.dp, max = maxComposerHeight)
                         .fillMaxWidth(),
                     colors = outlineTextFieldColors().copy(
                         focusedContainerColor = Color.Transparent,

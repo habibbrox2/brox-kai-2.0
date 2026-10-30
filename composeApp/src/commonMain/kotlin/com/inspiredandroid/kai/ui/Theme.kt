@@ -1,4 +1,4 @@
-﻿@file:Suppress("DEPRECATION")
+@file:Suppress("DEPRECATION")
 
 package com.inspiredandroid.kai.ui
 
@@ -61,10 +61,18 @@ val broxMutedText = Color(0xFF64748B)
 // ─── 2026 Design Tokens ───
 
 /** Ultra-deep background */
-val OledBlack = Color(0xFF000000)
+// ─── Brox Kai 2.0 Chat & Bubble Palette Tokens ───
+val ChatDarkBackground = Color(0xFF0E0F12)
+val WarmPaperBubble = Color(0xFFF3EEE4)
+val UserBubbleBlue = Color(0xFF7C96A8)
+val QuickOptionGreen = Color(0xFF9DD384)
+val DarkText = Color(0xFF0E0F12)
+val LightText = Color(0xFFECEAE4)
+
+val OledBlack = Color(0xFF0E0F12)
 
 /** Primary background */
-val BackgroundPrimary = Color(0xFF000000)
+val BackgroundPrimary = Color(0xFF0E0F12)
 
 /** Elevated surfaces */
 val SurfaceElevated = Color(0xFF0A0F1C)
@@ -252,7 +260,7 @@ object KaiShapes {
     val quickStartCard = RoundedCornerShape(18.dp)
 
     /** Composer container */
-    val composer = RoundedCornerShape(32.dp)
+    val composer = RoundedCornerShape(14.dp)
 
     /** Panel / sheet heading */
     val panel = RoundedCornerShape(24.dp)
@@ -419,7 +427,7 @@ val MidnightColorScheme = darkColorScheme(
     onError = Color.White,
     errorContainer = DangerAlert.copy(alpha = 0.2f),
     onErrorContainer = TextPrimary,
-    background = Color(0xFF050810),
+    background = Color(0xFF0E0F12),
     onBackground = TextPrimary,
     surface = SurfaceElevated,
     onSurface = TextPrimary,

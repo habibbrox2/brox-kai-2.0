@@ -9,9 +9,13 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Dns
 import androidx.compose.material.icons.filled.Menu
@@ -21,28 +25,32 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.inspiredandroid.kai.BackIcon
 import com.inspiredandroid.kai.data.ServiceEntry
 import com.inspiredandroid.kai.prefersReducedMotion
 import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.BorderSoft
-import com.inspiredandroid.kai.ui.CardFill
+import com.inspiredandroid.kai.ui.ChatDarkBackground
 import com.inspiredandroid.kai.ui.KaiShapes
-import com.inspiredandroid.kai.ui.SurfaceRaised
+import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.QuickOptionGreen
 import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.chat.ChatActions
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
 import com.inspiredandroid.kai.ui.handCursor
-import com.inspiredandroid.kai.ui.isOledFlavor
 import com.inspiredandroid.kai.ui.settings.SettingsModel
 import kai.composeapp.generated.resources.Res
+import kai.composeapp.generated.resources.ic_service_openrouter
 import kai.composeapp.generated.resources.ic_settings
 import kai.composeapp.generated.resources.ic_volume_off
 import kai.composeapp.generated.resources.ic_volume_up
@@ -54,16 +62,14 @@ import kai.composeapp.generated.resources.toggle_speech_output_content_descripti
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import nl.marc_apps.tts.TextToSpeechInstance
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
 /**
- * Chat workspace header (Plan 7, Phase 1).
- *
- * ChatGPT/Gemini-style layout: a drawer toggle on the left (only while the
- * sidebar is not permanently visible), the model selector pill centered, and
- * the quick actions (sandbox, speech output, settings) on the right. History
- * and new-chat live in [AppSidebar] now, so the legacy leading icons are gone.
+ * Chat workspace header.
+ * Displays OpenRouter logo + "Brox Kai 2.0" + "AI Agent" badge,
+ * active model selector, and navigation / tool buttons.
  */
 @Composable
 internal fun TopBar(
@@ -86,21 +92,16 @@ internal fun TopBar(
     /** Removes the last exchange — only offered while interactive mode is on. */
     onGoBack: (() -> Unit)? = null,
 ) {
-    val isOled = MaterialTheme.colorScheme.isOledFlavor
-    val topBarBg = if (isOled) {
-        com.inspiredandroid.kai.ui.CardFill
-    } else {
-        SurfaceRaised.copy(alpha = 0.85f)
-    }
-    val topBarBorder = if (isOled) {
-        androidx.compose.foundation.BorderStroke(1.dp, com.inspiredandroid.kai.ui.BorderSoft)
-    } else {
-        androidx.compose.foundation.BorderStroke(1.dp, BorderSoft.copy(alpha = 0.5f))
-    }
-    val topBarShape = com.inspiredandroid.kai.ui.KaiShapes.panel
+    val topBarBg = ChatDarkBackground
+    val topBarBorder = BorderStroke(1.dp, BorderSoft.copy(alpha = 0.5f))
+    val topBarShape = KaiShapes.panel
 
     Box(
-        modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = ChatSpacing.xxxl + 4.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .statusBarsPadding()
+            .padding(top = 20.dp)
+            .defaultMinSize(minHeight = ChatSpacing.xxxl + 4.dp),
     ) {
         Box(
             modifier = Modifier
@@ -134,8 +135,6 @@ internal fun TopBar(
                             )
                         }
                     }
-                    // Leading cluster: the interactive-UI toggle lives here so the right cluster
-                    // keeps room for the model pill on narrow screens.
                     onToggleInteractiveMode?.let { toggle ->
                         IconToggleButton(
                             checked = isInteractiveMode,
@@ -155,12 +154,48 @@ internal fun TopBar(
                     }
                 }
 
-                // Center: model selector
-                Box(
+                // Center: OpenRouter logo + "Brox Kai 2.0" + "AI Agent" badge + model selector
+                Row(
                     modifier = Modifier.weight(1f).fillMaxWidth(),
-                    contentAlignment = Alignment.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
                 ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    ) {
+                        Icon(
+                            painter = painterResource(Res.drawable.ic_service_openrouter),
+                            contentDescription = "OpenRouter",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(20.dp),
+                        )
+                        Text(
+                            text = "Brox Kai 2.0",
+                            style = KaiTypography.titleSmall.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Bold),
+                            color = TextPrimary,
+                            maxLines = 1,
+                        )
+                        Box(
+                            modifier = Modifier
+                                .clip(KaiShapes.pill)
+                                .background(QuickOptionGreen.copy(alpha = 0.15f))
+                                .border(
+                                    1.dp,
+                                    QuickOptionGreen.copy(alpha = 0.5f),
+                                    KaiShapes.pill,
+                                )
+                                .padding(horizontal = 6.dp, vertical = 2.dp),
+                        ) {
+                            Text(
+                                text = "AI Agent",
+                                style = KaiTypography.labelSmall.copy(fontSize = 10.sp, fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold),
+                                color = QuickOptionGreen,
+                            )
+                        }
+                    }
                     if (services.isNotEmpty()) {
+                        Spacer(Modifier.width(8.dp))
                         ServiceSelector(
                             services = services,
                             onSelectService = actions.selectService,
@@ -168,7 +203,7 @@ internal fun TopBar(
                             isLoadingModels = isLoadingModels,
                             onSelectModel = actions.selectModel,
                             onLoadModels = actions.loadModels,
-                            showLabel = true,
+                            showLabel = false,
                         )
                     }
                 }
