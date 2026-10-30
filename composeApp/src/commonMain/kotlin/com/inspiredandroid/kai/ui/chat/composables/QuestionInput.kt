@@ -367,7 +367,7 @@ fun QuestionInput(
                     modifier = Modifier
                         .focusRequester(focusRequester)
                         .defaultMinSize(minHeight = 56.dp)
-                    .heightIn(min = 56.dp, max = maxComposerHeight)
+                        .heightIn(min = 56.dp, max = maxComposerHeight)
                         .fillMaxWidth(),
                     colors = outlineTextFieldColors().copy(
                         focusedContainerColor = Color.Transparent,
