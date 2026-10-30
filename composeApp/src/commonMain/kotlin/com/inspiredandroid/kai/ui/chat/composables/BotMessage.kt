@@ -27,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +48,7 @@ import com.inspiredandroid.kai.getBackgroundDispatcher
 import com.inspiredandroid.kai.ui.CardFill
 import com.inspiredandroid.kai.ui.DarkText
 import com.inspiredandroid.kai.ui.KaiTypography
+import com.inspiredandroid.kai.ui.SuccessGreen
 import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.WarmPaperBubble
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
@@ -57,16 +59,21 @@ import com.inspiredandroid.kai.ui.markdown.MarkdownContent
 import com.inspiredandroid.kai.ui.markdown.parseMarkdown
 import com.inspiredandroid.kai.ui.rememberCopyToClipboard
 import kai.composeapp.generated.resources.Res
+import kai.composeapp.generated.resources.bot_message_copy_content_description
 import kai.composeapp.generated.resources.bot_message_thinking_expand_content_description
 import kai.composeapp.generated.resources.bot_message_thinking_label
 import kai.composeapp.generated.resources.chat_cancel_edit_content_description
 import kai.composeapp.generated.resources.chat_edit_submission_content_description
+import kai.composeapp.generated.resources.ic_copy
+import kai.composeapp.generated.resources.ic_refresh
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import nl.marc_apps.tts.TextToSpeechInstance
 import nl.marc_apps.tts.errors.TextToSpeechSynthesisInterruptedError
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -170,11 +177,39 @@ internal fun BotMessage(
                                 frozen = effectiveFrozen,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(top = answerTopPadding),
+                                    .padding(top = answerTopPadding, end = if (message.isNotEmpty() && frozen == null) 24.dp else 0.dp),
                                 onOpenInEditor = onOpenInEditor,
                             )
                         }
                     }
+                }
+            }
+
+            // Copy button on top right of bot bubble
+            if (message.isNotEmpty() && frozen == null) {
+                var isCopiedInside by remember { mutableStateOf(false) }
+                LaunchedEffect(isCopiedInside) {
+                    if (isCopiedInside) {
+                        delay(2000)
+                        isCopiedInside = false
+                    }
+                }
+                androidx.compose.material3.IconButton(
+                    onClick = {
+                        copyToClipboard(message)
+                        isCopiedInside = true
+                    },
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .size(28.dp)
+                        .handCursor(),
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.ic_copy),
+                        contentDescription = stringResource(Res.string.bot_message_copy_content_description),
+                        tint = if (isCopiedInside) SuccessGreen else DarkText.copy(alpha = 0.5f),
+                        modifier = Modifier.size(15.dp),
+                    )
                 }
             }
 
