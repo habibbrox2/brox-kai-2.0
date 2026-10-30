@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
@@ -76,7 +77,7 @@ internal fun UserMessage(
             Column(
                 modifier = Modifier
                     .widthIn(min = 48.dp, max = 680.dp)
-                    .androidx.compose.ui.draw.shadow(
+                    .shadow(
                         elevation = 2.dp,
                         shape = userBubbleShape,
                         ambientColor = androidx.compose.ui.graphics.Color(0x26000000),

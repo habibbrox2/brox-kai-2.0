@@ -37,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -120,7 +121,7 @@ internal fun BotMessage(
         Box(
             modifier = Modifier
                 .widthIn(min = 48.dp, max = 680.dp)
-                .androidx.compose.ui.draw.shadow(
+                .shadow(
                     elevation = 3.dp,
                     shape = botBubbleShape,
                     ambientColor = androidx.compose.ui.graphics.Color(0x330E0F12),
