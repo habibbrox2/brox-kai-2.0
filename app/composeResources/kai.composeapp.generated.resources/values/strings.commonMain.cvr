@@ -411,7 +411,9 @@ string|settings_status_error_local_network|TG9jYWwgbmV0d29yayBhY2Nlc3MgZGVuaWVkL
 string|settings_status_error_quota_exhausted|UXVvdGEgZXhoYXVzdGVk
 string|settings_status_error_rate_limited|UmF0ZSBsaW1pdGVk
 string|settings_status_error|Q29ubmVjdGlvbiBmYWlsZWQ=
+string|settings_tab_account|QWNjb3VudCAmIFBsYW4=
 string|settings_tab_agent|QWdlbnQ=
+string|settings_tab_data|RGF0YSBDb250cm9s
 string|settings_tab_general|R2VuZXJhbA==
 string|settings_tab_integrations|SW50ZWdyYXRpb25z
 string|settings_tab_sandbox|TGludXggU2FuZGJveA==
