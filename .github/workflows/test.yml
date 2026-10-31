@@ -160,6 +160,7 @@ jobs:
             composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/updater/AndroidUpdateDiscovery.kt \
             composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/updater/AndroidUpdateDownloadRequestValidation.kt \
             composeApp/src/commonTest/kotlin/com/inspiredandroid/kai/updater/AndroidUpdateDownloadRequestValidationTest.kt \
+            composeApp/src/commonTest/kotlin/com/inspiredandroid/kai/updater/AndroidUpdateDiscoveryTest.kt \
             composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/updater/AndroidApkVersionValidation.kt \
             composeApp/src/commonTest/kotlin/com/inspiredandroid/kai/updater/AndroidApkVersionValidationTest.kt \
             androidApp/build.gradle.kts \

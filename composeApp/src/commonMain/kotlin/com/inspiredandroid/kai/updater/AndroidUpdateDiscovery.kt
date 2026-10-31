@@ -16,6 +16,7 @@ object AndroidUpdateDiscovery {
         "https://api.github.com/repos/habibbrox2/brox-kai-2.0/releases?per_page=100"
     private const val TAG_PREFIX = "v2.0."
     private const val MANIFEST_ASSET = "update.json"
+    private const val MAIN_MANIFEST_URL = "https://raw.githubusercontent.com/habibbrox2/brox-kai-2.0/main/update.json"
 
     private val releaseJson = Json { ignoreUnknownKeys = true }
 
@@ -61,6 +62,34 @@ object AndroidUpdateDiscovery {
         },
     ): Result {
         if (installedVersionCode <= 0L) return Result.InvalidRelease("Invalid installed version code")
+        // Prefer the canonical manifest published to main after a successful stable release.
+        // Only a missing file (404) falls back to the legacy per-release asset lookup.
+        val canonicalManifest = try {
+            AndroidUpdateManifest.parse(fetchText(MAIN_MANIFEST_URL))
+        } catch (exception: HttpRequestException) {
+            if (exception.statusCode != 404) {
+                return Result.InvalidRelease("Unable to download main update manifest: ${httpFailureReason(exception)}")
+            }
+            null
+        } catch (_: SerializationException) {
+            return Result.InvalidRelease("Main update manifest was not valid JSON")
+        } catch (_: Exception) {
+            return Result.InvalidRelease("Network error while reading main update manifest")
+        }
+
+        if (canonicalManifest != null) {
+            val tag = "v${canonicalManifest.versionName}"
+            when (val validation = canonicalManifest.validateForRelease(tag)) {
+                ManifestValidation.Valid -> Unit
+                is ManifestValidation.Invalid -> return Result.InvalidRelease(validation.reason)
+            }
+            return if (canonicalManifest.isUpgradeFrom(installedVersionCode)) {
+                Result.UpdateAvailable(canonicalManifest, tag)
+            } else {
+                Result.UpToDate
+            }
+        }
+
         val releases = try {
             releaseJson.decodeFromString<List<GitHubRelease>>(fetchText(RELEASES_URL))
         } catch (exception: HttpRequestException) {

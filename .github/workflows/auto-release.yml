@@ -255,3 +255,31 @@ jobs:
           files: |
             dist/Brox-Kai-*
             dist/update.json
+
+      - name: Publish canonical update.json to main
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          API_PATH="repos/habibbrox2/brox-kai-2.0/contents/update.json"
+          CURRENT=$(gh api "$API_PATH?ref=main" 2>/dev/null || true)
+          if [ -n "$CURRENT" ]; then
+            CURRENT_CODE=$(printf '%s' "$CURRENT" | jq -r '.content' | tr -d '\n' | base64 --decode | python3 -c 'import json,sys; print(int(json.load(sys.stdin)["versionCode"]))')
+            CANDIDATE_CODE=$(python3 -c 'import json; print(int(json.load(open("dist/update.json"))["versionCode"]))')
+            if [ "$CURRENT_CODE" -ge "$CANDIDATE_CODE" ]; then
+              echo "Keeping canonical main manifest versionCode $CURRENT_CODE; candidate $CANDIDATE_CODE is not newer."
+              exit 0
+            fi
+            EXISTING_SHA=$(printf '%s' "$CURRENT" | jq -r '.sha')
+          else
+            EXISTING_SHA=""
+          fi
+          CONTENT=$(base64 -w 0 dist/update.json)
+          ARGS=(--method PUT "$API_PATH"
+            -f message="[skip ci] chore(update): publish v${{ needs.bump.outputs.version }} manifest"
+            -f content="$CONTENT"
+            -f branch=main)
+          if [ -n "$EXISTING_SHA" ]; then ARGS+=(-f sha="$EXISTING_SHA"); fi
+          gh api "${ARGS[@]}"
+          echo "Published canonical update.json for v${{ needs.bump.outputs.version }}"
