@@ -461,7 +461,6 @@ private fun ChatModeScreen(
                     }
 
                     if (isSandboxOpen && !expanded) {
-                        val sandboxState = sandboxState ?: (previewSandboxState ?: SandboxUiState())
                         SandboxTabsContent(
                             sandboxState = sandboxState,
                             onSetupSandbox = sandboxViewModel?.let { { it.onSetupSandbox() } } ?: {},
@@ -540,7 +539,7 @@ private fun ChatModeScreen(
                 },
                 sidePanel = if (isSandboxOpen && expanded) {
                     {
-                        val sbState = sandboxState ?: (previewSandboxState ?: SandboxUiState())
+                        val sbState = sandboxState
                         SandboxTabsContent(
                             sandboxState = sbState,
                             onSetupSandbox = sandboxViewModel?.let { { it.onSetupSandbox() } } ?: {},

@@ -52,7 +52,7 @@ internal fun deriveChatTimelineData(
             History.Role.ASSISTANT -> {
                 if (entry.isThinking) {
                     if (entry.content.isNotEmpty()) {
-                        priorThinkingSegments = priorThinkingSegments.add(entry.content)
+                        priorThinkingSegments = priorThinkingSegments.adding(entry.content)
                     }
                 } else if (entry.content.isNotEmpty()) {
                     val combined = buildList {
