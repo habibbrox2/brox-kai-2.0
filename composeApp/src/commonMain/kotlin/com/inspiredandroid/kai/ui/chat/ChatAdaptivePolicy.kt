@@ -42,8 +42,7 @@ object ChatAdaptivePolicy {
      * window, the conversation rail moves back to the drawer and the sandbox uses
      * the main content slot.
      */
-    fun useExpandedLayout(width: Dp, hasSidePanel: Boolean): Boolean =
-        width >= 840.dp && (!hasSidePanel || width >= expandedSidePanelMinWidth)
+    fun useExpandedLayout(width: Dp, hasSidePanel: Boolean): Boolean = width >= 840.dp && (!hasSidePanel || width >= expandedSidePanelMinWidth)
 
     /** Conversation column is centered and capped on expanded windows. */
     val conversationColumnMax: Dp = 760.dp

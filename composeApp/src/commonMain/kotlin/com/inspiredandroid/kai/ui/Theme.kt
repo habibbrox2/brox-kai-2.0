@@ -532,8 +532,7 @@ fun kaiAdaptiveCardColors(): CardColors = CardDefaults.cardColors(
 )
 
 @Composable
-fun kaiAdaptiveCardBorder(): BorderStroke =
-    BorderStroke(1.dp, BorderSoft)
+fun kaiAdaptiveCardBorder(): BorderStroke = BorderStroke(1.dp, BorderSoft)
 
 @Composable
 fun Modifier.kaiAdaptiveCardSurface(shape: Shape = CardDefaults.shape): Modifier = this

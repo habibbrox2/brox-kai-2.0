@@ -41,8 +41,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.BackIcon
-import com.inspiredandroid.kai.prefersReducedMotion
 import com.inspiredandroid.kai.getBackgroundDispatcher
+import com.inspiredandroid.kai.prefersReducedMotion
 import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.CardFill
 import com.inspiredandroid.kai.ui.KaiTypography
@@ -50,10 +50,10 @@ import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
 import com.inspiredandroid.kai.ui.chat.ChatUiState
-import com.inspiredandroid.kai.ui.chat.deriveChatTimelineData
 import com.inspiredandroid.kai.ui.chat.History
 import com.inspiredandroid.kai.ui.chat.activities.ActivityDetails
 import com.inspiredandroid.kai.ui.chat.activities.ActivityMapper
+import com.inspiredandroid.kai.ui.chat.deriveChatTimelineData
 import com.inspiredandroid.kai.ui.chat.lastRenderedAssistant
 import com.inspiredandroid.kai.ui.components.LogoAnimation
 import com.inspiredandroid.kai.ui.components.VerticalScrollbarForList

@@ -89,7 +89,8 @@ internal fun deriveChatTimelineData(
             }
 
             History.Role.TOOL_EXECUTING,
-            History.Role.TOOL -> Unit
+            History.Role.TOOL,
+            -> Unit
         }
     }
 
