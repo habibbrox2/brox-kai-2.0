@@ -131,7 +131,7 @@ private fun DynamicUiToggle(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun ThemeModeSwitch(
+internal fun ThemeModeSwitch(
     themeMode: ThemeMode,
     onChangeThemeMode: (ThemeMode) -> Unit,
 ) {
