@@ -76,12 +76,6 @@ internal fun GeneralContent(uiState: SettingsUiState, actions: SettingsActions) 
                 )
             }
             SettingsCard {
-                ThemeModeSwitch(
-                    themeMode = uiState.themeMode,
-                    onChangeThemeMode = actions.onChangeThemeMode,
-                )
-            }
-            SettingsCard {
                 TtsSettingsSection()
             }
         },
@@ -147,6 +141,16 @@ private fun ThemeModeSwitch(
         ThemeMode.Dark to stringResource(Res.string.settings_theme_dark),
         ThemeMode.OledBlack to stringResource(Res.string.settings_theme_oled),
         ThemeMode.Midnight to stringResource(Res.string.settings_theme_midnight),
+        ThemeMode.OGShine to "OG Shine",
+        ThemeMode.Peach to "Peach",
+        ThemeMode.Lilac to "Lilac",
+        ThemeMode.Dusk to "Dusk",
+        ThemeMode.Seafoam to "Seafoam",
+        ThemeMode.Graphite to "Graphite",
+        ThemeMode.Daybreak to "Daybreak",
+        ThemeMode.Sherbet to "Sherbet",
+        ThemeMode.Paper to "Paper",
+        ThemeMode.Carbon to "Carbon",
     )
 
     val isOled = MaterialTheme.colorScheme.isOledFlavor

@@ -59,8 +59,11 @@ enum class ConnectionStatus {
  * their own tab instead of being folded into a single long page.
  */
 enum class SettingsTab {
-    /** App-level preferences: theme, UI scale, dynamic UI, daemon mode, export/import. */
+    /** App-level preferences: UI scale, dynamic UI, daemon mode, export/import. */
     General,
+
+    /** Visual appearance: theme, colors. */
+    Appearance,
 
     /** The agent itself: soul, memories, scheduled tasks, heartbeat, email, SMS, notifications. */
     Agent,

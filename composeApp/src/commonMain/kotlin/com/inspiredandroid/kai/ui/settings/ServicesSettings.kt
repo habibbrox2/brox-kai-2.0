@@ -1063,7 +1063,7 @@ private fun ConfiguredServiceCardContent(
                         onChangeModelContextTokens = onChangeModelContextTokens,
                         modelContextTokens = modelContextTokens,
                     )
-                } else if (entry.service is Service.OpenAICompatible || entry.service is Service.Cloudflare) {
+                } else if (entry.service is Service.OpenAICompatible || entry.service is Service.Cloudflare || entry.service.modelsUrl != null || entry.service.chatUrl.isNotBlank()) {
                     OpenAICompatibleSettings(
                         baseUrl = entry.baseUrl,
                         onChangeBaseUrl = onChangeBaseUrl,

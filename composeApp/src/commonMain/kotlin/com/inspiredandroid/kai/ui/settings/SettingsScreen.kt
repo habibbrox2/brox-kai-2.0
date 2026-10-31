@@ -506,6 +506,7 @@ private fun SettingsTabSelector(
 
                 val label = when (tab) {
                     SettingsTab.General -> stringResource(Res.string.settings_tab_general)
+                    SettingsTab.Appearance -> "Appearance"
                     SettingsTab.Agent -> stringResource(Res.string.settings_tab_agent)
                     SettingsTab.Services -> stringResource(Res.string.settings_tab_services)
                     SettingsTab.Tools -> stringResource(Res.string.settings_tab_tools)

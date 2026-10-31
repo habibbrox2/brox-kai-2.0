@@ -1,33 +1,37 @@
 package com.inspiredandroid.kai.ui.components
 
-import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.EaseInOutCubic
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+
 // The Brox Kai "BK" monogram, authored in the same 512x512 space as the launcher
 // icon so the animated mark is the exact artwork used everywhere else.
 private const val MARK_CENTER_X = 264.5f
 private const val MARK_CENTER_Y = 256f
 private const val MARK_HEIGHT = 320f
 
-private val MarkCyan = Color(0xFF00D1E8)
-private val MarkBlueOnDark = Color(0xFF168BDB)
+private val MarkCyan = Color(0xFF00E5FF)
+private val MarkBlue = Color(0xFF1E88E5)
+private val GlowCyan = Color(0x4000E5FF)
 
 private val broxMarkB: Path by lazy {
     Path().apply {
@@ -74,50 +78,88 @@ private val broxMarkK: Path by lazy {
 }
 
 /**
- * The Brox Kai mark, alive: the two halves of the BK monogram ease apart and back
- * together while the whole mark gently breathes. Colors adapt to the surface it
- * sits on so the mark stays legible on both light and dark themes.
+ * The Brox Kai mark, reimagined with a premium glow and fluid motion.
+ * The two halves of the BK monogram elegantly drift apart and converge
+ * while breathing with a subtle pulse for a polished, futuristic look.
  */
 @Composable
 fun LogoAnimation(
     modifier: Modifier = Modifier,
-    size: Dp = 52.dp,
+    size: Dp = 72.dp,
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "logoAnimation")
-    val animatable by infiniteTransition.animateFloat(
+    
+    val drift by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 900, easing = EaseInOut),
+            animation = tween(durationMillis = 1400, easing = EaseInOutCubic),
             repeatMode = RepeatMode.Reverse,
         ),
-        label = "logoPulse",
+        label = "logoDrift",
+    )
+    
+    val breath by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 2200, easing = EaseInOutCubic),
+            repeatMode = RepeatMode.Reverse,
+        ),
+        label = "logoBreath",
     )
 
-    // Mark adapts to dark surfaces; on light surfaces the navy mark would be
-    // preferred, but the design system tokens handle theme adaptation at the
-    // theme level, so the mark keeps a single legible color here.
-    val kColor = MarkBlueOnDark
-
-    Canvas(modifier = modifier.size(size)) {
-        val breath = 1f - 0.04f * animatable
-        val scale = this.size.height * 0.66f / MARK_HEIGHT * breath
-        val centerX = this.size.width / 2f
-        val centerY = this.size.height / 2f
-        val drift = this.size.width * 0.09f * animatable
-
-        fun drawHalf(path: Path, color: Color, offsetX: Float) {
-            withTransform({
-                translate(centerX + offsetX, centerY)
-                translate(-MARK_CENTER_X, -MARK_CENTER_Y)
-                scale(scale, scale, Offset.Zero)
-            }) {
-                drawPath(path, color)
-            }
+    Box(
+        modifier = modifier.size(size),
+        contentAlignment = Alignment.Center,
+    ) {
+        Canvas(
+            modifier = Modifier
+                .size(size * 1.15f)
+                .scale(1f + 0.02f * breath),
+        ) {
+            val glowAlpha = 0.15f + 0.25f * breath
+            val glowRadius = this.size.minDimension * 0.45f
+            drawCircle(
+                brush = Brush.radialGradient(
+                    colors = listOf(
+                        GlowCyan.copy(alpha = glowAlpha),
+                        Color.Transparent,
+                    ),
+                    center = center,
+                    radius = glowRadius,
+                ),
+            )
         }
+        
+        Canvas(modifier = Modifier.size(size)) {
+            val breathScale = 1f + 0.015f * breath
+            val scale = this.size.height * 0.68f / MARK_HEIGHT * breathScale
+            val centerX = this.size.width / 2f
+            val centerY = this.size.height / 2f
+            val driftOffset = this.size.width * 0.08f * drift
+            val strokeWidth = scale * 2.5f
 
-        // B is the left half, K the right half; they part and reunite.
-        drawHalf(broxMarkB, MarkCyan, -drift)
-        drawHalf(broxMarkK, kColor, drift)
+            fun drawHalf(path: Path, color: Color, offsetX: Float, isLeft: Boolean) {
+                withTransform({
+                    translate(centerX + offsetX, centerY)
+                    translate(-MARK_CENTER_X, -MARK_CENTER_Y)
+                    scale(scale, scale, Offset.Zero)
+                }) {
+                    // Subtle glow stroke
+                    drawPath(
+                        path = path,
+                        color = color.copy(alpha = 0.3f),
+                        style = Stroke(width = strokeWidth),
+                    )
+                    // Main fill
+                    drawPath(path = path, color = color)
+                }
+            }
+
+            // B is the left half, K the right half; they elegantly part and reunite.
+            drawHalf(broxMarkB, MarkCyan, -driftOffset, true)
+            drawHalf(broxMarkK, MarkBlue, driftOffset, false)
+        }
     }
 }

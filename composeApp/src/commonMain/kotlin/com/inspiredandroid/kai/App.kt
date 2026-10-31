@@ -33,10 +33,20 @@ import com.inspiredandroid.kai.data.ThemeMode
 import com.inspiredandroid.kai.tools.AppPermission
 import com.inspiredandroid.kai.tools.PermissionController
 import com.inspiredandroid.kai.tools.SetupPermissionHandler
+import com.inspiredandroid.kai.ui.CarbonColorScheme
 import com.inspiredandroid.kai.ui.DarkColorScheme
+import com.inspiredandroid.kai.ui.DaybreakColorScheme
+import com.inspiredandroid.kai.ui.DuskColorScheme
+import com.inspiredandroid.kai.ui.GraphiteColorScheme
 import com.inspiredandroid.kai.ui.LightColorScheme
+import com.inspiredandroid.kai.ui.LilacColorScheme
 import com.inspiredandroid.kai.ui.MidnightColorScheme
+import com.inspiredandroid.kai.ui.OGShineColorScheme
 import com.inspiredandroid.kai.ui.OledColorScheme
+import com.inspiredandroid.kai.ui.PaperColorScheme
+import com.inspiredandroid.kai.ui.PeachColorScheme
+import com.inspiredandroid.kai.ui.SeafoamColorScheme
+import com.inspiredandroid.kai.ui.SherbetColorScheme
 import com.inspiredandroid.kai.ui.Theme
 import com.inspiredandroid.kai.ui.build.KaiBuildScreen
 import com.inspiredandroid.kai.ui.chat.ChatScreen
@@ -172,6 +182,16 @@ private fun AppContent(
         ThemeMode.Dark -> darkColorScheme
         ThemeMode.OledBlack -> OledColorScheme
         ThemeMode.Midnight -> MidnightColorScheme
+        ThemeMode.OGShine -> OGShineColorScheme
+        ThemeMode.Peach -> PeachColorScheme
+        ThemeMode.Lilac -> LilacColorScheme
+        ThemeMode.Dusk -> DuskColorScheme
+        ThemeMode.Seafoam -> SeafoamColorScheme
+        ThemeMode.Graphite -> GraphiteColorScheme
+        ThemeMode.Daybreak -> DaybreakColorScheme
+        ThemeMode.Sherbet -> SherbetColorScheme
+        ThemeMode.Paper -> PaperColorScheme
+        ThemeMode.Carbon -> CarbonColorScheme
     }
 
     val sandboxController = koinInject<SandboxController>()

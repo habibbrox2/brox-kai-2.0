@@ -238,19 +238,17 @@ fun AppSidebar(
         )
 
         Row(
-            modifier = Modifier.fillMaxWidth().padding(top = ChatSpacing.xxs),
+            modifier = Modifier.fillMaxWidth().padding(top = ChatSpacing.sm),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(ChatSpacing.xs),
+            horizontalArrangement = Arrangement.spacedBy(ChatSpacing.sm),
         ) {
-            Image(
-                painter = painterResource(Res.drawable.logo),
-                contentDescription = null,
-                modifier = Modifier.size(24.dp).clip(KaiShapes.xs),
+            com.inspiredandroid.kai.ui.components.LogoAnimation(
+                size = 32.dp,
             )
             Text(
                 text = "Brox Kai 2.0",
-                style = KaiTypography.titleSmall,
-                fontWeight = FontWeight.SemiBold,
+                style = KaiTypography.titleMedium,
+                fontWeight = FontWeight.Bold,
                 color = TextPrimary,
             )
         }

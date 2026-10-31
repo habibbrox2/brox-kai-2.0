@@ -83,6 +83,10 @@ fun SettingsDetailPane(
                                 GeneralContent(uiState = uiState, actions = actions)
                             }
 
+                            SettingsTab.Appearance -> {
+                                AppearanceContent(uiState = uiState, actions = actions)
+                            }
+
                             SettingsTab.Agent -> {
                                 AgentContent(uiState = uiState, actions = actions)
                             }

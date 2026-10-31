@@ -153,7 +153,7 @@ internal fun TopBar(
                     }
                 }
 
-                // Center: OpenRouter logo + "Brox Kai 2.0" + "AI Agent" badge + model selector
+                // Center: Brox Kai logo + "Brox Kai 2.0" + "AI Agent" badge + model selector
                 Row(
                     modifier = Modifier.weight(1f).fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -161,17 +161,14 @@ internal fun TopBar(
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        Icon(
-                            painter = painterResource(Res.drawable.ic_service_openrouter),
-                            contentDescription = "OpenRouter",
-                            tint = Color.Unspecified,
-                            modifier = Modifier.size(20.dp),
+                        com.inspiredandroid.kai.ui.components.LogoAnimation(
+                            size = 28.dp,
                         )
                         Text(
                             text = "Brox Kai 2.0",
-                            style = KaiTypography.titleSmall.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Bold),
+                            style = KaiTypography.titleMedium.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Bold),
                             color = TextPrimary,
                             maxLines = 1,
                         )

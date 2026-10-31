@@ -202,7 +202,7 @@ sealed class Service(
 
     data object Cloudflare : Service(
         id = "cloudflare",
-        displayName = "Cloudflare AI",
+        displayName = "Cloudflare AI Gateway",
         icon = Res.drawable.ic_service_cloudflare,
         requiresApiKey = true,
         defaultModel = null,

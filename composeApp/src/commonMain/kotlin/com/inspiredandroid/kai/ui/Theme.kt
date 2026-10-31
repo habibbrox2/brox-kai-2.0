@@ -562,6 +562,213 @@ val LightColorScheme = lightColorScheme(
     surfaceContainerLowest = Color(0xFFFFFFFF),
 )
 
+/** OG Shine - neon cyan/green on black */
+val OGShineColorScheme = darkColorScheme(
+    primary = Color(0xFF00FF88),
+    onPrimary = Color(0xFF000000),
+    primaryContainer = Color(0xFF003D20),
+    onPrimaryContainer = Color(0xFF00FFAA),
+    secondary = Color(0xFF00D1E8),
+    onSecondary = Color(0xFF000000),
+    tertiary = Color(0xFF39FF14),
+    onTertiary = Color(0xFF000000),
+    error = DangerAlert,
+    onError = Color.White,
+    background = Color(0xFF000000),
+    onBackground = Color(0xFF00FF88),
+    surface = Color(0xFF050505),
+    onSurface = Color(0xFF00FF88),
+    surfaceVariant = Color(0xFF0A0A0A),
+    onSurfaceVariant = Color(0xFF00D1E8),
+    outline = Color(0xFF00FF88),
+    outlineVariant = Color(0xFF003D20),
+    surfaceContainerHighest = Color(0xFF0A0A0A),
+    surfaceContainerHigh = Color(0xFF050505),
+    surfaceContainer = Color(0xFF000000),
+    surfaceContainerLow = Color(0xFF000000),
+    surfaceContainerLowest = Color(0xFF000000),
+)
+
+/** Peach theme */
+val PeachColorScheme = lightColorScheme(
+    primary = Color(0xFFE85D04),
+    onPrimary = Color.White,
+    primaryContainer = Color(0xFFFFDAB9),
+    onPrimaryContainer = Color(0xFF8B3A00),
+    secondary = Color(0xFFF48C06),
+    onSecondary = Color.White,
+    tertiary = Color(0xFFFFB347),
+    onTertiary = Color(0xFF4A2C00),
+    background = Color(0xFFFFF7F0),
+    onBackground = Color(0xFF2D1810),
+    surface = Color(0xFFFFF0E6),
+    onSurface = Color(0xFF2D1810),
+    surfaceVariant = Color(0xFFFFE4D1),
+    onSurfaceVariant = Color(0xFF6B3A2A),
+    outline = Color(0xFFD2691E),
+    outlineVariant = Color(0xFFFFDAB9),
+)
+
+/** Lilac theme */
+val LilacColorScheme = lightColorScheme(
+    primary = Color(0xFF6B46C1),
+    onPrimary = Color.White,
+    primaryContainer = Color(0xFFE9D8FD),
+    onPrimaryContainer = Color(0xFF4C1D95),
+    secondary = Color(0xFF8B5CF6),
+    onSecondary = Color.White,
+    tertiary = Color(0xFFA78BFA),
+    onTertiary = Color(0xFF2D1B69),
+    background = Color(0xFFFAF7FF),
+    onBackground = Color(0xFF1E1B4B),
+    surface = Color(0xFFF3F0FF),
+    onSurface = Color(0xFF1E1B4B),
+    surfaceVariant = Color(0xFFEDE9FE),
+    onSurfaceVariant = Color(0xFF4C1D95),
+    outline = Color(0xFF8B5CF6),
+    outlineVariant = Color(0xFFE9D8FD),
+)
+
+/** Dusk theme */
+val DuskColorScheme = darkColorScheme(
+    primary = Color(0xFFF59E0B),
+    onPrimary = Color(0xFF1C1917),
+    primaryContainer = Color(0xFF78350F),
+    onPrimaryContainer = Color(0xFFFCD34D),
+    secondary = Color(0xFFA855F7),
+    onSecondary = Color.White,
+    tertiary = Color(0xFFEC4899),
+    onTertiary = Color.White,
+    background = Color(0xFF0F0A19),
+    onBackground = Color(0xFFF3E8FF),
+    surface = Color(0xFF1E1625),
+    onSurface = Color(0xFFF3E8FF),
+    surfaceVariant = Color(0xFF2D1B69),
+    onSurfaceVariant = Color(0xFFD8B4FE),
+    outline = Color(0xFFA855F7),
+    outlineVariant = Color(0xFF4C1D95),
+)
+
+/** Seafoam theme */
+val SeafoamColorScheme = lightColorScheme(
+    primary = Color(0xFF059669),
+    onPrimary = Color.White,
+    primaryContainer = Color(0xFFA7F3D0),
+    onPrimaryContainer = Color(0xFF065F46),
+    secondary = Color(0xFF10B981),
+    onSecondary = Color.White,
+    tertiary = Color(0xFF34D399),
+    onTertiary = Color(0xFF064E3B),
+    background = Color(0xFFF0FDF4),
+    onBackground = Color(0xFF064E3B),
+    surface = Color(0xFFECFDF5),
+    onSurface = Color(0xFF064E3B),
+    surfaceVariant = Color(0xFFD1FAE5),
+    onSurfaceVariant = Color(0xFF047857),
+    outline = Color(0xFF10B981),
+    outlineVariant = Color(0xFFA7F3D0),
+)
+
+/** Graphite theme */
+val GraphiteColorScheme = darkColorScheme(
+    primary = Color(0xFF94A3B8),
+    onPrimary = Color(0xFF0F172A),
+    primaryContainer = Color(0xFF334155),
+    onPrimaryContainer = Color(0xFFE2E8F0),
+    secondary = Color(0xFF64748B),
+    onSecondary = Color.White,
+    tertiary = Color(0xFF475569),
+    onTertiary = Color.White,
+    background = Color(0xFF0F0F0F),
+    onBackground = Color(0xFFE5E5E5),
+    surface = Color(0xFF1A1A1A),
+    onSurface = Color(0xFFE5E5E5),
+    surfaceVariant = Color(0xFF252525),
+    onSurfaceVariant = Color(0xFFB0B0B0),
+    outline = Color(0xFF475569),
+    outlineVariant = Color(0xFF333333),
+)
+
+/** Daybreak theme */
+val DaybreakColorScheme = lightColorScheme(
+    primary = Color(0xFF2563EB),
+    onPrimary = Color.White,
+    primaryContainer = Color(0xFFDBEAFE),
+    onPrimaryContainer = Color(0xFF1E40AF),
+    secondary = Color(0xFF3B82F6),
+    onSecondary = Color.White,
+    tertiary = Color(0xFF60A5FA),
+    onTertiary = Color(0xFF1E3A8A),
+    background = Color(0xFFF8FAFF),
+    onBackground = Color(0xFF0F172A),
+    surface = Color(0xFFF1F5FF),
+    onSurface = Color(0xFF0F172A),
+    surfaceVariant = Color(0xFFE0E7FF),
+    onSurfaceVariant = Color(0xFF312E81),
+    outline = Color(0xFF3B82F6),
+    outlineVariant = Color(0xFFDBEAFE),
+)
+
+/** Sherbet theme */
+val SherbetColorScheme = lightColorScheme(
+    primary = Color(0xFFEC4899),
+    onPrimary = Color.White,
+    primaryContainer = Color(0xFFFCE7F3),
+    onPrimaryContainer = Color(0xFF9D174D),
+    secondary = Color(0xFFF472B6),
+    onSecondary = Color.White,
+    tertiary = Color(0xFFF9A8D4),
+    onTertiary = Color(0xFF831843),
+    background = Color(0xFFFFF7FB),
+    onBackground = Color(0xFF500724),
+    surface = Color(0xFFFEF2F8),
+    onSurface = Color(0xFF500724),
+    surfaceVariant = Color(0xFFFCE7F3),
+    onSurfaceVariant = Color(0xFF9D174D),
+    outline = Color(0xFFEC4899),
+    outlineVariant = Color(0xFFFCE7F3),
+)
+
+/** Paper theme */
+val PaperColorScheme = lightColorScheme(
+    primary = Color(0xFF92400E),
+    onPrimary = Color.White,
+    primaryContainer = Color(0xFFFEF3C7),
+    onPrimaryContainer = Color(0xFF78350F),
+    secondary = Color(0xFFD97757),
+    onSecondary = Color.White,
+    tertiary = Color(0xFFF59E0B),
+    onTertiary = Color(0xFF451A03),
+    background = Color(0xFFFAF7F2),
+    onBackground = Color(0xFF1C1917),
+    surface = Color(0xFFF5F3F0),
+    onSurface = Color(0xFF1C1917),
+    surfaceVariant = Color(0xFFE7E5E4),
+    onSurfaceVariant = Color(0xFF44403C),
+    outline = Color(0xFFA8A29E),
+    outlineVariant = Color(0xFFD6D3D1),
+)
+
+/** Carbon theme */
+val CarbonColorScheme = darkColorScheme(
+    primary = Color(0xFF60A5FA),
+    onPrimary = Color(0xFF000000),
+    primaryContainer = Color(0xFF1E3A8A),
+    onPrimaryContainer = Color(0xFFBFDBFE),
+    secondary = Color(0xFF3B82F6),
+    onSecondary = Color.White,
+    tertiary = Color(0xFF93C5FD),
+    onTertiary = Color(0xFF000000),
+    background = Color(0xFF000000),
+    onBackground = Color(0xFFE5E5E5),
+    surface = Color(0xFF0A0A0A),
+    onSurface = Color(0xFFE5E5E5),
+    surfaceVariant = Color(0xFF111111),
+    onSurfaceVariant = Color(0xFFA3A3A3),
+    outline = Color(0xFF3B82F6),
+    outlineVariant = Color(0xFF1E3A8A),
+)
+
 /** Check if current scheme is OLED flavor (pure black background) */
 val ColorScheme.isOledFlavor: Boolean get() = background == OledBlack
 

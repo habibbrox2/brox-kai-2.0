@@ -84,14 +84,24 @@ internal fun EmptyState(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        LogoAnimation(size = ChatSpacing.xxxl)
+        LogoAnimation(size = 110.dp)
         Spacer(Modifier.height(ChatSpacing.md))
+        Text(
+            text = "Brox Kai",
+            modifier = Modifier.padding(horizontal = 16.dp),
+            style = KaiTypography.displaySmall,
+            textAlign = TextAlign.Center,
+            color = TextPrimary,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 0.5.sp,
+        )
+        Spacer(Modifier.height(ChatSpacing.xs))
         Text(
             text = "How can I help you today?",
             modifier = Modifier.padding(horizontal = 16.dp),
-            style = KaiTypography.headlineSmall,
+            style = KaiTypography.titleMedium,
             textAlign = TextAlign.Center,
-            color = TextPrimary,
+            color = TextSecondary,
         )
         if (onQuickStart != null) {
             Spacer(Modifier.height(ChatSpacing.xl))

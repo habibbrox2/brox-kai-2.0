@@ -35,6 +35,16 @@ enum class ThemeMode {
 
     /** Deep-navy dark theme: the brand navy surfaces instead of neutral grey. */
     Midnight,
+    OGShine,
+    Peach,
+    Lilac,
+    Dusk,
+    Seafoam,
+    Graphite,
+    Daybreak,
+    Sherbet,
+    Paper,
+    Carbon,
 }
 
 /**
