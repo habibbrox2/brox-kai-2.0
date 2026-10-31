@@ -82,7 +82,9 @@ android {
                         "Release builds require KEYSTORE_FILE, KEYSTORE_PASSWORD, and KEY_ALIAS environment variables for release signing. Use release.yml workflow or provide signing credentials.",
                     )
                 }
-                // Fallback to debug keystore so release builds are always signed and installable on Android devices
+                // CI release workflows must explicitly set ENFORCE_RELEASE_SIGNING=true.
+                // Non-release CI tasks (formatting, lint, and unit tests) must not be blocked
+                // merely because production signing secrets are unavailable.
                 signingConfig = signingConfigs.getByName("debug")
             }
         }
@@ -102,6 +104,7 @@ dependencies {
     implementation(project(":composeApp"))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.process)
+    implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.foundation.android)
     implementation(libs.compose.material3)
     implementation(libs.koin.android)
@@ -112,5 +115,6 @@ dependencies {
     implementation(libs.tts.compose)
     implementation(libs.compose.components.uiToolingPreview)
     debugImplementation(libs.compose.ui.tooling)
+    testImplementation("junit:junit:4.13.2")
     "playStoreImplementation"(libs.play.review)
 }

@@ -146,4 +146,98 @@ class AutoUpdaterTest {
             assertNull(AutoUpdater.pickAssetFor(emptyList(), key))
         }
     }
+
+    // ------------------------------------------------------------------
+    // Android release manifest validation
+    // ------------------------------------------------------------------
+
+    private fun validAndroidManifest(
+        versionName: String = "2.0.75",
+        versionCode: Long = 190L,
+        tagName: String = "v2.0.75",
+        downloadUrl: String = "https://github.com/habibbrox2/brox-kai-2.0/releases/download/v2.0.75/Brox-Kai-2.0-v2.0.75-Android.apk",
+        sha256: String = "a".repeat(64),
+        signerSha256: String = "b".repeat(64),
+    ) = AndroidUpdateManifest(
+        schemaVersion = 1,
+        packageName = "com.inspiredandroid.kai",
+        versionName = versionName,
+        versionCode = versionCode,
+        assetName = "Brox-Kai-2.0-v$versionName-Android.apk",
+        downloadUrl = downloadUrl,
+        sha256 = sha256,
+        signerCertificateSha256 = signerSha256,
+    ).validateForRelease(tagName)
+
+    @Test
+    fun validAndroidManifestIsAccepted() {
+        assertEquals(ManifestValidation.Valid, validAndroidManifest())
+    }
+
+    @Test
+    fun manifestVersionMustMatchStableReleaseTag() {
+        assertTrue(validAndroidManifest(tagName = "v2.0.76") is ManifestValidation.Invalid)
+    }
+
+    @Test
+    fun manifestRejectsInvalidVersionName() {
+        assertTrue(validAndroidManifest(versionName = "2.0.75-beta") is ManifestValidation.Invalid)
+    }
+
+    @Test
+    fun manifestRejectsNonPositiveVersionCode() {
+        assertTrue(validAndroidManifest(versionCode = 0L) is ManifestValidation.Invalid)
+    }
+
+    @Test
+    fun manifestRejectsUnexpectedDownloadOriginOrPath() {
+        assertTrue(
+            validAndroidManifest(downloadUrl = "https://example.com/malicious.apk") is ManifestValidation.Invalid,
+        )
+    }
+
+    @Test
+    fun manifestRejectsMalformedApkChecksum() {
+        assertTrue(validAndroidManifest(sha256 = "not-a-sha256") is ManifestValidation.Invalid)
+    }
+
+    @Test
+    fun manifestRejectsMalformedSignerFingerprint() {
+        assertTrue(validAndroidManifest(signerSha256 = "not-a-fingerprint") is ManifestValidation.Invalid)
+    }
+
+    @Test
+    fun manifestParserRejectsUnknownFields() {
+        val raw = """
+            {
+              "schemaVersion": 1,
+              "packageName": "com.inspiredandroid.kai",
+              "versionName": "2.0.75",
+              "versionCode": 190,
+              "assetName": "Brox-Kai-2.0-v2.0.75-Android.apk",
+              "downloadUrl": "https://github.com/habibbrox2/brox-kai-2.0/releases/download/v2.0.75/Brox-Kai-2.0-v2.0.75-Android.apk",
+              "sha256": "${"a".repeat(64)}",
+              "signerCertificateSha256": "${"b".repeat(64)}",
+              "unexpected": true
+            }
+        """.trimIndent()
+        kotlin.test.assertFails { AndroidUpdateManifest.parse(raw) }
+    }
+
+    @Test
+    fun androidUpgradeUsesVersionCodeNotVersionName() {
+        val manifest = AndroidUpdateManifest(
+            schemaVersion = 1,
+            packageName = "com.inspiredandroid.kai",
+            versionName = "2.0.75",
+            versionCode = 190L,
+            assetName = "Brox-Kai-2.0-v2.0.75-Android.apk",
+            downloadUrl = "https://github.com/habibbrox2/brox-kai-2.0/releases/download/v2.0.75/Brox-Kai-2.0-v2.0.75-Android.apk",
+            sha256 = "a".repeat(64),
+            signerCertificateSha256 = "b".repeat(64),
+        )
+        assertTrue(manifest.isUpgradeFrom(189L))
+        assertFalse(manifest.isUpgradeFrom(190L))
+        assertFalse(manifest.isUpgradeFrom(191L))
+    }
 }

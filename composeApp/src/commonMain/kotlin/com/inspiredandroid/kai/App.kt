@@ -106,6 +106,7 @@ fun App(
     textToSpeech: TextToSpeechInstance? = null,
     isKoinStarted: Boolean = false,
     onAppOpens: ((Int) -> Unit)? = null,
+    androidUpdateContent: (@Composable () -> Unit)? = null,
 ) {
     setSingletonImageLoaderFactory { context: PlatformContext ->
         ImageLoader.Builder(context)
@@ -119,14 +120,14 @@ fun App(
     // Reuse global Koin if already started (Android Application class),
     // otherwise create a new instance (iOS, Desktop, Wasm).
     if (isKoinStarted) {
-        AppContent(navController, lightColorScheme, darkColorScheme, textToSpeech, onAppOpens)
+        AppContent(navController, lightColorScheme, darkColorScheme, textToSpeech, onAppOpens, androidUpdateContent)
     } else {
         KoinApplication(
             configuration = koinConfiguration {
                 modules(appModule)
             },
         ) {
-            AppContent(navController, lightColorScheme, darkColorScheme, textToSpeech, onAppOpens)
+            AppContent(navController, lightColorScheme, darkColorScheme, textToSpeech, onAppOpens, androidUpdateContent)
         }
     }
 }
@@ -138,6 +139,7 @@ private fun AppContent(
     darkColorScheme: ColorScheme,
     textToSpeech: TextToSpeechInstance?,
     onAppOpens: ((Int) -> Unit)?,
+    androidUpdateContent: (@Composable () -> Unit)?,
 ) {
     val appSettings = koinInject<AppSettings>()
 
@@ -295,6 +297,7 @@ private fun AppContent(
                                 chatViewModel.refreshSettings()
                                 navController.navigateUp()
                             },
+                            androidUpdateContent = androidUpdateContent,
                         )
                     }
                     composable<Build> { entry ->

@@ -27,6 +27,7 @@ import com.inspiredandroid.kai.data.DataRepository
 import com.inspiredandroid.kai.data.ThemeMode
 import com.inspiredandroid.kai.ui.DarkColorScheme
 import com.inspiredandroid.kai.ui.LightColorScheme
+import com.inspiredandroid.kai.updater.AndroidUpdateSettingsSection
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.init
 import nl.marc_apps.tts.TextToSpeechEngine
@@ -110,6 +111,11 @@ class MainActivity : ComponentActivity() {
                     if (appOpens % 5 == 0) {
                         requestReview(this@MainActivity)
                     }
+                },
+                androidUpdateContent = if (BuildConfig.FLAVOR == "foss") {
+                    { AndroidUpdateSettingsSection() }
+                } else {
+                    null
                 },
             )
         }

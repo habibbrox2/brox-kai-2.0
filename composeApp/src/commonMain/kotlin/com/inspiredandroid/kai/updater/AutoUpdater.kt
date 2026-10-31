@@ -19,6 +19,19 @@ import kotlin.time.Duration.Companion.hours
  */
 internal expect suspend fun httpGet(url: String, headers: Map<String, String>): String
 
+internal class HttpRequestException(
+    val statusCode: Int? = null,
+    val timedOut: Boolean = false,
+    cause: Throwable? = null,
+) : Exception(
+    when {
+        statusCode != null -> "HTTP $statusCode"
+        timedOut -> "Request timed out"
+        else -> "Network request failed"
+    },
+    cause,
+)
+
 /**
  * Identifies the current platform for release-asset selection:
  * "windows", "macos-arm64", "macos-x64", "linux-arm64", "linux-x64" or "none".

@@ -145,6 +145,7 @@ fun SettingsScreen(
     onNavigateBack: () -> Unit,
     initialSettingsTab: SettingsTab? = null,
     navigationTabBar: (@Composable () -> Unit)? = null,
+    androidUpdateContent: (@Composable () -> Unit)? = null,
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val sandboxState by sandboxViewModel.state.collectAsStateWithLifecycle()
@@ -182,6 +183,7 @@ fun SettingsScreen(
         onMigrateHome = sandboxViewModel::onMigrateHome,
         onNavigateBack = onNavigateBack,
         navigationTabBar = navigationTabBar,
+        androidUpdateContent = androidUpdateContent,
     )
 }
 
@@ -199,6 +201,7 @@ fun SettingsScreenContent(
     onMigrateHome: () -> Unit = {},
     onNavigateBack: () -> Unit = {},
     navigationTabBar: (@Composable () -> Unit)? = null,
+    androidUpdateContent: (@Composable () -> Unit)? = null,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val undoLabel = stringResource(Res.string.snackbar_undo)
@@ -307,6 +310,7 @@ fun SettingsScreenContent(
                             onResetSandbox = onResetSandbox,
                             onInstallPackages = onInstallPackages,
                             onMigrateHome = onMigrateHome,
+                            androidUpdateContent = androidUpdateContent,
                             modifier = Modifier.weight(1f),
                         )
                     }
@@ -340,6 +344,7 @@ fun SettingsScreenContent(
                         onResetSandbox = onResetSandbox,
                         onInstallPackages = onInstallPackages,
                         onMigrateHome = onMigrateHome,
+                        androidUpdateContent = androidUpdateContent,
                         modifier = Modifier.weight(1f),
                     )
                 }
