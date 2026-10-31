@@ -49,8 +49,20 @@ class MainActivity : ComponentActivity() {
             val systemInDark = isSystemInDarkTheme()
             val isDarkTheme = when (themeMode) {
                 ThemeMode.System -> systemInDark
-                ThemeMode.Light -> false
-                ThemeMode.Dark, ThemeMode.OledBlack, ThemeMode.Midnight -> true
+                ThemeMode.Light,
+                ThemeMode.Peach,
+                ThemeMode.Lilac,
+                ThemeMode.Seafoam,
+                ThemeMode.Daybreak,
+                ThemeMode.Sherbet,
+                ThemeMode.Paper -> false
+                ThemeMode.Dark,
+                ThemeMode.OledBlack,
+                ThemeMode.Midnight,
+                ThemeMode.OGShine,
+                ThemeMode.Dusk,
+                ThemeMode.Graphite,
+                ThemeMode.Carbon -> true
             }
             LaunchedEffect(isDarkTheme) {
                 enableEdgeToEdge(
@@ -148,7 +160,7 @@ class MainActivity : ComponentActivity() {
                 dataRepository.requestOpenShare(sharedText)
             }
             // Drop the action and extra so rotation doesn't re-apply the share after
-            // ChatViewModel has already consumed it.
+            // ChatViewModel has already consumed the request.
             intent.action = null
             intent.removeExtra(Intent.EXTRA_TEXT)
         }
