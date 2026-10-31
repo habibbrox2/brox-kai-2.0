@@ -146,6 +146,11 @@ jobs:
           git add -- \
             androidApp/src/main/kotlin/com/inspiredandroid/kai/MainActivity.kt \
             androidApp/src/main/kotlin/com/inspiredandroid/kai/updater/AndroidApkSignatureVerifier.kt \
+            androidApp/src/main/kotlin/com/inspiredandroid/kai/updater/AndroidUpdateDownloadWorker.kt \
+            androidApp/build.gradle.kts \
+            gradle/libs.versions.toml \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/updater/AndroidApkIdentityValidation.kt \
+            composeApp/src/commonTest/kotlin/com/inspiredandroid/kai/updater/AndroidApkIdentityValidationTest.kt \
             composeApp/src/androidMain/kotlin/com/inspiredandroid/kai/Platform.android.kt \
             composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/data/AppSettings.kt \
             composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/data/RemoteDataRepository.kt \
