@@ -151,6 +151,8 @@ jobs:
             androidApp/src/main/kotlin/com/inspiredandroid/kai/updater/AndroidUpdateDownloadWorker.kt \
             androidApp/src/main/kotlin/com/inspiredandroid/kai/updater/AndroidUpdateInstaller.kt \
             androidApp/src/main/kotlin/com/inspiredandroid/kai/updater/AndroidUpdateSettingsSection.kt \
+            androidApp/src/main/kotlin/com/inspiredandroid/kai/updater/AndroidUpdateApkPathValidation.kt \
+            androidApp/src/test/kotlin/com/inspiredandroid/kai/updater/AndroidUpdateApkPathValidationTest.kt \
             composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/App.kt \
             composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/settings/SettingsScreen.kt \
             composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/settings/SettingsDetailPane.kt \
