@@ -82,11 +82,9 @@ android {
                         "Release builds require KEYSTORE_FILE, KEYSTORE_PASSWORD, and KEY_ALIAS environment variables for release signing. Use release.yml workflow or provide signing credentials.",
                     )
                 }
-                // Local development may still build a debug-signed release variant, but
-                // production workflows must set ENFORCE_RELEASE_SIGNING=true.
-                if (System.getenv("CI") == "true" || System.getenv("GITHUB_ACTIONS") == "true") {
-                    throw GradleException("CI release builds must use the production signing keystore.")
-                }
+                // CI release workflows must explicitly set ENFORCE_RELEASE_SIGNING=true.
+                // Non-release CI tasks (formatting, lint, and unit tests) must not be blocked
+                // merely because production signing secrets are unavailable.
                 signingConfig = signingConfigs.getByName("debug")
             }
         }
