@@ -64,9 +64,11 @@ class KaiUiScreenshotTest {
 
         snapshot {
             Box(modifier = Modifier.fillMaxSize()) {
-                CompositionLocalProvider(LocalInspectionMode provides true) {
-                    Theme(colorScheme = colorScheme) {
-                        content()
+                WithScreenshotTestKoin {
+                    CompositionLocalProvider(LocalInspectionMode provides true) {
+                        Theme(colorScheme = colorScheme) {
+                            content()
+                        }
                     }
                 }
             }

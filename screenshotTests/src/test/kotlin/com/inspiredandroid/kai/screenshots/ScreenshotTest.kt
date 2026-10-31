@@ -66,12 +66,14 @@ class ScreenshotTest {
 
         snapshot {
             Box(modifier = Modifier.fillMaxSize()) {
-                CompositionLocalProvider(
-                    LocalInspectionMode provides true,
-                    LocalPreviewImages provides previewImages,
-                ) {
-                    Theme(colorScheme = colorScheme) {
-                        content()
+                WithScreenshotTestKoin {
+                    CompositionLocalProvider(
+                        LocalInspectionMode provides true,
+                        LocalPreviewImages provides previewImages,
+                    ) {
+                        Theme(colorScheme = colorScheme) {
+                            content()
+                        }
                     }
                 }
             }

@@ -67,6 +67,7 @@ internal fun deriveChatTimelineData(
                     latestAssistantByContent[entry.content] = entry.id
                 }
             }
+
             History.Role.TOOL_CONFIRMATION -> {
                 // Skip confirmation entries for timeline data processing
             }

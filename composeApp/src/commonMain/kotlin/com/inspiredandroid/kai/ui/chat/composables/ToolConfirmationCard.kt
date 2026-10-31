@@ -142,35 +142,36 @@ fun ToolConfirmationCard(
     }
 }
 
-private fun extractTargetInfo(toolName: String, arguments: String): String {
-    return try {
-        when (toolName) {
-            "fetch_url" -> {
-                val urlMatch = Regex("\"url\"\\s*:\\s*\"([^\"]+)\"").find(arguments)
-                val url = urlMatch?.groupValues?.get(1) ?: ""
-                if (url.isNotEmpty()) "Fetch: $url" else ""
-            }
-            "web_search" -> {
-                val queryMatch = Regex("\"query\"\\s*:\\s*\"([^\"]+)\"").find(arguments)
-                val query = queryMatch?.groupValues?.get(1) ?: ""
-                if (query.isNotEmpty()) "Search: $query" else ""
-            }
-            "execute_shell_command" -> {
-                val cmdMatch = Regex("\"command\"\\s*:\\s*\"([^\"]+)\"").find(arguments)
-                val cmd = cmdMatch?.groupValues?.get(1) ?: ""
-                if (cmd.isNotEmpty()) "Command: $cmd" else "Shell command"
-            }
-            else -> {
-                // Try to find url or common params
-                val urlMatch = Regex("\"url\"\\s*:\\s*\"([^\"]+)\"").find(arguments)
-                if (urlMatch != null) {
-                    "Target: ${urlMatch.groupValues[1]}"
-                } else {
-                    ""
-                }
+private fun extractTargetInfo(toolName: String, arguments: String): String = try {
+    when (toolName) {
+        "fetch_url" -> {
+            val urlMatch = Regex("\"url\"\\s*:\\s*\"([^\"]+)\"").find(arguments)
+            val url = urlMatch?.groupValues?.get(1) ?: ""
+            if (url.isNotEmpty()) "Fetch: $url" else ""
+        }
+
+        "web_search" -> {
+            val queryMatch = Regex("\"query\"\\s*:\\s*\"([^\"]+)\"").find(arguments)
+            val query = queryMatch?.groupValues?.get(1) ?: ""
+            if (query.isNotEmpty()) "Search: $query" else ""
+        }
+
+        "execute_shell_command" -> {
+            val cmdMatch = Regex("\"command\"\\s*:\\s*\"([^\"]+)\"").find(arguments)
+            val cmd = cmdMatch?.groupValues?.get(1) ?: ""
+            if (cmd.isNotEmpty()) "Command: $cmd" else "Shell command"
+        }
+
+        else -> {
+            // Try to find url or common params
+            val urlMatch = Regex("\"url\"\\s*:\\s*\"([^\"]+)\"").find(arguments)
+            if (urlMatch != null) {
+                "Target: ${urlMatch.groupValues[1]}"
+            } else {
+                ""
             }
         }
-    } catch (_: Exception) {
-        ""
     }
+} catch (_: Exception) {
+    ""
 }

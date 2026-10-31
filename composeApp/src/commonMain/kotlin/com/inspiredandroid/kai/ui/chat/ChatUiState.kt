@@ -243,6 +243,7 @@ fun History.toGroqMessageDto(
     )
 
     History.Role.TOOL_EXECUTING -> OpenAICompatibleChatRequestDto.Message(role = "assistant", content = JsonPrimitive(content))
+
     History.Role.TOOL_CONFIRMATION -> OpenAICompatibleChatRequestDto.Message(role = "assistant", content = JsonPrimitive(content))
 }
 
@@ -339,6 +340,7 @@ fun History.toAnthropicContentBlocks(): JsonElement = when (role) {
     }
 
     History.Role.TOOL_EXECUTING -> JsonPrimitive(content)
+
     History.Role.TOOL_CONFIRMATION -> JsonPrimitive(content)
 }
 

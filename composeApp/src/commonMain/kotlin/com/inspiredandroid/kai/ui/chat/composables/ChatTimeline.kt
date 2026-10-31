@@ -15,9 +15,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Icon
@@ -45,6 +45,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.BackIcon
+import com.inspiredandroid.kai.data.AppSettings
 import com.inspiredandroid.kai.getBackgroundDispatcher
 import com.inspiredandroid.kai.prefersReducedMotion
 import com.inspiredandroid.kai.ui.AccentPrimary
@@ -78,9 +79,8 @@ import nl.marc_apps.tts.TextToSpeechInstance
 import nl.marc_apps.tts.errors.TextToSpeechSynthesisInterruptedError
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
-import kotlinx.collections.immutable.ImmutableList as IImmutableList
-import com.inspiredandroid.kai.data.AppSettings
 import org.koin.compose.koinInject
+import kotlinx.collections.immutable.ImmutableList as IImmutableList
 
 /**
  * The conversation timeline: scrollable list of user/assistant messages, tool
@@ -294,6 +294,7 @@ fun ChatTimeline(
                                 )
                             }
                         }
+
                         History.Role.TOOL_CONFIRMATION -> {
                             val toolCallId = history.toolConfirmationId ?: history.toolCallId ?: history.id
                             ToolConfirmationCard(
@@ -364,12 +365,12 @@ fun ChatTimeline(
         ) {
             SmallFloatingActionButton(
                 modifier = Modifier
-                    .handCursor()                .shadow(
-                    elevation = 12.dp,
-                    shape = CircleShape,
-                    ambientColor = com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.2f),
-                    spotColor = com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.3f),
-                ),
+                    .handCursor().shadow(
+                        elevation = 12.dp,
+                        shape = CircleShape,
+                        ambientColor = com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.2f),
+                        spotColor = com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.3f),
+                    ),
                 onClick = {
                     componentScope.launch {
                         val totalItems = listState.layoutInfo.totalItemsCount

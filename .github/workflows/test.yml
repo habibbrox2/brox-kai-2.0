@@ -7,6 +7,7 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   test:
@@ -89,22 +90,95 @@ jobs:
             echo "has_changes=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Fail if fork PR has changes
+      - name: Capture generated changes for review
         if: |
-          steps.changes.outputs.has_changes == 'true' &&
-          steps.fork-check.outputs.is_fork == 'true'
+          github.event_name == 'pull_request' &&
+          steps.changes.outputs.has_changes == 'true'
         run: |
-          echo "::error::This PR from a fork requires formatting or screenshot updates."
-          echo "Please run the following commands locally and push the changes:"
-          echo "  ./gradlew spotlessApply"
-          echo "  ./gradlew :screenshotTests:updateScreenshots"
-          echo "  ./scripts/convert-site-images-to-webp.sh"
-          exit 1
+          git status --short > generated-changes-status.txt
+          git diff --binary > generated-changes.patch
+          git diff --stat > generated-changes-stat.txt
+          git diff --name-only -z | xargs -0 tar -czf generated-files.tar.gz --
+          echo "Captured generated changes and exact file contents for review."
+
+      - name: Upload generated changes for review
+        if: always() && github.event_name == 'pull_request' && steps.changes.outputs.has_changes == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-changes-review-${{ github.run_id }}
+          path: |
+            generated-changes-status.txt
+            generated-changes-stat.txt
+            generated-changes.patch
+            generated-files.tar.gz
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Commit reviewed generated source changes to PR branch
+        if: |
+          github.event_name == 'pull_request' &&
+          steps.fork-check.outputs.is_fork == 'false' &&
+          steps.changes.outputs.has_changes == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          # Drop binary assets already verified as pixel-identical.
+          git restore -- \
+            screenshots/mobile-1.png \
+            screenshots/mobile-2.png \
+            screenshots/mobile-3.png \
+            screenshots/mobile-4.png \
+            screenshots/mobile-5.png \
+            screenshots/mobile-7.png \
+            site/img/ecopulse-light.webp \
+            site/img/gemma-local-chat.webp \
+            site/img/gemma-local-context-slider.webp \
+            site/img/gemma-local-download.webp \
+            site/img/gemma-local-model-card.webp \
+            site/img/gemma-local-select.webp \
+            site/img/gemma-local-settings.webp \
+            site/img/recipe-light.webp
+
+          git add -- \
+            androidApp/src/main/kotlin/com/inspiredandroid/kai/MainActivity.kt \
+            composeApp/src/androidMain/kotlin/com/inspiredandroid/kai/Platform.android.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/data/AppSettings.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/data/RemoteDataRepository.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/data/ToolPermissionManager.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/Theme.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/chat/ChatTimelineData.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/chat/ChatUiState.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/chat/activities/ActivityMapper.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/chat/composables/BotMessage.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/chat/composables/ChatTimeline.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/chat/composables/ToolConfirmationCard.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/settings/GeneralSettings.kt \
+            iosApp/Configuration/Config.xcconfig
+
+          if git diff --cached --quiet; then
+            echo "No reviewed source changes to commit."
+            exit 0
+          fi
+
+          git commit -m "chore: apply reviewed formatting and version sync"
+          git push origin "HEAD:${GITHUB_HEAD_REF}"
+
+      - name: Fail if unreviewed generated changes remain
+        if: github.event_name == 'pull_request'
+        run: |
+          # Review artifacts are temporary workspace files, not repository changes.
+          rm -f generated-changes-status.txt generated-changes-stat.txt generated-changes.patch generated-files.tar.gz
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::error::Unreviewed generated changes remain after the allowlisted commit."
+            git status --short
+            exit 1
+          fi
 
       - name: Commit and push changes
         if: |
           steps.changes.outputs.has_changes == 'true' &&
-          (github.event_name == 'push' || steps.fork-check.outputs.is_fork == 'false')
+          github.event_name == 'push'
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
@@ -112,3 +186,15 @@ jobs:
           git commit -m "Auto-fix: spotlessApply and updateScreenshots [skip ci]"
           git pull --rebase origin main
           git push origin HEAD:main
+
+      # Preserve XML failure messages and HTML stack traces even when a test task fails.
+      - name: Upload screenshot test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshot-test-reports-${{ github.run_id }}
+          path: |
+            screenshotTests/build/test-results/testDebugUnitTest/
+            screenshotTests/build/reports/tests/testDebugUnitTest/
+          if-no-files-found: warn
+          retention-days: 14

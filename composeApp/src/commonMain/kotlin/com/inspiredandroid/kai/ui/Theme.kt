@@ -956,6 +956,7 @@ fun Theme(
             borderSoft = Color(0x33000000),
             borderStrong = Color(0x4D000000),
         )
+
         colorScheme === OledColorScheme -> KaiColorPalette(
             textPrimary = Color(0xFFFFFFFF),
             textSecondary = Color(0xFFCBD5E1),
@@ -969,6 +970,7 @@ fun Theme(
             borderSoft = Color(0x33FFFFFF),
             borderStrong = Color(0x4DFFFFFF),
         )
+
         colorScheme === MidnightColorScheme -> KaiColorPalette(
             textPrimary = Color(0xFFECEAE4),
             textSecondary = Color(0xFFCBD5E1),
@@ -982,6 +984,7 @@ fun Theme(
             borderSoft = Color(0x33FFFFFF),
             borderStrong = Color(0x4DFFFFFF),
         )
+
         else -> KaiColorPalette(
             textPrimary = Color(0xFFFFFFFF),
             textSecondary = Color(0xFFCBD5E1),
