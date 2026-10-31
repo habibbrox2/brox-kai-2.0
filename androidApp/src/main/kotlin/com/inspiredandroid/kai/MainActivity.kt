@@ -49,20 +49,24 @@ class MainActivity : ComponentActivity() {
             val systemInDark = isSystemInDarkTheme()
             val isDarkTheme = when (themeMode) {
                 ThemeMode.System -> systemInDark
+
                 ThemeMode.Light,
                 ThemeMode.Peach,
                 ThemeMode.Lilac,
                 ThemeMode.Seafoam,
                 ThemeMode.Daybreak,
                 ThemeMode.Sherbet,
-                ThemeMode.Paper -> false
+                ThemeMode.Paper,
+                -> false
+
                 ThemeMode.Dark,
                 ThemeMode.OledBlack,
                 ThemeMode.Midnight,
                 ThemeMode.OGShine,
                 ThemeMode.Dusk,
                 ThemeMode.Graphite,
-                ThemeMode.Carbon -> true
+                ThemeMode.Carbon,
+                -> true
             }
             LaunchedEffect(isDarkTheme) {
                 enableEdgeToEdge(

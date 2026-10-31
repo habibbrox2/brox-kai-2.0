@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.data.AppSettings
-import org.koin.compose.koinInject
 import com.inspiredandroid.kai.data.ThemeMode
 import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.BorderSoft
@@ -55,6 +54,7 @@ import kai.composeapp.generated.resources.settings_theme_oled
 import kai.composeapp.generated.resources.settings_theme_system
 import kai.composeapp.generated.resources.settings_ui_scale
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import kotlin.math.roundToInt
 
 @Composable
@@ -259,7 +259,6 @@ private fun UiScaleSection(
         )
     }
 }
-
 
 @Composable
 private fun TtsSettingsSection() {

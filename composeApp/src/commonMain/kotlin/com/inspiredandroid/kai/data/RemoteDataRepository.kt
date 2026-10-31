@@ -1370,31 +1370,30 @@ class RemoteDataRepository(
      * own flow, so background runs (heartbeat, scheduled tasks) don't leak rows into the open chat.
      * Returns a list of (callId, toolName, result).
      */
-    private fun parseArgsToMap(args: String): Map<String, Any> {
-        return try {
-            val jsonElement = Json.parseToJsonElement(args)
-            if (jsonElement is JsonObject) {
-                jsonElement.entries.associate { (k, v) ->
-                    k to when (v) {
-                        is JsonPrimitive -> {
-                            when {
-                                v.isString -> v.content
-                                v.content == "true" -> true
-                                v.content == "false" -> false
-                                v.content.toLongOrNull() != null -> v.content.toLong()
-                                v.content.toDoubleOrNull() != null -> v.content.toDouble()
-                                else -> v.content
-                            }
+    private fun parseArgsToMap(args: String): Map<String, Any> = try {
+        val jsonElement = Json.parseToJsonElement(args)
+        if (jsonElement is JsonObject) {
+            jsonElement.entries.associate { (k, v) ->
+                k to when (v) {
+                    is JsonPrimitive -> {
+                        when {
+                            v.isString -> v.content
+                            v.content == "true" -> true
+                            v.content == "false" -> false
+                            v.content.toLongOrNull() != null -> v.content.toLong()
+                            v.content.toDoubleOrNull() != null -> v.content.toDouble()
+                            else -> v.content
                         }
-                        else -> v.toString()
                     }
+
+                    else -> v.toString()
                 }
-            } else {
-                emptyMap()
             }
-        } catch (_: Exception) {
+        } else {
             emptyMap()
         }
+    } catch (_: Exception) {
+        emptyMap()
     }
 
     private suspend fun executeToolCallsInParallel(
@@ -1728,25 +1727,30 @@ class RemoteDataRepository(
             ?: deriveTitle(history)
         val conversation = Conversation(
             id = conversationId,
-            messages =                history
-                    .filter { it.role != History.Role.TOOL_EXECUTING && it.role != History.Role.TOOL_CONFIRMATION }
-                    .map { h ->
-                        Conversation.Message(
-                            id = h.id,
-                            role = when (h.role) {
-                                History.Role.USER -> "user"
-                                History.Role.ASSISTANT -> "assistant"
-                                History.Role.TOOL -> "tool"
-                                History.Role.TOOL_EXECUTING -> "tool" // Should not happen due to filter
-                                History.Role.TOOL_CONFIRMATION -> "assistant"
-                            },
-                            content = h.content,
-                            attachments = h.attachments,
-                            uiSubmission = h.uiSubmission,
-                            isThinking = h.isThinking,
-                            reasoningContent = h.reasoningContent,
-                        )
-                    },
+            messages = history
+                .filter { it.role != History.Role.TOOL_EXECUTING && it.role != History.Role.TOOL_CONFIRMATION }
+                .map { h ->
+                    Conversation.Message(
+                        id = h.id,
+                        role = when (h.role) {
+                            History.Role.USER -> "user"
+
+                            History.Role.ASSISTANT -> "assistant"
+
+                            History.Role.TOOL -> "tool"
+
+                            History.Role.TOOL_EXECUTING -> "tool"
+
+                            // Should not happen due to filter
+                            History.Role.TOOL_CONFIRMATION -> "assistant"
+                        },
+                        content = h.content,
+                        attachments = h.attachments,
+                        uiSubmission = h.uiSubmission,
+                        isThinking = h.isThinking,
+                        reasoningContent = h.reasoningContent,
+                    )
+                },
             createdAt = existingConversation?.createdAt ?: now,
             updatedAt = now,
             title = title,

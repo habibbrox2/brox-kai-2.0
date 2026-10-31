@@ -345,22 +345,34 @@ class AppSettings(internal val settings: Settings) {
     }
 
     fun getTtsRate(): Float = settings.getFloat(KEY_TTS_RATE, 1.0f)
-    fun setTtsRate(rate: Float) { settings.putFloat(KEY_TTS_RATE, rate.coerceIn(0.5f, 2.0f)) }
+    fun setTtsRate(rate: Float) {
+        settings.putFloat(KEY_TTS_RATE, rate.coerceIn(0.5f, 2.0f))
+    }
 
     fun getTtsPitch(): Float = settings.getFloat(KEY_TTS_PITCH, 1.0f)
-    fun setTtsPitch(pitch: Float) { settings.putFloat(KEY_TTS_PITCH, pitch.coerceIn(0.5f, 2.0f)) }
+    fun setTtsPitch(pitch: Float) {
+        settings.putFloat(KEY_TTS_PITCH, pitch.coerceIn(0.5f, 2.0f))
+    }
 
     fun getTtsVolume(): Float = settings.getFloat(KEY_TTS_VOLUME, 1.0f)
-    fun setTtsVolume(volume: Float) { settings.putFloat(KEY_TTS_VOLUME, volume.coerceIn(0.0f, 1.0f)) }
+    fun setTtsVolume(volume: Float) {
+        settings.putFloat(KEY_TTS_VOLUME, volume.coerceIn(0.0f, 1.0f))
+    }
 
     fun getTtsVoice(): String? = settings.getStringOrNull(KEY_TTS_VOICE)
-    fun setTtsVoice(voice: String?) { if (voice == null) settings.remove(KEY_TTS_VOICE) else settings.putString(KEY_TTS_VOICE, voice) }
+    fun setTtsVoice(voice: String?) {
+        if (voice == null) settings.remove(KEY_TTS_VOICE) else settings.putString(KEY_TTS_VOICE, voice)
+    }
 
     fun getTtsEnabled(): Boolean = settings.getBoolean(KEY_TTS_ENABLED, true)
-    fun setTtsEnabled(enabled: Boolean) { settings.putBoolean(KEY_TTS_ENABLED, enabled) }
+    fun setTtsEnabled(enabled: Boolean) {
+        settings.putBoolean(KEY_TTS_ENABLED, enabled)
+    }
 
     fun getTtsAutoPlay(): Boolean = settings.getBoolean(KEY_TTS_AUTO_PLAY, false)
-    fun setTtsAutoPlay(enabled: Boolean) { settings.putBoolean(KEY_TTS_AUTO_PLAY, enabled) }
+    fun setTtsAutoPlay(enabled: Boolean) {
+        settings.putBoolean(KEY_TTS_AUTO_PLAY, enabled)
+    }
 
     private fun loadInitialThemeMode(): ThemeMode {
         val raw = settings.getString(KEY_THEME_MODE, "")
