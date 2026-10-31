@@ -9,7 +9,7 @@ name: Auto Release
 #      is the fixed brand name, only the 2.0.x version changes per release.
 # The bump commit is pushed with the workflow GITHUB_TOKEN, which does not
 # retrigger workflows, so there is no release loop.
-# APK signing: if release keystore secrets are not set, the APK is signed with the debug keystore fallback so it installs cleanly on Android devices.
+# Production APK releases require the configured production keystore. Missing or invalid signing secrets fail before version bump/tag creation.
 
 on:
   push:
@@ -23,8 +23,34 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  signing-preflight:
+    name: Validate production Android signing
+    runs-on: ubuntu-latest
+    env:
+      KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
+      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      ENFORCE_RELEASE_SIGNING: "true"
+    steps:
+      - name: Validate signing secrets and keystore
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in KEYSTORE_B64 KEY_ALIAS KEYSTORE_PASSWORD; do
+            if [[ -z "${!name}" ]]; then
+              echo "::error::Required production signing secret ${name} is not configured."
+              exit 1
+            fi
+          done
+          KEYSTORE_PATH="$RUNNER_TEMP/brox-kai-release.jks"
+          printf '%s' "$KEYSTORE_B64" | base64 --decode > "$KEYSTORE_PATH"
+          test -s "$KEYSTORE_PATH"
+          keytool -list -keystore "$KEYSTORE_PATH" -storepass "$KEYSTORE_PASSWORD" -alias "$KEY_ALIAS" >/dev/null
+          echo "Production signing keystore and alias validated."
+
   bump:
     name: Bump version and tag
+    needs: signing-preflight
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.bump.outputs.version }}
@@ -88,19 +114,25 @@ jobs:
           yes | sdkmanager "build-tools;37.0.0"
           yes | sdkmanager "build-tools;36.0.0"
           yes | sdkmanager "ndk;29.0.14206865"
-      - name: Build Foss APK
+      - name: Configure production signing keystore
+        shell: bash
+        run: |
+          set -euo pipefail
+          KEYSTORE_PATH="$RUNNER_TEMP/brox-kai-release.jks"
+          printf '%s' "$KEYSTORE_B64" | base64 --decode > "$KEYSTORE_PATH"
+          test -s "$KEYSTORE_PATH"
+          keytool -list -keystore "$KEYSTORE_PATH" -storepass "$KEYSTORE_PASSWORD" -alias "$KEY_ALIAS" >/dev/null
+          echo "KEYSTORE_FILE=$KEYSTORE_PATH" >> "$GITHUB_ENV"
+      - name: Build production-signed Foss APK
         run: ./gradlew :androidApp:assembleFossRelease --stacktrace
-      - name: Sign APK
-        if: env.KEYSTORE_B64 != '' && env.KEY_ALIAS != '' && env.KEYSTORE_PASSWORD != ''
-        uses: r0adkll/sign-android-release@v1
-        env:
-          BUILD_TOOLS_VERSION: "36.0.0"
-        with:
-          releaseDirectory: androidApp/build/outputs/apk/foss/release
-          signingKeyBase64: ${{ secrets.KEYSTORE_B64 }}
-          alias: ${{ secrets.KEY_ALIAS }}
-          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEYSTORE_PASSWORD }}
+      - name: Verify APK signature
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="androidApp/build/outputs/apk/foss/release/androidApp-foss-release.apk"
+          test -s "$APK"
+          "$ANDROID_HOME/build-tools/37.0.0/apksigner" verify --verbose --print-certs "$APK"
+          sha256sum "$APK"
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
