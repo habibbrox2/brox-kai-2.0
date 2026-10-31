@@ -30,34 +30,29 @@ internal class AndroidApkSignatureVerifier(
         if (!apkFile.isFile || apkFile.length() <= 0L) {
             return VerificationResult.Invalid("Downloaded APK is missing or empty")
         }
-        if (!SHA256.matches(expectedSignerSha256)) {
-            return VerificationResult.Invalid("Invalid expected signer fingerprint")
-        }
 
         val installedSigner = installedSignerSha256()
-            ?: return VerificationResult.Invalid("Unable to establish installed app signer")
-        if (!installedSigner.equals(expectedSignerSha256, ignoreCase = true)) {
-            return VerificationResult.Invalid("Release manifest signer does not match installed app")
-        }
-
         val archiveInfo = context.packageManager.getPackageArchiveInfo(
             apkFile.absolutePath,
             signingFlags(),
-        ) ?: return VerificationResult.Invalid("Unable to read downloaded APK metadata")
+        )
+        val archiveSigner = archiveInfo?.signerSha256()
 
-        if (archiveInfo.packageName != expectedPackageName ||
-            archiveInfo.packageName != context.packageName
+        return when (
+            val validation = AndroidApkIdentityValidation.validate(
+                expectedPackageName = expectedPackageName,
+                installedPackageName = context.packageName,
+                apkPackageName = archiveInfo?.packageName,
+                expectedSignerSha256 = expectedSignerSha256,
+                installedSignerSha256 = installedSigner,
+                apkSignerSha256 = archiveSigner,
+            )
         ) {
-            return VerificationResult.Invalid("Downloaded APK package name mismatch")
+            is AndroidApkIdentityValidation.Result.Valid ->
+                VerificationResult.Valid(validation.signerSha256)
+            is AndroidApkIdentityValidation.Result.Invalid ->
+                VerificationResult.Invalid(validation.reason)
         }
-
-        val archiveSigner = archiveInfo.signerSha256()
-            ?: return VerificationResult.Invalid("Downloaded APK must have exactly one signer")
-        if (!archiveSigner.equals(installedSigner, ignoreCase = true)) {
-            return VerificationResult.Invalid("Downloaded APK signer does not match installed app")
-        }
-
-        return VerificationResult.Valid(archiveSigner)
     }
 
     private fun getPackageInfo(packageName: String): PackageInfo? = runCatching {
@@ -97,9 +92,5 @@ internal class AndroidApkSignatureVerifier(
     sealed interface VerificationResult {
         data class Valid(val signerSha256: String) : VerificationResult
         data class Invalid(val reason: String) : VerificationResult
-    }
-
-    private companion object {
-        val SHA256 = Regex("^[a-fA-F0-9]{64}$")
     }
 }
