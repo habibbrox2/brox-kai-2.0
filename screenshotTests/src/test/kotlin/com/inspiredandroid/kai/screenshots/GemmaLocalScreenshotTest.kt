@@ -87,9 +87,11 @@ class GemmaLocalScreenshotTest {
         unsafeUpdateConfig(theme = theme)
 
         snapshot {
-            CompositionLocalProvider(LocalInspectionMode provides true) {
-                Theme(colorScheme = colorScheme) {
-                    content()
+            WithScreenshotTestKoin {
+                CompositionLocalProvider(LocalInspectionMode provides true) {
+                    Theme(colorScheme = colorScheme) {
+                        content()
+                    }
                 }
             }
         }
