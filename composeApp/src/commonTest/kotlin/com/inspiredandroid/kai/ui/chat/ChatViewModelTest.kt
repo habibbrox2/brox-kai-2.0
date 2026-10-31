@@ -56,16 +56,8 @@ class ChatViewModelTest {
     fun `tool confirmation action delegates the selected approval policy to repository`() = runTest {
         val viewModel = createViewModel()
 
-        viewModel.state.value.actions.confirmToolExecution(
-            toolCallId = "call-allow-once",
-            allowOnce = true,
-            alwaysAllow = false,
-        )
-        viewModel.state.value.actions.confirmToolExecution(
-            toolCallId = "call-always-allow",
-            allowOnce = false,
-            alwaysAllow = true,
-        )
+        viewModel.state.value.actions.confirmToolExecution("call-allow-once", true, false)
+        viewModel.state.value.actions.confirmToolExecution("call-always-allow", false, true)
 
         assertEquals(
             listOf(
