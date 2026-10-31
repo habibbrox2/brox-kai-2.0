@@ -136,15 +136,8 @@ internal class AndroidUpdateDownloadWorker(
         error("Too many update download redirects")
     }
 
-    private fun isValidDownloadRequest(url: String, sha256: String, assetName: String): Boolean {
-        val parsedUrl = runCatching { URL(url) }.getOrNull() ?: return false
-        return parsedUrl.protocol == "https" &&
-            parsedUrl.host.equals("github.com", ignoreCase = true) &&
-            parsedUrl.path.startsWith("/habibbrox2/brox-kai-2.0/releases/download/") &&
-            SHA256.matches(sha256) &&
-            APK_ASSET.matches(assetName) &&
-            parsedUrl.path.endsWith("/$assetName")
-    }
+    private fun isValidDownloadRequest(url: String, sha256: String, assetName: String): Boolean =
+        AndroidUpdateDownloadRequestValidation.isValid(url, sha256, assetName)
 
     private fun failure(message: String): Result = Result.failure(workDataOf(KEY_ERROR to message))
 
@@ -164,8 +157,6 @@ internal class AndroidUpdateDownloadWorker(
         private const val MAX_REDIRECTS = 5
         private const val MAX_RETRIES = 3
         private val REDIRECT_CODES = setOf(301, 302, 303, 307, 308)
-        private val SHA256 = Regex("^[a-fA-F0-9]{64}$")
-        private val APK_ASSET = Regex("^Brox-Kai-2\\.0-v2\\.0\\.[0-9]+-Android\\.apk$")
         private val ALLOWED_DOWNLOAD_HOSTS = setOf(
             "github.com",
             "objects.githubusercontent.com",
