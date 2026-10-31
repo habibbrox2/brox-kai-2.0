@@ -146,7 +146,7 @@ fun SettingsScreen(
     initialSettingsTab: SettingsTab? = null,
     navigationTabBar: (@Composable () -> Unit)? = null,
     androidUpdateContent: (@Composable () -> Unit)? = null,
-)
+) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val sandboxState by sandboxViewModel.state.collectAsStateWithLifecycle()
 
