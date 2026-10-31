@@ -42,3 +42,6 @@
 - Start with a focused compile/test, then broaden to Wasm distribution, desktop tests, and Android build as appropriate.
 - The existing `.github/workflows/test.yml` runs `spotlessApply`, updates screenshots, converts site images, and may commit/push generated changes. Do not treat it as a read-only check or trigger it casually.
 - Never claim a target passes unless its command completed successfully in this checkout.
+
+## Git commit messages
+- Do **not** add "Generated with Codebuff", "Co-Authored-By: Codebuff", or similar AI attribution/footer lines to commit messages. Keep commit messages clean and descriptive.

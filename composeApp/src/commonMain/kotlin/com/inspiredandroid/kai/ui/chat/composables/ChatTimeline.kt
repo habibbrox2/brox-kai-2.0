@@ -88,7 +88,6 @@ import kotlinx.collections.immutable.ImmutableList as IImmutableList
 fun ChatTimeline(
     uiState: ChatUiState,
     textToSpeech: TextToSpeechInstance?,
-    onOpenInEditor: ((String, String?) -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
@@ -196,7 +195,6 @@ fun ChatTimeline(
                                     null
                                 },
                                 reasoningSegments = reasoningSegmentsByAssistantId[history.id] ?: persistentListOf(),
-                                onOpenInEditor = onOpenInEditor,
                                 isFirstMessage = history.id == firstAssistantId,
                             )
                             if (history.fallbackServiceName != null) {
@@ -218,7 +216,6 @@ fun ChatTimeline(
                                 setIsSpeaking = {},
                                 reasoningSegments = reasoningSegmentsByAssistantId[history.id]
                                     ?: persistentListOf(history.content),
-                                onOpenInEditor = onOpenInEditor,
                                 isFirstMessage = history.id == firstAssistantId,
                             )
                         }

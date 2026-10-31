@@ -42,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -202,9 +203,15 @@ internal fun WaitingResponseRow(
         Column(
             modifier = Modifier
                 .clip(RoundedCornerShape(12.dp))
-                .background(MaterialTheme.colorScheme.background)
+                .shadow(
+                    elevation = 3.dp,
+                    shape = RoundedCornerShape(12.dp),
+                    ambientColor = AccentPrimary.copy(alpha = 0.35f),
+                    spotColor = AccentPrimary.copy(alpha = 0.35f),
+                )
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                 .border(
-                    BorderStroke(1.dp, Color(0xFF1E293B)),
+                    BorderStroke(1.dp, AccentPrimary.copy(alpha = 0.30f)),
                     RoundedCornerShape(12.dp),
                 )
                 .semantics { contentDescription = waitingCd },
@@ -223,12 +230,13 @@ internal fun WaitingResponseRow(
                 )
                 if (!summary.isNullOrBlank()) {
                     Text(
-                        text = "· $summary",
+                        text = summary,
                         fontFamily = FontFamily.Monospace,
                         style = KaiTypography.labelSmall,
-                        color = Color(0xFFCBD5E1),
+                        color = Color(0xFF94A3B8),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f),
                     )
                 }
             }

@@ -12,17 +12,22 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -88,7 +93,6 @@ internal fun BotMessage(
     frozen: FrozenSubmission? = null,
     onResubmit: ((event: String, data: Map<String, String>) -> Unit)? = null,
     reasoningSegments: ImmutableList<String> = persistentListOf(),
-    onOpenInEditor: ((String, String?) -> Unit)? = null,
     isFirstMessage: Boolean = false,
 ) {
     val document = remember(message) { parseMarkdown(message) }
@@ -182,7 +186,6 @@ internal fun BotMessage(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(top = answerTopPadding, end = if (message.isNotEmpty() && frozen == null) 24.dp else 0.dp),
-                                onOpenInEditor = onOpenInEditor,
                             )
                         }
                     }
@@ -337,37 +340,74 @@ private fun ReasoningBlockquote(
                 .padding(horizontal = 10.dp, vertical = 7.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // Left accent bar
             Box(
                 modifier = Modifier
-                    .size(width = 3.dp, height = 16.dp)
-                    .background(accentCyan, RoundedCornerShape(2.dp)),
-            )
+                    .size(26.dp)
+                    .clip(CircleShape)
+                    .background(accentCyan.copy(alpha = 0.14f)),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Lightbulb,
+                    contentDescription = null,
+                    tint = accentCyan,
+                    modifier = Modifier.size(15.dp),
+                )
+            }
+            Spacer(Modifier.size(10.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = stringResource(Res.string.bot_message_thinking_label),
+                        style = KaiTypography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
+                        fontFamily = FontFamily.Monospace,
+                        color = textSlate,
+                        fontSize = 12.sp,
+                    )
+                    if (segments.size > 1) {
+                        Box(
+                            modifier = Modifier
+                                .padding(start = 6.dp)
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(accentCyan.copy(alpha = 0.12f))
+                                .padding(horizontal = 5.dp, vertical = 1.dp),
+                        ) {
+                            Text(
+                                text = "${segments.size} steps",
+                                style = KaiTypography.labelSmall,
+                                fontFamily = FontFamily.Monospace,
+                                color = accentCyan,
+                                fontSize = 10.sp,
+                            )
+                        }
+                    }
+                }
+                if (!expanded && preview.isNotEmpty()) {
+                    Text(
+                        text = preview,
+                        style = KaiTypography.bodySmall,
+                        fontFamily = FontFamily.Monospace,
+                        color = textMuted,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(top = 3.dp),
+                        fontSize = 11.sp,
+                    )
+                }
+            }
             Spacer(Modifier.size(8.dp))
-            Icon(
-                imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                contentDescription = stringResource(Res.string.bot_message_thinking_expand_content_description),
-                tint = accentCyan,
-                modifier = Modifier.size(16.dp),
-            )
-            Spacer(Modifier.size(6.dp))
-            Text(
-                text = if (segments.size > 1) "Thinking (${segments.size} steps)" else stringResource(Res.string.bot_message_thinking_label),
-                style = KaiTypography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
-                fontFamily = FontFamily.Monospace,
-                color = textSlate,
-                fontSize = 12.sp,
-            )
-            if (!expanded && preview.isNotEmpty()) {
-                Text(
-                    text = " · $preview",
-                    style = KaiTypography.bodySmall,
-                    fontFamily = FontFamily.Monospace,
-                    color = textMuted,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f).padding(start = 4.dp),
-                    fontSize = 11.sp,
+            Box(
+                modifier = Modifier
+                    .size(22.dp)
+                    .clip(CircleShape)
+                    .background(Color.White.copy(alpha = 0.05f)),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    contentDescription = stringResource(Res.string.bot_message_thinking_expand_content_description),
+                    tint = if (expanded) accentCyan else textMuted,
+                    modifier = Modifier.size(16.dp),
                 )
             }
         }
@@ -379,24 +419,44 @@ private fun ReasoningBlockquote(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .heightIn(max = 360.dp)
+                    .verticalScroll(rememberScrollState())
                     .background(Color(0xFF070A10))
                     .border(
                         width = 1.dp,
                         color = borderColor.copy(alpha = 0.5f),
                         shape = RoundedCornerShape(bottomStart = 10.dp, bottomEnd = 10.dp),
                     )
-                    .padding(horizontal = 12.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                    .padding(horizontal = 12.dp, vertical = 10.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                for (segment in segments) {
-                    SelectionContainer {
-                        Text(
-                            text = segment,
-                            color = textSlate,
-                            style = KaiTypography.bodySmall,
-                            fontFamily = FontFamily.Monospace,
-                            lineHeight = 18.sp,
+                segments.forEachIndexed { index, segment ->
+                    if (index > 0) {
+                        HorizontalDivider(
+                            modifier = Modifier.padding(vertical = 2.dp),
+                            color = borderColor.copy(alpha = 0.6f),
+                            thickness = 1.dp,
                         )
+                    }
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(
+                            text = "STEP ${index + 1}",
+                            style = KaiTypography.labelSmall,
+                            fontFamily = FontFamily.Monospace,
+                            color = accentCyan.copy(alpha = 0.75f),
+                            fontSize = 9.sp,
+                            letterSpacing = 0.8.sp,
+                        )
+                        SelectionContainer {
+                            Text(
+                                text = segment,
+                                color = textSlate,
+                                style = KaiTypography.bodySmall,
+                                fontFamily = FontFamily.Monospace,
+                                fontSize = 12.sp,
+                                lineHeight = 18.sp,
+                            )
+                        }
                     }
                 }
             }
