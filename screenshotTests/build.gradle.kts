@@ -49,6 +49,7 @@ dependencies {
     testImplementation(libs.kotlinx.serialization.json)
     testImplementation(libs.compose.material3)
     testImplementation(libs.compose.components.resources)
+    testImplementation(libs.multiplatform.settings.test)
 }
 
 // Ensure composeApp resources are generated before screenshot tests
