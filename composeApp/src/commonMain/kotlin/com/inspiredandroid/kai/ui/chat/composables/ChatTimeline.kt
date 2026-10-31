@@ -294,6 +294,17 @@ fun ChatTimeline(
                                 )
                             }
                         }
+                        History.Role.TOOL_CONFIRMATION -> {
+                            val toolCallId = history.toolConfirmationId ?: history.toolCallId ?: history.id
+                            ToolConfirmationCard(
+                                toolName = history.toolName ?: history.content,
+                                toolCallId = toolCallId,
+                                arguments = history.content,
+                                onDeny = { uiState.actions.denyToolExecution(toolCallId) },
+                                onAllowOnce = { uiState.actions.confirmToolExecution(toolCallId, true, false) },
+                                onAlwaysAllow = { uiState.actions.confirmToolExecution(toolCallId, false, true) },
+                            )
+                        }
                     }
                 }
             }

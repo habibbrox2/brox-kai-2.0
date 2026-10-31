@@ -36,6 +36,14 @@ import com.inspiredandroid.kai.tools.CreateCalendarEventTool
 import com.inspiredandroid.kai.tools.DownloadsStatusTool
 import com.inspiredandroid.kai.tools.DownloadsStatusToolImpl
 import com.inspiredandroid.kai.tools.GalleryPermissionController
+import com.inspiredandroid.kai.tools.GalleryCopyTool
+import com.inspiredandroid.kai.tools.GalleryCopyToolImpl
+import com.inspiredandroid.kai.tools.GalleryDeleteTool
+import com.inspiredandroid.kai.tools.GalleryDeleteToolImpl
+import com.inspiredandroid.kai.tools.GalleryMoveTool
+import com.inspiredandroid.kai.tools.GalleryMoveToolImpl
+import com.inspiredandroid.kai.tools.GalleryRenameTool
+import com.inspiredandroid.kai.tools.GalleryRenameToolImpl
 import com.inspiredandroid.kai.tools.GallerySearchTool
 import com.inspiredandroid.kai.tools.GallerySearchToolImpl
 import com.inspiredandroid.kai.tools.GalleryStatusTool
@@ -214,6 +222,10 @@ actual fun getPlatformToolDefinitions(): List<ToolInfo> = CommonTools.commonTool
         GalleryStatusTool.toolInfo,
         DownloadsStatusTool.toolInfo,
         GallerySearchTool.toolInfo,
+        GalleryRenameTool.toolInfo,
+        GalleryDeleteTool.toolInfo,
+        GalleryMoveTool.toolInfo,
+        GalleryCopyTool.toolInfo,
         OcrTool.toolInfo,
         WorkflowTool.toolInfo,
         ParameterExtractionTool.toolInfo,
@@ -313,6 +325,10 @@ actual fun getAvailableTools(): List<Tool> {
 
         // Gallery search tool - always available, requests runtime permission if needed
         add(GallerySearchToolImpl())
+        add(GalleryRenameToolImpl())
+        add(GalleryDeleteToolImpl())
+        add(GalleryMoveToolImpl())
+        add(GalleryCopyToolImpl())
 
         // OCR tool - always available on Android with ML Kit
         val ocrTool = OcrToolImpl()

@@ -4,7 +4,7 @@
     <string name="error_invalid_api_key">Invalid API Key. Please check your settings.</string>
     <string name="error_rate_limit_exceeded">Rate limit exceeded. Please try again later.</string>
     <string name="error_free_limit_title">Free tier limit reached</string>
-    <string name="error_free_limit_body">Free FAST and Free EXPERT are rate-limited. Create a free API key with one of these providers for higher limits, then add it under Settings → Services.</string>
+    <string name="error_free_limit_body">Free FAST and Free EXPERT are rate-limited. Create a free API key with one of these providers for higher limits, then add it under Settings → AI Providers.</string>
     <string name="error_empty_response">No response received. Try starting a new chat or shortening your message.</string>
     <string name="error_unknown">An unknown error occurred.</string>
     <string name="settings_ai_mistakes_warning">AI makes mistakes, double check and don't share sensitive information.</string>
@@ -61,7 +61,7 @@
     <string name="settings_tools_none_available">No tools available on this platform.</string>
     <string name="settings_tab_general">General</string>
     <string name="settings_tab_agent">Agent</string>
-    <string name="settings_tab_services">Services</string>
+    <string name="settings_tab_services">AI Providers</string>
     <string name="settings_tab_tools">Tools</string>
     <string name="settings_tab_sandbox">Linux Sandbox</string>
     <string name="settings_tab_integrations">Integrations</string>

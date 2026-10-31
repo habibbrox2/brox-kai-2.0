@@ -202,6 +202,10 @@ interface DataRepository {
     fun getExportPreview(): Map<ImportSection, String?>
     fun importSettingsFromJson(json: String, sections: Set<ImportSection>, replace: Boolean): Int
 
+    // Tool confirmation
+    fun confirmToolExecution(toolCallId: String, allowOnce: Boolean = false, alwaysAllow: Boolean = false)
+    fun denyToolExecution(toolCallId: String)
+
     // Background ask with tools (no chat history update, supports tool-calling loop).
     // When `conversationIdOverride` is set, tool calls during this run route to that
     // conversation's sandbox session instead of inheriting the active chat's id —

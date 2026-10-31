@@ -5,6 +5,9 @@ import com.inspiredandroid.kai.linux.LinuxDistro
 import com.russhwolf.settings.Settings
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
@@ -183,6 +186,32 @@ class AppSettings(internal val settings: Settings) {
 
     fun setToolEnabled(toolId: String, enabled: Boolean) {
         settings.putBoolean("$KEY_TOOL_PREFIX$toolId", enabled)
+    }
+
+    fun getToolPermissions(): List<ToolPermission> {
+        val json = settings.getStringOrNull(KEY_TOOL_PERMISSIONS) ?: return emptyList()
+        return try {
+            Json.decodeFromString<List<ToolPermission>>(json)
+        } catch (_: Exception) {
+            emptyList()
+        }
+    }
+
+    fun setToolPermissions(permissions: List<ToolPermission>) {
+        settings.putString(KEY_TOOL_PERMISSIONS, Json.encodeToString(permissions))
+    }
+
+    fun getToolPermission(toolName: String, scope: String? = null): ToolPermission? {
+        val permissions = getToolPermissions()
+        return permissions.firstOrNull { it.toolName == toolName && it.scope == scope }
+            ?: permissions.firstOrNull { it.toolName == toolName && it.scope == null }
+    }
+
+    fun setToolPermission(permission: ToolPermission) {
+        val permissions = getToolPermissions().toMutableList()
+        permissions.removeAll { it.toolName == permission.toolName && it.scope == permission.scope }
+        permissions.add(permission)
+        setToolPermissions(permissions)
     }
 
     fun getConversationsJson(): String? = settings.getStringOrNull(KEY_CONVERSATIONS)
@@ -654,6 +683,7 @@ class AppSettings(internal val settings: Settings) {
         const val KEY_SANDBOX_ENABLED = "sandbox_enabled"
         const val KEY_SANDBOX_DISTRO = "sandbox_distro"
         const val KEY_KAI_BUILD_LAUNCH_AGENT = "kai_build_launch_agent"
+        const val KEY_TOOL_PERMISSIONS = "tool_permissions"
 
         // Basic memory guidance shared by every chat variant. The advanced `## Structured
         // Learning` block lives in `ChatSystemPromptBuilder.DEFAULT_STRUCTURED_LEARNING_SECTION`

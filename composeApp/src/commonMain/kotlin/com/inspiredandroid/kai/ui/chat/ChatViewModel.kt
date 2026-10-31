@@ -83,6 +83,12 @@ class ChatViewModel(
         sendSmsDraft = ::sendSmsDraft,
         discardSmsDraft = ::discardSmsDraft,
         consumeComposerPrefill = ::consumeComposerPrefill,
+        confirmToolExecution = { toolCallId, allowOnce, alwaysAllow ->
+            dataRepository.confirmToolExecution(toolCallId, allowOnce, alwaysAllow)
+        },
+        denyToolExecution = { toolCallId ->
+            dataRepository.denyToolExecution(toolCallId)
+        },
     )
     private val freeModeNames: Map<FreeMode, String> = FreeMode.entries.associateWith { "Free ${it.modelId.replaceFirstChar { c -> c.uppercase() }}" }
     private var currentJob: Job? = null

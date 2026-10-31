@@ -311,4 +311,86 @@ class GalleryRepositoryImpl(
             false
         }
     }
+
+    override suspend fun rename(id: Long, newName: String): Boolean = withContext(kotlinx.coroutines.Dispatchers.IO) {
+        try {
+            val uri = ContentUris.withAppendedId(baseUri, id)
+            val values = android.content.ContentValues()
+            values.put(MediaStore.Files.FileColumns.DISPLAY_NAME, newName)
+            val result = contentResolver.update(uri, values, null, null)
+            result > 0
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    override suspend fun delete(id: Long): Boolean = withContext(kotlinx.coroutines.Dispatchers.IO) {
+        try {
+            val uri = ContentUris.withAppendedId(baseUri, id)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                try {
+                    val result = contentResolver.delete(uri, null, null)
+                    result > 0
+                } catch (e: Exception) {
+                    false
+                }
+            } else {
+                val result = contentResolver.delete(uri, null, null)
+                result > 0
+            }
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    override suspend fun move(id: Long, newRelativePath: String): Boolean = withContext(kotlinx.coroutines.Dispatchers.IO) {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val uri = ContentUris.withAppendedId(baseUri, id)
+                val values = android.content.ContentValues()
+                values.put(MediaStore.Files.FileColumns.RELATIVE_PATH, newRelativePath)
+                val result = contentResolver.update(uri, values, null, null)
+                result > 0
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    override suspend fun copy(id: Long, newName: String?): Boolean = withContext(kotlinx.coroutines.Dispatchers.IO) {
+        try {
+            val item = getById(id)
+            if (item == null) return@withContext false
+            val sourceUri = Uri.parse(item.contentUri)
+            val inputStream = contentResolver.openInputStream(sourceUri) ?: return@withContext false
+            val values = android.content.ContentValues()
+            values.put(MediaStore.Files.FileColumns.DISPLAY_NAME, newName ?: "${item.displayName}_copy")
+            values.put(MediaStore.Files.FileColumns.MIME_TYPE, item.mimeType)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                values.put(MediaStore.Files.FileColumns.RELATIVE_PATH, item.relativePath ?: "Download/")
+                values.put(MediaStore.Files.FileColumns.IS_PENDING, 1)
+            }
+            val destUri = contentResolver.insert(baseUri, values) ?: run {
+                inputStream.close()
+                return@withContext false
+            }
+            val outputStream = contentResolver.openOutputStream(destUri) ?: run {
+                inputStream.close()
+                return@withContext false
+            }
+            inputStream.copyTo(outputStream)
+            inputStream.close()
+            outputStream.close()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val updateValues = android.content.ContentValues()
+                updateValues.put(MediaStore.Files.FileColumns.IS_PENDING, 0)
+                contentResolver.update(destUri, updateValues, null, null)
+            }
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
 }

@@ -513,11 +513,27 @@ class Requests {
     private fun resolveUrl(service: Service, credentials: ServiceCredentials, path: String): String {
         val customBase = credentials.baseUrl.trim()
         if (customBase.isNotEmpty()) {
+            if (path.contains("{account_id}") && customBase.isNotEmpty()) {
+                // Try to extract account ID from custom base URL or use as-is if it contains account ID
+                val accountId = customBase
+                    .substringAfter("/accounts/", missingDelimiterValue = "")
+                    .substringBefore("/", missingDelimiterValue = customBase)
+                    .takeIf { it.isNotEmpty() && !it.contains(":") && !it.startsWith("http") } ?: ""
+                val resolved = if (accountId.isNotEmpty() && path.contains("{account_id}")) {
+                    path.replace("{account_id}", accountId)
+                } else if (path.contains("{account_id}")) {
+                    // Maybe customBase is just the account ID
+                    path.replace("{account_id}", customBase)
+                } else {
+                    path
+                }
+                return resolved
+            }
             val base = Service.normalizeOpenAICompatibleBaseUrl(customBase)
             val relPath = if (path.startsWith("/")) path else "/$path"
             return "$base$relPath"
         }
-        return path
+        return path.replace("{account_id}", "")
     }
 
     private fun getApiKeyOrThrow(service: Service, credentials: ServiceCredentials): String? {

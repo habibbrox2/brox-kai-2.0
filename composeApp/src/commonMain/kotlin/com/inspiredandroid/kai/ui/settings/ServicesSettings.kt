@@ -759,6 +759,7 @@ internal fun ServicesContent(uiState: SettingsUiState, actions: SettingsActions)
 private fun setupRequirement(service: Service): String = when {
     service.isOnDevice -> "Runs on this device · downloads models"
     service is Service.OpenAICompatible -> "Custom endpoint · base URL and API key"
+    service is Service.Cloudflare -> "Cloudflare AI · Account ID and API token"
     service.requiresApiKey && service.apiKeyUrlDisplay != null -> "API key from ${service.apiKeyUrlDisplay}"
     service.requiresApiKey -> "API key required"
     service.supportsOptionalApiKey -> "API key optional"
@@ -788,7 +789,7 @@ private fun ProviderRowItem(
         bottomStart = if (isLast) 12.dp else 0.dp,
         bottomEnd = if (isLast) 12.dp else 0.dp,
     )
-    val isSpecial = service.isOnDevice || service is Service.OpenAICompatible || service is Service.AtlasCloud
+    val isSpecial = service.isOnDevice || service is Service.OpenAICompatible || service is Service.AtlasCloud || service is Service.Cloudflare
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -1062,7 +1063,7 @@ private fun ConfiguredServiceCardContent(
                         onChangeModelContextTokens = onChangeModelContextTokens,
                         modelContextTokens = modelContextTokens,
                     )
-                } else if (entry.service is Service.OpenAICompatible) {
+                } else if (entry.service is Service.OpenAICompatible || entry.service is Service.Cloudflare) {
                     OpenAICompatibleSettings(
                         baseUrl = entry.baseUrl,
                         onChangeBaseUrl = onChangeBaseUrl,

@@ -106,6 +106,7 @@ data class ChatUiState(
     val installedSkills: ImmutableList<com.inspiredandroid.kai.skills.SkillManifest> = persistentListOf(),
     val composerPrefill: String? = null,
     val followUpSuggestions: ImmutableList<String> = persistentListOf(),
+    val pendingToolConfirmations: ImmutableList<PendingToolConfirmation> = persistentListOf(),
 ) {
     val heartbeatConversationId: String?
         get() = savedConversations.firstOrNull { it.isHeartbeat }?.id
@@ -127,12 +128,16 @@ data class History(
     // Preserved from a tool-call assistant turn so it can be round-tripped
     // back to providers (e.g. DeepSeek) that require it on the next request.
     val reasoningContent: String? = null,
+    // For tool confirmation flow
+    val pendingToolConfirmation: Boolean = false,
+    val toolConfirmationId: String? = null,
 ) {
     enum class Role {
         USER,
         ASSISTANT,
         TOOL_EXECUTING,
         TOOL,
+        TOOL_CONFIRMATION,
     }
 }
 
@@ -145,6 +150,15 @@ data class ToolCallInfo(
     val name: String,
     val arguments: String,
     val thoughtSignature: String? = null,
+)
+
+@Immutable
+data class PendingToolConfirmation(
+    val id: String = Uuid.random().toString(),
+    val toolCallId: String,
+    val toolName: String,
+    val arguments: String,
+    val description: String? = null,
 )
 
 fun History.toGroqMessageDto(
@@ -229,6 +243,7 @@ fun History.toGroqMessageDto(
     )
 
     History.Role.TOOL_EXECUTING -> OpenAICompatibleChatRequestDto.Message(role = "assistant", content = JsonPrimitive(content))
+    History.Role.TOOL_CONFIRMATION -> OpenAICompatibleChatRequestDto.Message(role = "assistant", content = JsonPrimitive(content))
 }
 
 fun History.toAnthropicContentBlocks(): JsonElement = when (role) {
@@ -324,6 +339,7 @@ fun History.toAnthropicContentBlocks(): JsonElement = when (role) {
     }
 
     History.Role.TOOL_EXECUTING -> JsonPrimitive(content)
+    History.Role.TOOL_CONFIRMATION -> JsonPrimitive(content)
 }
 
 private val geminiJsonParser = SharedJson
@@ -336,7 +352,7 @@ fun History.toGeminiMessageDto(): GeminiChatRequestDto.Content {
         History.Role.TOOL -> "user"
 
         // Tool results are sent as user role with functionResponse
-        History.Role.ASSISTANT, History.Role.TOOL_EXECUTING -> "model"
+        History.Role.ASSISTANT, History.Role.TOOL_EXECUTING, History.Role.TOOL_CONFIRMATION -> "model"
     }
     return GeminiChatRequestDto.Content(
         parts = buildList {

@@ -7,6 +7,7 @@ import kai.composeapp.generated.resources.ic_service_aihubmix
 import kai.composeapp.generated.resources.ic_service_anthropic
 import kai.composeapp.generated.resources.ic_service_atlascloud
 import kai.composeapp.generated.resources.ic_service_cerebras
+import kai.composeapp.generated.resources.ic_service_cloudflare
 import kai.composeapp.generated.resources.ic_service_deepinfra
 import kai.composeapp.generated.resources.ic_service_deepseek
 import kai.composeapp.generated.resources.ic_service_fireworksai
@@ -197,6 +198,20 @@ sealed class Service(
         apiKeyUrl = "https://app.requesty.ai/api-keys",
         apiKeyUrlDisplay = "app.requesty.ai/api-keys",
         reasoningRequestMode = ReasoningRequestMode.REASONING_CONTENT,
+    )
+
+    data object Cloudflare : Service(
+        id = "cloudflare",
+        displayName = "Cloudflare AI",
+        icon = Res.drawable.ic_service_cloudflare,
+        requiresApiKey = true,
+        defaultModel = null,
+        settingsKeyPrefix = "cloudflare",
+        defaultModels = emptyList(),
+        chatUrl = "https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/v1/chat/completions",
+        modelsUrl = "https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/v1/models",
+        apiKeyUrl = "https://dash.cloudflare.com/profile/api-tokens",
+        apiKeyUrlDisplay = "dash.cloudflare.com/profile/api-tokens",
     )
 
     data object Nvidia : Service(
@@ -636,7 +651,7 @@ sealed class Service(
     )
 
     companion object {
-        val all: List<Service> get() = listOf(Free, AtlasCloud, Gemini, Anthropic, OpenAI, DeepSeek, Mistral, XAI, OpenRouter, Requesty, Groq, Nvidia, Cerebras, OllamaCloud, LongCat, Together, HuggingFace, Venice, Moonshot, Zai, ZaiCodingPlan, Minimax, AiHubMix, DeepInfra, FireworksAI, OpenCode, Kilo, PublicAI, AIHorde, OneMinAI, Perplexity, OpenAICompatible, LiteRT)
+        val all: List<Service> get() = listOf(Free, AtlasCloud, Gemini, Anthropic, OpenAI, DeepSeek, Mistral, XAI, OpenRouter, Requesty, Cloudflare, Groq, Nvidia, Cerebras, OllamaCloud, LongCat, Together, HuggingFace, Venice, Moonshot, Zai, ZaiCodingPlan, Minimax, AiHubMix, DeepInfra, FireworksAI, OpenCode, Kilo, PublicAI, AIHorde, OneMinAI, Perplexity, OpenAICompatible, LiteRT)
 
         const val DEFAULT_OPENAI_COMPATIBLE_BASE_URL = "http://localhost:11434/v1"
 

@@ -56,6 +56,26 @@ interface GalleryRepository {
      * Check if a content URI is accessible (handles deleted/inaccessible files).
      */
     fun canAccessMediaUri(uri: String): Boolean
+
+    /**
+     * Rename a media file/item.
+     */
+    suspend fun rename(id: Long, newName: String): Boolean = false
+
+    /**
+     * Delete a media file/item. Requires permission.
+     */
+    suspend fun delete(id: Long): Boolean = false
+
+    /**
+     * Move a media file/item to a different relative path/location.
+     */
+    suspend fun move(id: Long, newRelativePath: String): Boolean = false
+
+    /**
+     * Copy a media file/item.
+     */
+    suspend fun copy(id: Long, newName: String? = null): Boolean = false
 }
 
 /**

@@ -19,6 +19,9 @@ object ActivityMapper {
                     // User messages aren't "agent activities" in the same sense
                     // Skip or could add as context
                 }
+                History.Role.TOOL_CONFIRMATION -> {
+                    // Skip confirmation entries in activity mapping
+                }
 
                 History.Role.ASSISTANT -> {
                     if (entry.toolCalls != null && entry.toolCalls.isNotEmpty()) {

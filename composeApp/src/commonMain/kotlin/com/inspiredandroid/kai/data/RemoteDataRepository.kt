@@ -72,6 +72,7 @@ import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.default_soul
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -196,6 +197,24 @@ class RemoteDataRepository(
     private val sandboxController: SandboxController,
     private val localInferenceEngine: LocalInferenceEngine? = null,
 ) : DataRepository {
+
+    private val toolPermissionManager = ToolPermissionManager(appSettings)
+
+    private data class PendingToolExecution(
+        val deferred: CompletableDeferred<ToolConfirmationResult>,
+        val toolName: String,
+        val arguments: String,
+        val callId: String,
+        val scope: String? = null,
+    )
+
+    private data class ToolConfirmationResult(
+        val approved: Boolean,
+        val allowOnce: Boolean = false,
+        val alwaysAllow: Boolean = false,
+    )
+
+    private val pendingToolExecutions = mutableMapOf<String, PendingToolExecution>()
 
     private val prettyJson = Json { prettyPrint = true }
 
@@ -684,6 +703,69 @@ class RemoteDataRepository(
         // Background runs must not leak shell commands into whatever chat is open.
         val conversationIdForTool = activeConversationId()
         try {
+            val argsMap = parseArgsToMap(arguments)
+            val scope = toolPermissionManager.getScope(name, argsMap)
+            if (toolPermissionManager.shouldAskForPermission(name, argsMap)) {
+                val deferred = CompletableDeferred<ToolConfirmationResult>()
+                pendingToolExecutions[callId] = PendingToolExecution(
+                    deferred = deferred,
+                    toolName = name,
+                    arguments = arguments,
+                    callId = callId,
+                    scope = scope,
+                )
+                history.update { h ->
+                    h.toMutableList().apply {
+                        add(
+                            History(
+                                id = "confirm-$callId",
+                                role = History.Role.TOOL_CONFIRMATION,
+                                content = arguments,
+                                toolName = name,
+                                toolCallId = callId,
+                                pendingToolConfirmation = true,
+                                toolConfirmationId = callId,
+                            ),
+                        )
+                    }
+                }
+                val confirmationResult = deferred.await()
+                history.update { h ->
+                    h.filter { it.role != History.Role.TOOL_CONFIRMATION }
+                }
+                if (!confirmationResult.approved) {
+                    toolPermissionManager.consumeAllowOnce(name, scope)
+                    val result = toolErrorJson("User denied tool execution")
+                    val elapsed = Clock.System.now().toEpochMilliseconds() - startTime
+                    if (elapsed < MIN_TOOL_DISPLAY_MS) {
+                        delay(MIN_TOOL_DISPLAY_MS.milliseconds - elapsed.milliseconds)
+                    }
+                    history.update { h ->
+                        buildList(h.size) {
+                            for (entry in h) {
+                                if (entry.id != executingId) add(entry)
+                            }
+                            add(
+                                History(
+                                    role = History.Role.TOOL,
+                                    content = result,
+                                    toolCallId = callId,
+                                    toolName = name,
+                                ),
+                            )
+                        }
+                    }
+                    return result
+                }
+                if (confirmationResult.allowOnce) {
+                    toolPermissionManager.consumeAllowOnce(name, scope)
+                }
+            } else {
+                val perm = appSettings.getToolPermission(name, scope)
+                if (perm?.policy == ToolPermissionPolicy.ALLOW_ONCE) {
+                    toolPermissionManager.consumeAllowOnce(name, scope)
+                }
+            }
             val result = try {
                 toolExecutor.executeTool(name, arguments, conversationIdForTool)
             } catch (e: Exception) {
@@ -1288,6 +1370,33 @@ class RemoteDataRepository(
      * own flow, so background runs (heartbeat, scheduled tasks) don't leak rows into the open chat.
      * Returns a list of (callId, toolName, result).
      */
+    private fun parseArgsToMap(args: String): Map<String, Any> {
+        return try {
+            val jsonElement = Json.parseToJsonElement(args)
+            if (jsonElement is JsonObject) {
+                jsonElement.entries.associate { (k, v) ->
+                    k to when (v) {
+                        is JsonPrimitive -> {
+                            when {
+                                v.isString -> v.content
+                                v.content == "true" -> true
+                                v.content == "false" -> false
+                                v.content.toLongOrNull() != null -> v.content.toLong()
+                                v.content.toDoubleOrNull() != null -> v.content.toDouble()
+                                else -> v.content
+                            }
+                        }
+                        else -> v.toString()
+                    }
+                }
+            } else {
+                emptyMap()
+            }
+        } catch (_: Exception) {
+            emptyMap()
+        }
+    }
+
     private suspend fun executeToolCallsInParallel(
         toolCalls: List<Triple<String, String, String>>,
         history: MutableStateFlow<List<History>>,
@@ -1320,6 +1429,48 @@ class RemoteDataRepository(
             val results = coroutineScope {
                 toolCalls.map { (callId, name, arguments) ->
                     async {
+                        val argsMap = parseArgsToMap(arguments)
+                        val scope = toolPermissionManager.getScope(name, argsMap)
+                        if (toolPermissionManager.shouldAskForPermission(name, argsMap)) {
+                            val deferred = CompletableDeferred<ToolConfirmationResult>()
+                            pendingToolExecutions[callId] = PendingToolExecution(
+                                deferred = deferred,
+                                toolName = name,
+                                arguments = arguments,
+                                callId = callId,
+                                scope = scope,
+                            )
+                            // Add confirmation card to history
+                            history.update { h ->
+                                h.toMutableList().apply {
+                                    add(
+                                        History(
+                                            id = "confirm-$callId",
+                                            role = History.Role.TOOL_CONFIRMATION,
+                                            content = arguments,
+                                            toolName = name,
+                                            toolCallId = callId,
+                                            pendingToolConfirmation = true,
+                                            toolConfirmationId = callId,
+                                        ),
+                                    )
+                                }
+                            }
+                            val confirmationResult = deferred.await()
+                            if (!confirmationResult.approved) {
+                                toolPermissionManager.consumeAllowOnce(name, scope)
+                                return@async Triple(callId, name, toolErrorJson("User denied tool execution"))
+                            }
+                            if (confirmationResult.allowOnce) {
+                                toolPermissionManager.consumeAllowOnce(name, scope)
+                            }
+                        } else {
+                            // Check if there's an ALLOW_ONCE permission to consume
+                            val perm = appSettings.getToolPermission(name, scope)
+                            if (perm?.policy == ToolPermissionPolicy.ALLOW_ONCE) {
+                                toolPermissionManager.consumeAllowOnce(name, scope)
+                            }
+                        }
                         val result = toolExecutor.executeTool(name, arguments, conversationIdSnapshot)
                         Triple(callId, name, result)
                     }
@@ -1329,12 +1480,16 @@ class RemoteDataRepository(
             if (elapsed < MIN_TOOL_DISPLAY_MS) {
                 delay((MIN_TOOL_DISPLAY_MS - elapsed).milliseconds)
             }
+            // Remove confirmation entries
+            history.update { h ->
+                h.filter { it.role != History.Role.TOOL_CONFIRMATION }
+            }
             return results
         } finally {
             // Remove all TOOL_EXECUTING indicators — also on cancellation, so stopping a
             // run doesn't strand spinner rows in the chat. Non-suspending, safe in finally.
             history.update { h ->
-                h.filter { it.id !in executingIds }
+                h.filter { it.id !in executingIds && it.role != History.Role.TOOL_CONFIRMATION }
             }
         }
     }
@@ -1573,24 +1728,25 @@ class RemoteDataRepository(
             ?: deriveTitle(history)
         val conversation = Conversation(
             id = conversationId,
-            messages = history
-                .filter { it.role != History.Role.TOOL_EXECUTING }
-                .map { h ->
-                    Conversation.Message(
-                        id = h.id,
-                        role = when (h.role) {
-                            History.Role.USER -> "user"
-                            History.Role.ASSISTANT -> "assistant"
-                            History.Role.TOOL -> "tool"
-                            History.Role.TOOL_EXECUTING -> "tool" // Should not happen due to filter
-                        },
-                        content = h.content,
-                        attachments = h.attachments,
-                        uiSubmission = h.uiSubmission,
-                        isThinking = h.isThinking,
-                        reasoningContent = h.reasoningContent,
-                    )
-                },
+            messages =                history
+                    .filter { it.role != History.Role.TOOL_EXECUTING && it.role != History.Role.TOOL_CONFIRMATION }
+                    .map { h ->
+                        Conversation.Message(
+                            id = h.id,
+                            role = when (h.role) {
+                                History.Role.USER -> "user"
+                                History.Role.ASSISTANT -> "assistant"
+                                History.Role.TOOL -> "tool"
+                                History.Role.TOOL_EXECUTING -> "tool" // Should not happen due to filter
+                                History.Role.TOOL_CONFIRMATION -> "assistant"
+                            },
+                            content = h.content,
+                            attachments = h.attachments,
+                            uiSubmission = h.uiSubmission,
+                            isThinking = h.isThinking,
+                            reasoningContent = h.reasoningContent,
+                        )
+                    },
             createdAt = existingConversation?.createdAt ?: now,
             updatedAt = now,
             title = title,
@@ -2239,6 +2395,27 @@ class RemoteDataRepository(
 
     override fun consumeOpenAssistRequest() {
         _openAssistRequested.value = false
+    }
+
+    override fun confirmToolExecution(toolCallId: String, allowOnce: Boolean, alwaysAllow: Boolean) {
+        val pending = pendingToolExecutions[toolCallId]
+        if (pending != null) {
+            if (alwaysAllow) {
+                toolPermissionManager.recordAlwaysAllow(pending.toolName, pending.scope)
+            } else if (allowOnce) {
+                toolPermissionManager.recordAllowOnce(pending.toolName, pending.scope)
+            }
+            pending.deferred.complete(ToolConfirmationResult(approved = true, allowOnce = allowOnce, alwaysAllow = alwaysAllow))
+            pendingToolExecutions.remove(toolCallId)
+        }
+    }
+
+    override fun denyToolExecution(toolCallId: String) {
+        val pending = pendingToolExecutions[toolCallId]
+        if (pending != null) {
+            pending.deferred.complete(ToolConfirmationResult(approved = false))
+            pendingToolExecutions.remove(toolCallId)
+        }
     }
 
     private val _pendingShareText = MutableStateFlow<String?>(null)
