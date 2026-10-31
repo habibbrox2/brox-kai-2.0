@@ -305,6 +305,24 @@ class AppSettings(internal val settings: Settings) {
         _themeModeFlow.value = mode
     }
 
+    fun getTtsRate(): Float = settings.getFloat(KEY_TTS_RATE, 1.0f)
+    fun setTtsRate(rate: Float) { settings.putFloat(KEY_TTS_RATE, rate.coerceIn(0.5f, 2.0f)) }
+
+    fun getTtsPitch(): Float = settings.getFloat(KEY_TTS_PITCH, 1.0f)
+    fun setTtsPitch(pitch: Float) { settings.putFloat(KEY_TTS_PITCH, pitch.coerceIn(0.5f, 2.0f)) }
+
+    fun getTtsVolume(): Float = settings.getFloat(KEY_TTS_VOLUME, 1.0f)
+    fun setTtsVolume(volume: Float) { settings.putFloat(KEY_TTS_VOLUME, volume.coerceIn(0.0f, 1.0f)) }
+
+    fun getTtsVoice(): String? = settings.getStringOrNull(KEY_TTS_VOICE)
+    fun setTtsVoice(voice: String?) { if (voice == null) settings.remove(KEY_TTS_VOICE) else settings.putString(KEY_TTS_VOICE, voice) }
+
+    fun getTtsEnabled(): Boolean = settings.getBoolean(KEY_TTS_ENABLED, true)
+    fun setTtsEnabled(enabled: Boolean) { settings.putBoolean(KEY_TTS_ENABLED, enabled) }
+
+    fun getTtsAutoPlay(): Boolean = settings.getBoolean(KEY_TTS_AUTO_PLAY, false)
+    fun setTtsAutoPlay(enabled: Boolean) { settings.putBoolean(KEY_TTS_AUTO_PLAY, enabled) }
+
     private fun loadInitialThemeMode(): ThemeMode {
         val raw = settings.getString(KEY_THEME_MODE, "")
         if (raw.isNotEmpty()) {
@@ -616,6 +634,13 @@ class AppSettings(internal val settings: Settings) {
         const val KEY_INSTANCE_MIGRATION_COMPLETE = "instance_migration_complete_v1"
         const val KEY_BASE_URL_V1_MIGRATION_COMPLETE = "base_url_v1_migration_complete"
         const val KEY_CUSTOM_MODEL_MIGRATION_COMPLETE = "custom_model_migration_complete_v1"
+
+        const val KEY_TTS_RATE = "tts_rate"
+        const val KEY_TTS_PITCH = "tts_pitch"
+        const val KEY_TTS_VOLUME = "tts_volume"
+        const val KEY_TTS_VOICE = "tts_voice"
+        const val KEY_TTS_ENABLED = "tts_enabled"
+        const val KEY_TTS_AUTO_PLAY = "tts_auto_play"
 
         const val KEY_SPLINTERLANDS_ENABLED = "splinterlands_enabled"
         const val KEY_SPLINTERLANDS_ACCOUNT = "splinterlands_account"

@@ -77,6 +77,8 @@ import nl.marc_apps.tts.errors.TextToSpeechSynthesisInterruptedError
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import kotlinx.collections.immutable.ImmutableList as IImmutableList
+import com.inspiredandroid.kai.data.AppSettings
+import org.koin.compose.koinInject
 
 /**
  * The conversation timeline: scrollable list of user/assistant messages, tool
@@ -94,6 +96,7 @@ fun ChatTimeline(
 ) {
     val listState = rememberLazyListState()
     val componentScope = rememberCoroutineScope()
+    val appSettings: AppSettings = koinInject()
 
     val lastAssistantId = remember(uiState.history) { uiState.history.lastRenderedAssistant()?.id }
     // Scroll to bottom & speak only when a NEW assistant message is appended (not on clear, regenerate, etc.)
@@ -110,6 +113,18 @@ fun ChatTimeline(
                     textToSpeech?.stop()
                     uiState.actions.setIsSpeaking(true, lastMessage.id)
                     try {
+                        try {
+                            textToSpeech?.rate = appSettings.getTtsRate()
+                        } catch (_: Exception) {
+                        }
+                        try {
+                            textToSpeech?.pitch = appSettings.getTtsPitch()
+                        } catch (_: Exception) {
+                        }
+                        try {
+                            textToSpeech?.volume = (appSettings.getTtsVolume() * 100).toInt()
+                        } catch (_: Exception) {
+                        }
                         textToSpeech?.say(lastMessage.content.toSpeakableText())
                     } catch (_: TextToSpeechSynthesisInterruptedError) {
                         // Speech was interrupted by user

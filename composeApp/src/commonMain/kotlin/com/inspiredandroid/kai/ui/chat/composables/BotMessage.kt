@@ -63,6 +63,8 @@ import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.markdown.MarkdownContent
 import com.inspiredandroid.kai.ui.markdown.parseMarkdown
 import com.inspiredandroid.kai.ui.rememberCopyToClipboard
+import com.inspiredandroid.kai.data.AppSettings
+import org.koin.compose.koinInject
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.bot_message_copy_content_description
 import kai.composeapp.generated.resources.bot_message_thinking_expand_content_description
@@ -252,6 +254,7 @@ internal fun BotMessage(
             val componentScope = rememberCoroutineScope()
             val uriHandler = LocalUriHandler.current
 
+            val appSettings: AppSettings = koinInject()
             MessageActionRow(
                 modifier = Modifier.padding(top = 4.dp, start = 4.dp),
                 onCopy = { copyToClipboard(message) },
@@ -264,6 +267,18 @@ internal fun BotMessage(
                             } else {
                                 setIsSpeaking(true)
                                 try {
+                                    try {
+                                        textToSpeech.rate = appSettings.getTtsRate()
+                                    } catch (_: Exception) {
+                                    }
+                                    try {
+                                        textToSpeech.pitch = appSettings.getTtsPitch()
+                                    } catch (_: Exception) {
+                                    }
+                                    try {
+                                        textToSpeech.volume = (appSettings.getTtsVolume() * 100).toInt()
+                                    } catch (_: Exception) {
+                                    }
                                     textToSpeech.say(text = message.toSpeakableText())
                                 } catch (_: TextToSpeechSynthesisInterruptedError) {
                                     // Expected interruption

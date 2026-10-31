@@ -10,13 +10,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -24,6 +29,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.inspiredandroid.kai.data.AppSettings
+import org.koin.compose.koinInject
 import com.inspiredandroid.kai.data.ThemeMode
 import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.BorderSoft
@@ -73,6 +80,9 @@ internal fun GeneralContent(uiState: SettingsUiState, actions: SettingsActions) 
                     themeMode = uiState.themeMode,
                     onChangeThemeMode = actions.onChangeThemeMode,
                 )
+            }
+            SettingsCard {
+                TtsSettingsSection()
             }
         },
         end = {
@@ -242,6 +252,66 @@ private fun UiScaleSection(
             onValueChangeFinished = { onChangeUiScale(sliderValue) },
             valueRange = 0.5f..2.0f,
             steps = steps,
+        )
+    }
+}
+
+
+@Composable
+private fun TtsSettingsSection() {
+    val appSettings: AppSettings = koinInject()
+    var rate by remember { mutableFloatStateOf(appSettings.getTtsRate()) }
+    var pitch by remember { mutableFloatStateOf(appSettings.getTtsPitch()) }
+    var volume by remember { mutableFloatStateOf(appSettings.getTtsVolume()) }
+
+    LaunchedEffect(rate) { appSettings.setTtsRate(rate) }
+    LaunchedEffect(pitch) { appSettings.setTtsPitch(pitch) }
+    LaunchedEffect(volume) { appSettings.setTtsVolume(volume) }
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = "Text-to-Speech (TTS)",
+            style = KaiTypography.titleMedium,
+            color = TextPrimary,
+        )
+        Text(
+            text = "কণ্ঠের স্বরভঙ্গি, গতি ও আবেগ আরও স্বাভাবিক করুন",
+            style = KaiTypography.bodyMedium,
+            color = TextSecondary,
+            modifier = Modifier.padding(top = 4.dp, bottom = 12.dp),
+        )
+
+        Text(text = "গতি (Speed): ${(rate * 100).roundToInt()}%", style = KaiTypography.labelLarge, color = TextPrimary)
+        Slider(
+            value = rate,
+            onValueChange = { rate = it },
+            valueRange = 0.7f..1.3f,
+            modifier = Modifier.fillMaxWidth(),
+        )
+
+        Spacer(Modifier.height(8.dp))
+        Text(text = "স্বরভঙ্গি (Pitch): ${(pitch * 100).roundToInt()}%", style = KaiTypography.labelLarge, color = TextPrimary)
+        Slider(
+            value = pitch,
+            onValueChange = { pitch = it },
+            valueRange = 0.8f..1.2f,
+            modifier = Modifier.fillMaxWidth(),
+        )
+
+        Spacer(Modifier.height(8.dp))
+        Text(text = "ভলিউম (Volume): ${(volume * 100).roundToInt()}%", style = KaiTypography.labelLarge, color = TextPrimary)
+        Slider(
+            value = volume,
+            onValueChange = { volume = it },
+            valueRange = 0.0f..1.0f,
+            modifier = Modifier.fillMaxWidth(),
+        )
+
+        Spacer(Modifier.height(8.dp))
+        Text(
+            text = "নোট: প্রাকৃতিক কণ্ঠের জন্য গতি ০.৯৫-১.০৫, স্বরভঙ্গি ০.৯৫-১.০৫ রাখলে বেশি স্বাভাবিক শোনাবে।",
+            style = KaiTypography.bodySmall,
+            color = TextSecondary,
         )
     }
 }
