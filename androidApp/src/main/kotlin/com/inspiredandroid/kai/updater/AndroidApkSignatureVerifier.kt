@@ -50,6 +50,7 @@ internal class AndroidApkSignatureVerifier(
         ) {
             is AndroidApkIdentityValidation.Result.Valid ->
                 VerificationResult.Valid(validation.signerSha256)
+
             is AndroidApkIdentityValidation.Result.Invalid ->
                 VerificationResult.Invalid(validation.reason)
         }
