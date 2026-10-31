@@ -7,9 +7,9 @@ package com.inspiredandroid.kai.updater
  * asset filename. Redirect destinations are separately allowlisted by the Android worker.
  */
 object AndroidUpdateDownloadRequestValidation {
-    private val assetPattern = Regex("^Brox-Kai-2\\.0-v(2\\.0\\.[0-9]+)-Android\\.apk$")
-    private val sha256Pattern = Regex("^[a-fA-F0-9]{64}$")
-    private const val releasePrefix = "https://github.com/habibbrox2/brox-kai-2.0/releases/download/"
+    private val ASSET_PATTERN = Regex("^Brox-Kai-2\\.0-v(2\\.0\\.[0-9]+)-Android\\.apk$")
+    private val SHA256_PATTERN = Regex("^[a-fA-F0-9]{64}$")
+    private const val RELEASE_PREFIX = "https://github.com/habibbrox2/brox-kai-2.0/releases/download/"
 
     fun isValid(url: String, sha256: String, assetName: String): Boolean {
         if (!sha256Pattern.matches(sha256)) return false
