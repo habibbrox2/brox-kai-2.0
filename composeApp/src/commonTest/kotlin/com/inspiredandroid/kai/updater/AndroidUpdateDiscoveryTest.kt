@@ -49,14 +49,13 @@ class AndroidUpdateDiscoveryTest {
         }
     """.trimIndent()
 
-    private fun legacyFetch(api: String, releaseManifest: String = manifest()): suspend (String) -> String =
-        { url ->
-            when {
-                url == mainManifestUrl -> throw HttpRequestException(statusCode = 404)
-                url.contains("/releases?") -> api
-                else -> releaseManifest
-            }
+    private fun legacyFetch(api: String, releaseManifest: String = manifest()): suspend (String) -> String = { url ->
+        when {
+            url == mainManifestUrl -> throw HttpRequestException(statusCode = 404)
+            url.contains("/releases?") -> api
+            else -> releaseManifest
         }
+    }
 
     @Test
     fun prefersCanonicalMainManifestWithoutCallingReleasesApi() = runTest {
@@ -64,6 +63,7 @@ class AndroidUpdateDiscoveryTest {
         val result = AndroidUpdateDiscovery.check(189L) { url ->
             when (url) {
                 mainManifestUrl -> manifest()
+
                 else -> {
                     releasesApiCalled = true
                     error("Legacy releases API should not be called")
