@@ -25,6 +25,7 @@ import androidx.navigation.compose.rememberNavController
 import com.inspiredandroid.kai.data.AppSettings
 import com.inspiredandroid.kai.data.DataRepository
 import com.inspiredandroid.kai.data.ThemeMode
+import com.inspiredandroid.kai.updater.AndroidUpdateSettingsSection
 import com.inspiredandroid.kai.ui.DarkColorScheme
 import com.inspiredandroid.kai.ui.LightColorScheme
 import io.github.vinceglb.filekit.FileKit
@@ -110,6 +111,11 @@ class MainActivity : ComponentActivity() {
                     if (appOpens % 5 == 0) {
                         requestReview(this@MainActivity)
                     }
+                },
+                androidUpdateContent = if (BuildConfig.FLAVOR == "foss") {
+                    { AndroidUpdateSettingsSection() }
+                } else {
+                    null
                 },
             )
         }
