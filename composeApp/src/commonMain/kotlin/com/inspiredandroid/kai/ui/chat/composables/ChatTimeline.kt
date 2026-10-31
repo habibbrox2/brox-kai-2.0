@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -36,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -350,7 +352,13 @@ fun ChatTimeline(
             exit = fadeOut() + scaleOut(),
         ) {
             SmallFloatingActionButton(
-                modifier = Modifier.handCursor(),
+                modifier = Modifier
+                    .handCursor()                .shadow(
+                    elevation = 12.dp,
+                    shape = CircleShape,
+                    ambientColor = com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.2f),
+                    spotColor = com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.3f),
+                ),
                 onClick = {
                     componentScope.launch {
                         val totalItems = listState.layoutInfo.totalItemsCount
@@ -363,8 +371,9 @@ fun ChatTimeline(
                         }
                     }
                 },
-                containerColor = com.inspiredandroid.kai.ui.CardFill,
+                containerColor = com.inspiredandroid.kai.ui.CardFill.copy(alpha = 0.95f),
                 contentColor = com.inspiredandroid.kai.ui.TextPrimary,
+                shape = CircleShape,
             ) {
                 Icon(
                     Icons.Default.KeyboardArrowDown,
