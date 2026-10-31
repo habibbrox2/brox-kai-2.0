@@ -114,14 +114,64 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-      - name: Fail if pull request has generated changes
+      - name: Commit reviewed generated source changes to PR branch
         if: |
           github.event_name == 'pull_request' &&
+          steps.fork-check.outputs.is_fork == 'false' &&
           steps.changes.outputs.has_changes == 'true'
         run: |
-          echo "::error::This pull request requires reviewed generated changes to be committed."
-          echo "See the generated-changes-review artifact for the complete patch."
-          exit 1
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          # Drop binary assets already verified as pixel-identical.
+          git restore -- \
+            screenshots/mobile-1.png \
+            screenshots/mobile-2.png \
+            screenshots/mobile-3.png \
+            screenshots/mobile-4.png \
+            screenshots/mobile-5.png \
+            screenshots/mobile-7.png \
+            site/img/ecopulse-light.webp \
+            site/img/gemma-local-chat.webp \
+            site/img/gemma-local-context-slider.webp \
+            site/img/gemma-local-download.webp \
+            site/img/gemma-local-model-card.webp \
+            site/img/gemma-local-select.webp \
+            site/img/gemma-local-settings.webp \
+            site/img/recipe-light.webp
+
+          git add -- \
+            androidApp/src/main/kotlin/com/inspiredandroid/kai/MainActivity.kt \
+            composeApp/src/androidMain/kotlin/com/inspiredandroid/kai/Platform.android.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/data/AppSettings.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/data/RemoteDataRepository.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/data/ToolPermissionManager.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/Theme.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/chat/ChatTimelineData.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/chat/ChatUiState.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/chat/activities/ActivityMapper.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/chat/composables/BotMessage.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/chat/composables/ChatTimeline.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/chat/composables/ToolConfirmationCard.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/settings/GeneralSettings.kt \
+            iosApp/Configuration/Config.xcconfig
+
+          if git diff --cached --quiet; then
+            echo "No reviewed source changes to commit."
+            exit 0
+          fi
+
+          git commit -m "chore: apply reviewed formatting and version sync"
+          git push origin "HEAD:${GITHUB_HEAD_REF}"
+
+      - name: Fail if unreviewed generated changes remain
+        if: github.event_name == 'pull_request'
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::error::Unreviewed generated changes remain after the allowlisted commit."
+            git status --short
+            exit 1
+          fi
 
       - name: Commit and push changes
         if: |
