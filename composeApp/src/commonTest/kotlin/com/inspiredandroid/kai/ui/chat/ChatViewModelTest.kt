@@ -53,6 +53,39 @@ class ChatViewModelTest {
     }
 
     @Test
+    fun `tool confirmation action delegates the selected approval policy to repository`() = runTest {
+        val viewModel = createViewModel()
+
+        viewModel.state.value.actions.confirmToolExecution(
+            toolCallId = "call-allow-once",
+            allowOnce = true,
+            alwaysAllow = false,
+        )
+        viewModel.state.value.actions.confirmToolExecution(
+            toolCallId = "call-always-allow",
+            allowOnce = false,
+            alwaysAllow = true,
+        )
+
+        assertEquals(
+            listOf(
+                Triple("call-allow-once", true, false),
+                Triple("call-always-allow", false, true),
+            ),
+            fakeRepository.confirmToolExecutionCalls,
+        )
+    }
+
+    @Test
+    fun `tool denial action delegates the tool call id to repository`() = runTest {
+        val viewModel = createViewModel()
+
+        viewModel.state.value.actions.denyToolExecution("call-deny")
+
+        assertEquals(listOf("call-deny"), fakeRepository.denyToolExecutionCalls)
+    }
+
+    @Test
     fun `restore runs off the main thread and flips isRestoring`() = runTest {
         // Isolated paused dispatcher so the launched restore coroutine doesn't run synchronously.
         val backgroundDispatcher = StandardTestDispatcher()
