@@ -46,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
@@ -181,6 +182,12 @@ internal fun TrailingIcon(
                 scaleX = pressScale
                 scaleY = pressScale
             }
+            .shadow(
+                elevation = 10.dp,
+                shape = CircleShape,
+                ambientColor = AccentGradientEnd.copy(alpha = 0.25f),
+                spotColor = AccentGradientStart.copy(alpha = 0.35f),
+            )
             .clip(CircleShape)
             .background(
                 brush = androidx.compose.ui.graphics.Brush.linearGradient(
@@ -191,7 +198,7 @@ internal fun TrailingIcon(
                 ),
                 shape = CircleShape,
             )
-            .border(1.dp, com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.6f), CircleShape)
+            .border(1.dp, com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.7f), CircleShape)
             .handCursor()
             .clickable(
                 interactionSource = interactionSource,
@@ -370,6 +377,12 @@ fun QuestionInput(
                     .fillMaxWidth()
                     .defaultMinSize(minHeight = 56.dp)
                     .heightIn(min = 56.dp, max = maxComposerHeight)
+                    .shadow(
+                        elevation = 6.dp,
+                        shape = com.inspiredandroid.kai.ui.KaiShapes.composer,
+                        ambientColor = AccentPrimary.copy(alpha = 0.06f),
+                        spotColor = AccentPrimary.copy(alpha = 0.1f),
+                    )
                     .clip(com.inspiredandroid.kai.ui.KaiShapes.composer)
                     .background(inputPillBg, com.inspiredandroid.kai.ui.KaiShapes.composer)
                     .border(
