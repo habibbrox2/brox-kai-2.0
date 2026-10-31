@@ -47,6 +47,7 @@ fun SettingsDetailPane(
     onResetSandbox: () -> Unit,
     onInstallPackages: () -> Unit,
     onMigrateHome: () -> Unit,
+    androidUpdateContent: (@Composable () -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     val settingsListState = rememberLazyListState()
@@ -80,7 +81,7 @@ fun SettingsDetailPane(
                         when (uiState.currentTab) {
                             SettingsTab.General -> {
                                 SettingsOverview(uiState = uiState, sandboxInstalled = sandboxState.sandboxInstalled)
-                                GeneralContent(uiState = uiState, actions = actions)
+                                GeneralContent(uiState = uiState, actions = actions, androidUpdateContent = androidUpdateContent)
                             }
 
                             SettingsTab.Appearance -> {
