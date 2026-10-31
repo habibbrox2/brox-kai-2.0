@@ -98,7 +98,8 @@ jobs:
           git status --short > generated-changes-status.txt
           git diff --binary > generated-changes.patch
           git diff --stat > generated-changes-stat.txt
-          echo "Captured generated changes for review."
+          git diff --name-only -z | xargs -0 tar -czf generated-files.tar.gz --
+          echo "Captured generated changes and exact file contents for review."
 
       - name: Upload generated changes for review
         if: always() && github.event_name == 'pull_request' && steps.changes.outputs.has_changes == 'true'
@@ -109,6 +110,7 @@ jobs:
             generated-changes-status.txt
             generated-changes-stat.txt
             generated-changes.patch
+            generated-files.tar.gz
           if-no-files-found: error
           retention-days: 7
 
