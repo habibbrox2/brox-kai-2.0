@@ -375,6 +375,7 @@ jobs:
   release:
     name: Release APK, DMG, MSI, DEB, RPM, AppImage, Flatpak and Tarball
     needs: [apk, dmg, msi, deb, rpm, appimage, linux-tar, flatpak]
+    if: always() && needs.apk.result == 'success' && needs.dmg.result == 'success' && needs.msi.result == 'success' && needs.deb.result == 'success' && needs.rpm.result == 'success' && needs.appimage.result == 'success' && needs.linux-tar.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -423,6 +424,7 @@ jobs:
           name: linux-tar-package
 
       - name: Download Flatpak Artifact
+        if: needs.flatpak.result == 'success'
         uses: actions/download-artifact@v4.1.7
         with:
           name: flatpak-package
@@ -441,7 +443,7 @@ jobs:
           mv *.rpm "Kai-${VERSION}-linux.rpm"
           mv *.AppImage "Kai-${VERSION}-linux.AppImage"
           mv Kai-linux-x86_64.tar.gz "Kai-${VERSION}-linux-x86_64.tar.gz"
-          mv Kai.flatpak "Kai-${VERSION}-linux.flatpak"
+          if [ -f Kai.flatpak ]; then mv Kai.flatpak "Kai-${VERSION}-linux.flatpak"; fi
 
       - name: Extract changelog
         run: |
@@ -485,6 +487,25 @@ jobs:
             Brox-Kai-2.0-v*-Android.apk
             update.json
             SHA256SUMS
+
+      - name: Publish canonical update.json to main
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          CONTENT=$(base64 -w 0 update.json)
+          API_PATH="repos/habibbrox2/brox-kai-2.0/contents/update.json"
+          EXISTING_SHA=$(gh api "$API_PATH?ref=main" --jq .sha 2>/dev/null || true)
+          ARGS=(--method PUT "$API_PATH"
+            -f message="[skip ci] chore(update): publish ${GITHUB_REF_NAME} manifest"
+            -f content="$CONTENT"
+            -f branch=main)
+          if [ -n "$EXISTING_SHA" ]; then
+            ARGS+=(-f sha="$EXISTING_SHA")
+          fi
+          gh api "${ARGS[@]}"
+          echo "Published update.json to main for ${GITHUB_REF_NAME}"
 
       - name: Sync winget-pkgs fork
         env:
