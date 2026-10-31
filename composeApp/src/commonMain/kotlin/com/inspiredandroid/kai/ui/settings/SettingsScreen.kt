@@ -64,9 +64,11 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.isShiftPressed
@@ -706,18 +708,24 @@ internal fun SettingsCard(
     val cardBg = if (isOled) {
         com.inspiredandroid.kai.ui.OledBlack
     } else {
-        androidx.compose.ui.graphics.Color(0xFF0F172A)
+        androidx.compose.ui.graphics.Color(0xFF0F172A).copy(alpha = 0.92f)
     }
     val cardBorder = if (isOled) {
         BorderStroke(1.dp, com.inspiredandroid.kai.ui.BorderSubtle)
     } else {
-        BorderStroke(1.dp, BorderSoft.copy(alpha = 0.7f))
+        BorderStroke(1.dp, BorderSoft.copy(alpha = 0.8f))
     }
     val cardShape = SettingsShapes.card
 
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .shadow(
+                elevation = 8.dp,
+                shape = cardShape,
+                ambientColor = com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.06f),
+                spotColor = com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.1f),
+            )
             .clip(cardShape)
             .background(cardBg)
             .border(cardBorder, cardShape)
