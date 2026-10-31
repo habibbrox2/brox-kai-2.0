@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://broxlab.online/schemas/brox-kai-android-update-v1.json",
+  "title": "Brox Kai Android Update Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "packageName",
+    "versionName",
+    "versionCode",
+    "assetName",
+    "downloadUrl",
+    "sha256",
+    "signerCertificateSha256"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "packageName": { "const": "com.inspiredandroid.kai" },
+    "versionName": { "type": "string", "pattern": "^2\\.0\\.[0-9]+$" },
+    "versionCode": { "type": "integer", "minimum": 1 },
+    "assetName": { "type": "string", "pattern": "^Brox-Kai-2\\.0-v2\\.0\\.[0-9]+-Android\\.apk$" },
+    "downloadUrl": { "type": "string", "format": "uri", "pattern": "^https://github\\.com/habibbrox2/brox-kai-2\\.0/releases/download/" },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "signerCertificateSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}
