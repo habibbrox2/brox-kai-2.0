@@ -53,15 +53,28 @@ internal fun AndroidUpdateSettingsSection() {
     var downloadedApk by remember { mutableStateOf<File?>(null) }
     var installerMessage by remember { mutableStateOf<String?>(null) }
 
-    var onPermissionReturned by remember { mutableStateOf<() -> Unit>({}) }
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult(),
     ) {
         // Permission is not proof of installability: verify the APK again after returning.
-        if (context.packageManager.canRequestPackageInstalls()) {
-            onPermissionReturned()
-        } else {
+        val currentManifest = manifest
+        val apk = downloadedApk
+        if (!context.packageManager.canRequestPackageInstalls()) {
             installerMessage = "Installation permission was not granted. The existing app was not changed."
+        } else if (currentManifest != null && apk != null) {
+            when (val result = AndroidUpdateInstaller(context).prepareInstall(currentManifest, apk)) {
+                is AndroidUpdateInstaller.InstallPreparation.Ready -> {
+                    runCatching { context.startActivity(result.installIntent) }
+                        .onSuccess { installerMessage = "Android's installer was opened. Confirm the update there to continue." }
+                        .onFailure { installerMessage = "Android could not open the package installer." }
+                }
+                is AndroidUpdateInstaller.InstallPreparation.PermissionRequired ->
+                    installerMessage = "Installation permission is still required."
+                is AndroidUpdateInstaller.InstallPreparation.Unsupported ->
+                    installerMessage = result.reason
+                is AndroidUpdateInstaller.InstallPreparation.Invalid ->
+                    installerMessage = "APK verification failed: ${result.reason}"
+            }
         }
     }
 
@@ -85,7 +98,6 @@ internal fun AndroidUpdateSettingsSection() {
             is AndroidUpdateInstaller.InstallPreparation.Invalid -> installerMessage = "APK verification failed: ${result.reason}"
         }
     }
-    onPermissionReturned = { launchVerifiedInstall() }
 
     LaunchedEffect(workInfos, manifest) {
         val completed = workInfos.firstOrNull { it.state == WorkInfo.State.SUCCEEDED } ?: return@LaunchedEffect
