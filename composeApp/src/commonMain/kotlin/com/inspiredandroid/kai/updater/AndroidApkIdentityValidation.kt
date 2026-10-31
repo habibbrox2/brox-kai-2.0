@@ -6,7 +6,7 @@ package com.inspiredandroid.kai.updater
  * The installed certificate is the trust anchor. A fingerprint supplied by a remote
  * manifest is only a claim and must match both the installed signer and APK signer.
  */
-internal object AndroidApkIdentityValidation {
+object AndroidApkIdentityValidation {
     private val sha256Pattern = Regex("^[a-fA-F0-9]{64}$")
 
     sealed interface Result {
