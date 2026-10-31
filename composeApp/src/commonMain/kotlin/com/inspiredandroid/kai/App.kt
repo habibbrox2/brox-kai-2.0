@@ -127,7 +127,7 @@ fun App(
                 modules(appModule)
             },
         ) {
-            AppContent(navController, lightColorScheme, darkColorScheme, textToSpeech, onAppOpens)
+            AppContent(navController, lightColorScheme, darkColorScheme, textToSpeech, onAppOpens, androidUpdateContent)
         }
     }
 }
