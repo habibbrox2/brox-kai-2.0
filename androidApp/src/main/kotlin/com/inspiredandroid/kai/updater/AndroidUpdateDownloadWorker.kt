@@ -1,7 +1,12 @@
 package com.inspiredandroid.kai.updater
 
 import android.content.Context
+import androidx.work.Constraints
 import androidx.work.CoroutineWorker
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import androidx.work.Data
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
@@ -86,12 +91,14 @@ internal class AndroidUpdateDownloadWorker(
             }
             Result.success(workDataOf(KEY_FILE_PATH to finalFile.absolutePath))
         } catch (exception: Exception) {
-            partialFile.delete()
             if (runAttemptCount < MAX_RETRIES) {
                 Result.retry()
             } else {
                 failure(exception.message ?: "Update download failed")
             }
+        } finally {
+            // Never leave a partial or checksum-failed APK available to an installer.
+            if (partialFile.exists()) partialFile.delete()
         }
     }
 
@@ -171,5 +178,30 @@ internal class AndroidUpdateDownloadWorker(
             KEY_SHA256 to sha256,
             KEY_ASSET_NAME to assetName,
         )
+    }
+}
+
+
+/** Enqueues one network-constrained update download, replacing any stale request. */
+internal object AndroidUpdateDownloadScheduler {
+    fun enqueue(context: Context, downloadUrl: String, sha256: String, assetName: String) {
+        val request = OneTimeWorkRequestBuilder<AndroidUpdateDownloadWorker>()
+            .setInputData(AndroidUpdateDownloadWorker.inputData(downloadUrl, sha256, assetName))
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build(),
+            )
+            .build()
+        WorkManager.getInstance(context.applicationContext).enqueueUniqueWork(
+            AndroidUpdateDownloadWorker.WORK_NAME,
+            ExistingWorkPolicy.REPLACE,
+            request,
+        )
+    }
+
+    fun cancel(context: Context) {
+        WorkManager.getInstance(context.applicationContext)
+            .cancelUniqueWork(AndroidUpdateDownloadWorker.WORK_NAME)
     }
 }
