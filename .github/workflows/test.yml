@@ -90,17 +90,35 @@ jobs:
             echo "has_changes=false" >> $GITHUB_OUTPUT
           fi
 
+      - name: Capture generated changes for review
+        if: |
+          github.event_name == 'pull_request' &&
+          steps.changes.outputs.has_changes == 'true'
+        run: |
+          git status --short > generated-changes-status.txt
+          git diff --binary > generated-changes.patch
+          git diff --stat > generated-changes-stat.txt
+          echo "Captured generated changes for review."
+
+      - name: Upload generated changes for review
+        if: always() && github.event_name == 'pull_request' && steps.changes.outputs.has_changes == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-changes-review-${{ github.run_id }}
+          path: |
+            generated-changes-status.txt
+            generated-changes-stat.txt
+            generated-changes.patch
+          if-no-files-found: error
+          retention-days: 7
+
       - name: Fail if pull request has generated changes
         if: |
           github.event_name == 'pull_request' &&
           steps.changes.outputs.has_changes == 'true'
         run: |
-          echo "::error::This pull request requires formatting or generated asset updates."
-          echo "Generated/modified files:"
-          git status --short
-          echo "Diff summary:"
-          git diff --stat
-          echo "Please commit the generated results to the PR branch."
+          echo "::error::This pull request requires reviewed generated changes to be committed."
+          echo "See the generated-changes-review artifact for the complete patch."
           exit 1
 
       - name: Commit and push changes
