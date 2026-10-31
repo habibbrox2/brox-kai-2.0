@@ -105,7 +105,6 @@ import com.inspiredandroid.kai.ui.chat.composables.UserMessage
 import com.inspiredandroid.kai.ui.chat.composables.uiErrorText
 import com.inspiredandroid.kai.ui.components.VerticalScrollbarForList
 import com.inspiredandroid.kai.ui.dynamicui.toSpeakableText
-import com.inspiredandroid.kai.ui.editor.CodeEditorScreen
 import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.isOledFlavor
 import com.inspiredandroid.kai.ui.sandbox.SandboxTabsContent
@@ -168,9 +167,6 @@ fun ChatScreenContent(
     // Kai Build is a transient surface, not a conversation — unlike interactive
     // mode it needs no persistence beyond surviving configuration changes.
     var isKaiBuildOpen by rememberSaveable { mutableStateOf(false) }
-    var isEditorOpen by rememberSaveable { mutableStateOf(false) }
-    var editorCode by rememberSaveable { mutableStateOf("") }
-    var editorLanguage by rememberSaveable { mutableStateOf<String?>(null) }
 
     // Shared text opens a new chat; leave Kai Build so the composer is visible.
     LaunchedEffect(uiState.composerPrefill) {
@@ -185,15 +181,6 @@ fun ChatScreenContent(
             KaiBuildScreen(onExit = { isKaiBuildOpen = false })
         }
 
-        isEditorOpen -> {
-            com.inspiredandroid.kai.PlatformBackHandler(true) { isEditorOpen = false }
-            CodeEditorScreen(
-                code = editorCode,
-                language = editorLanguage,
-                onExit = { isEditorOpen = false },
-            )
-        }
-
         else -> ChatModeScreen(
             uiState = uiState,
             textToSpeech = textToSpeech,
@@ -201,11 +188,6 @@ fun ChatScreenContent(
             onNavigateToDashboard = onNavigateToDashboard,
             isSandboxAvailable = isSandboxAvailable,
             onOpenKaiBuild = { isKaiBuildOpen = true }.takeIf { isKaiBuildAvailable },
-            onOpenInEditor = { code, language ->
-                editorCode = code
-                editorLanguage = language
-                isEditorOpen = true
-            },
             initialSandboxOpen = initialSandboxOpen,
             previewSandboxState = previewSandboxState,
             previewSandboxLines = previewSandboxLines,
@@ -223,7 +205,6 @@ private fun ChatModeScreen(
     onNavigateToDashboard: (() -> Unit)?,
     isSandboxAvailable: Boolean,
     onOpenKaiBuild: (() -> Unit)?,
-    onOpenInEditor: ((String, String?) -> Unit)? = null,
     initialSandboxOpen: Boolean = false,
     previewSandboxState: SandboxUiState? = null,
     previewSandboxLines: ImmutableList<TerminalLine> = persistentListOf(),
@@ -519,7 +500,6 @@ private fun ChatModeScreen(
                                         uiState = uiState,
                                         textToSpeech = textToSpeech,
                                         modifier = Modifier.fillMaxWidth().weight(1f),
-                                        onOpenInEditor = onOpenInEditor,
                                     )
                                 }
                             }

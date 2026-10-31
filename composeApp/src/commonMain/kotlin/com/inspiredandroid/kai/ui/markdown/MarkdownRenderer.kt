@@ -49,7 +49,6 @@ fun MarkdownContent(
     isInteractive: Boolean = false,
     onUiCallback: (event: String, data: Map<String, String>) -> Unit = { _, _ -> },
     frozen: FrozenSubmission? = null,
-    onOpenInEditor: ((String, String?) -> Unit)? = null,
 ) {
     val currentContentColor = LocalContentColor.current
     val effectiveColor = if (currentContentColor != androidx.compose.ui.graphics.Color.Unspecified) {
@@ -60,7 +59,7 @@ fun MarkdownContent(
     CompositionLocalProvider(LocalContentColor provides effectiveColor) {
         Column(modifier) {
             for (block in document.blocks) {
-                BlockRenderer(block, isInteractive, onUiCallback, frozen, onOpenInEditor)
+                BlockRenderer(block, isInteractive, onUiCallback, frozen)
             }
         }
     }
@@ -73,14 +72,13 @@ fun MarkdownContent(
     isInteractive: Boolean = false,
     onUiCallback: (event: String, data: Map<String, String>) -> Unit = { _, _ -> },
     frozen: FrozenSubmission? = null,
-    onOpenInEditor: ((String, String?) -> Unit)? = null,
 ) {
     val doc = remember(content) {
         runCatching { parseMarkdown(content) }.getOrElse {
             MarkdownDocument(persistentListOf(Paragraph(persistentListOf(com.inspiredandroid.kai.ui.markdown.Text(content)))))
         }
     }
-    MarkdownContent(doc, modifier, isInteractive, onUiCallback, frozen, onOpenInEditor)
+    MarkdownContent(doc, modifier, isInteractive, onUiCallback, frozen)
 }
 
 @Composable
@@ -89,7 +87,6 @@ private fun BlockRenderer(
     isInteractive: Boolean,
     onUiCallback: (String, Map<String, String>) -> Unit,
     frozen: FrozenSubmission?,
-    onOpenInEditor: ((String, String?) -> Unit)? = null,
 ) {
     when (block) {
         is Heading -> HeadingBlock(block)
@@ -98,12 +95,19 @@ private fun BlockRenderer(
 
         is CodeFence -> {
             if (block.code.isNotBlank() || !block.language.isNullOrBlank()) {
-                CodeFenceBlock(
-                    language = block.language,
-                    code = block.code,
-                    modifier = Modifier.padding(vertical = 4.dp),
-                    onOpenInEditor = onOpenInEditor,
-                )
+                if (isDiffContent(block.language, block.code)) {
+                    // Git-style card for unified diffs; plain code keeps the code fence.
+                    DiffCard(
+                        code = block.code,
+                        modifier = Modifier.padding(vertical = 4.dp),
+                    )
+                } else {
+                    CodeFenceBlock(
+                        language = block.language,
+                        code = block.code,
+                        modifier = Modifier.padding(vertical = 4.dp),
+                    )
+                }
             }
         }
 

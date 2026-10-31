@@ -1,6 +1,7 @@
 package com.inspiredandroid.kai.ui.chat.composables
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -38,6 +39,7 @@ fun StatusPill(
     Row(
         modifier = modifier
             .background(color.copy(alpha = 0.14f), ChatShapes.pill)
+            .border(1.dp, color.copy(alpha = 0.32f), ChatShapes.pill)
             .padding(horizontal = ChatSpacing.sm, vertical = ChatSpacing.xxs),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(ChatSpacing.xs),

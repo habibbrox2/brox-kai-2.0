@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Terminal
 import androidx.compose.material3.ButtonDefaults
@@ -53,7 +52,6 @@ internal fun CodeFenceBlock(
     language: String?,
     code: String,
     modifier: Modifier = Modifier,
-    onOpenInEditor: ((String, String?) -> Unit)? = null,
     onRunInSandbox: (() -> Unit)? = null,
 ) {
     val colorScheme = MaterialTheme.colorScheme
@@ -119,24 +117,11 @@ internal fun CodeFenceBlock(
                     )
                 }
 
-                // Right side: Edit, Run, and Copy buttons
+                // Right side: Run and Copy buttons
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
-                    if (onOpenInEditor != null) {
-                        IconButton(
-                            onClick = { onOpenInEditor(code, language) },
-                            modifier = Modifier.size(32.dp).handCursor(),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Edit,
-                                contentDescription = "Open in editor",
-                                modifier = Modifier.size(14.dp),
-                                tint = mutedText,
-                            )
-                        }
-                    }
                     if (onRunInSandbox != null) {
                         TextButton(
                             onClick = onRunInSandbox,
