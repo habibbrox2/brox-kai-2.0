@@ -49,17 +49,17 @@ class AndroidUpdateDiscoveryTest {
     fun selectsNewestStableReleaseAndValidatesItsManifest() = runTest {
         val api = """
             [
-              ${release("v2.0.75")},
+              ${release("v2.0.76")},
               ${release("v2.0.77", prerelease = true)},
-              ${release("v2.0.76", draft = true)},
-              ${release("v2.0.74")}
+              ${release("v2.0.78", draft = true)},
+              ${release("v2.0.75")}
             ]
         """.trimIndent()
         val result = AndroidUpdateDiscovery.check(189L) { url ->
             if (url.contains("/releases?")) api else manifest()
         }
         val update = assertIs<AndroidUpdateDiscovery.Result.UpdateAvailable>(result)
-        assertEquals("v2.0.75", update.releaseTag)
+        assertEquals("v2.0.76", update.releaseTag)
         assertEquals(191L, update.manifest.versionCode)
     }
 
