@@ -50,6 +50,8 @@ dependencies {
     testImplementation(libs.compose.material3)
     testImplementation(libs.compose.components.resources)
     testImplementation(libs.multiplatform.settings.test)
+    // AppSettings exposes Settings in its constructor; keep the API on the test compile classpath.
+    testImplementation(libs.multiplatform.settings)
     testImplementation(libs.koin.compose)
     testImplementation(libs.koin.core)
 }
