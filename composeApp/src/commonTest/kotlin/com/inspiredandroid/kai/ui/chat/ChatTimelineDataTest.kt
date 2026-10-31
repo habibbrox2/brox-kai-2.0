@@ -62,11 +62,11 @@ class ChatTimelineDataTest {
 
         assertEquals(
             listOf("second thought", "first thought", "provider reasoning"),
-            result.reasoningSegmentsByAssistantId["answer-1"],
+            result.reasoningSegmentsByAssistantId["answer-1"].orEmpty(),
         )
         assertEquals(
             listOf("third thought", "second thought", "first thought"),
-            result.reasoningSegmentsByAssistantId["answer-2"],
+            result.reasoningSegmentsByAssistantId["answer-2"].orEmpty(),
         )
         assertEquals(setOf("thinking-1", "thinking-2", "thinking-3"), result.suppressedThinkingIds)
         assertFalse("thinking-4" in result.suppressedThinkingIds)
