@@ -10,7 +10,7 @@ import kotlinx.serialization.json.Json
  * The manifest is fetched only from the matching GitHub release asset. Its APK URL, package,
  * version/tag relationship, checksums and signer fingerprint are validated before it is returned.
  */
-internal object AndroidUpdateDiscovery {
+object AndroidUpdateDiscovery {
     private const val RELEASES_URL =
         "https://api.github.com/repos/habibbrox2/brox-kai-2.0/releases?per_page=100"
     private const val TAG_PREFIX = "v2.0."
@@ -19,13 +19,13 @@ internal object AndroidUpdateDiscovery {
     private val releaseJson = Json { ignoreUnknownKeys = true }
 
     @Serializable
-    internal data class ReleaseAsset(
+    data class ReleaseAsset(
         val name: String,
         val browser_download_url: String,
     )
 
     @Serializable
-    internal data class GitHubRelease(
+    data class GitHubRelease(
         val tag_name: String,
         val draft: Boolean,
         val prerelease: Boolean,
