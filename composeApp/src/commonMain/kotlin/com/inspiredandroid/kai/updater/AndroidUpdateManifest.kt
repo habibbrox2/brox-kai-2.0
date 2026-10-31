@@ -37,7 +37,11 @@ data class AndroidUpdateManifest(
         const val RELEASE_DOWNLOAD_PREFIX = "https://github.com/habibbrox2/brox-kai-2.0/releases/download/"
         private val VERSION_NAME = Regex("^2\\.0\\.[0-9]+$")
         private val SHA256 = Regex("^[a-f0-9]{64}$")
-        private val json = Json { ignoreUnknownKeys = false; isLenient = false; coerceInputValues = false }
+        private val json = Json {
+            ignoreUnknownKeys = false
+            isLenient = false
+            coerceInputValues = false
+        }
         fun parse(rawJson: String): AndroidUpdateManifest = json.decodeFromString(rawJson)
     }
 }
