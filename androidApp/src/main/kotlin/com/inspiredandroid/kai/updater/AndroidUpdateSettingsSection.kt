@@ -58,7 +58,11 @@ internal fun AndroidUpdateSettingsSection() {
         ActivityResultContracts.StartActivityForResult(),
     ) {
         // Permission is not proof of installability: verify the APK again after returning.
-        onPermissionReturned()
+        if (context.packageManager.canRequestPackageInstalls()) {
+            onPermissionReturned()
+        } else {
+            installerMessage = "Installation permission was not granted. The existing app was not changed."
+        }
     }
 
     fun launchVerifiedInstall() {
