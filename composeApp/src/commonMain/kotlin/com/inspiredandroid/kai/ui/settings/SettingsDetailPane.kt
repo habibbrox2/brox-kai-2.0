@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -25,6 +26,9 @@ import com.inspiredandroid.kai.ui.KaiTypography
 import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.components.VerticalScrollbarForList
+import kai.composeapp.generated.resources.Res
+import kai.composeapp.generated.resources.settings_tab_data
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * Detail pane for the settings screen (Plan 2, Phase 2). Renders the scrollable
@@ -46,6 +50,10 @@ fun SettingsDetailPane(
     modifier: Modifier = Modifier,
 ) {
     val settingsListState = rememberLazyListState()
+    LaunchedEffect(uiState.currentTab) {
+        settingsListState.scrollToItem(0)
+    }
+
     Box(modifier = modifier.fillMaxWidth()) {
         LazyColumn(
             state = settingsListState,
@@ -169,7 +177,7 @@ fun DataControlContent(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text(
-            text = "Data Control",
+            text = stringResource(Res.string.settings_tab_data),
             style = KaiTypography.titleMedium,
             color = TextPrimary,
         )

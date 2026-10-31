@@ -48,7 +48,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.BorderSoft
-import com.inspiredandroid.kai.ui.ChatDarkBackground
 import com.inspiredandroid.kai.ui.KaiTypography
 import com.inspiredandroid.kai.ui.QuickOptionGreen
 import com.inspiredandroid.kai.ui.SurfaceRaised
@@ -198,7 +197,7 @@ private fun QuickStartCard(
     val isHovered by interactionSource.collectIsHoveredAsState()
     val cardColor = item.accentColor ?: UserBubbleBlue
 
-    val cardBg = ChatDarkBackground
+    val cardBg = MaterialTheme.colorScheme.surface
     val cardBorder = if (isHovered) {
         BorderStroke(1.dp, cardColor)
     } else {

@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -54,6 +55,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.prefersReducedMotion
+import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.CardFill
 import com.inspiredandroid.kai.ui.KaiShapes
 import com.inspiredandroid.kai.ui.KaiTypography
@@ -74,8 +76,21 @@ private fun toolSummaryText(executingTools: ImmutableList<Pair<String, String>>)
 @Composable
 internal fun AnimatedTypingDots(
     modifier: Modifier = Modifier,
-    dotColor: Color = Color(0xFF22D3EE),
+    dotColor: Color = AccentPrimary,
 ) {
+    if (prefersReducedMotion()) {
+        Row(
+            modifier = modifier,
+            horizontalArrangement = Arrangement.spacedBy(3.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            repeat(3) {
+                Box(Modifier.size(5.dp).clip(CircleShape).background(dotColor))
+            }
+        }
+        return
+    }
+
     val transition = rememberInfiniteTransition(label = "typingDots")
     val dot1Alpha by transition.animateFloat(
         initialValue = 0.25f,
@@ -119,8 +134,19 @@ internal fun AnimatedTypingDots(
 @Composable
 internal fun AnimatedLoadingBar(
     modifier: Modifier = Modifier,
-    color: Color = Color(0xFF22D3EE),
+    color: Color = AccentPrimary,
 ) {
+    if (prefersReducedMotion()) {
+        Box(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(2.dp)
+                .clip(RoundedCornerShape(1.dp))
+                .background(color.copy(alpha = 0.55f)),
+        )
+        return
+    }
+
     val transition = rememberInfiniteTransition(label = "loadingBar")
     val offsetFraction by transition.animateFloat(
         initialValue = 0f,
@@ -176,7 +202,7 @@ internal fun WaitingResponseRow(
         Column(
             modifier = Modifier
                 .clip(RoundedCornerShape(12.dp))
-                .background(Color(0xFF0E0F12))
+                .background(MaterialTheme.colorScheme.background)
                 .border(
                     BorderStroke(1.dp, Color(0xFF1E293B)),
                     RoundedCornerShape(12.dp),
@@ -188,11 +214,11 @@ internal fun WaitingResponseRow(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                AnimatedTypingDots(dotColor = Color(0xFF22D3EE))
+                AnimatedTypingDots(dotColor = AccentPrimary)
                 Text(
                     text = "Thinking",
                     style = KaiTypography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                    color = Color(0xFF22D3EE),
+                    color = AccentPrimary,
                     fontFamily = FontFamily.Monospace,
                 )
                 if (!summary.isNullOrBlank()) {
@@ -206,7 +232,7 @@ internal fun WaitingResponseRow(
                     )
                 }
             }
-            AnimatedLoadingBar(color = Color(0xFF22D3EE))
+            AnimatedLoadingBar(color = AccentPrimary)
         }
     }
 }

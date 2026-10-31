@@ -581,4 +581,6 @@
     <string name="cron_day_thursday">Thu</string>
     <string name="cron_day_friday">Fri</string>
     <string name="cron_day_saturday">Sat</string>
+    <string name="settings_tab_data">Data Control</string>
+    <string name="settings_tab_account">Account &amp; Plan</string>
 </resources>

@@ -24,6 +24,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
@@ -101,7 +102,7 @@ internal fun BuildSessionBar(
         modifier = modifier
             .fillMaxWidth()
             .clip(com.inspiredandroid.kai.ui.KaiShapes.card)
-            .background(com.inspiredandroid.kai.ui.BackgroundPrimary, com.inspiredandroid.kai.ui.KaiShapes.card)
+            .background(MaterialTheme.colorScheme.surface, com.inspiredandroid.kai.ui.KaiShapes.card)
             .border(com.inspiredandroid.kai.ui.KaiBorders.soft, com.inspiredandroid.kai.ui.KaiShapes.card),
     ) {
         Row(

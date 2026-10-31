@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -168,7 +169,7 @@ internal fun KaiBuildScreenContent(
     // content color, which is what keeps the bare icons legible in dark mode.
     Box(
         modifier = modifier.fillMaxSize()
-            .background(com.inspiredandroid.kai.ui.BackgroundPrimary),
+            .background(MaterialTheme.colorScheme.background),
     ) {
         Column(
             modifier = Modifier
@@ -329,7 +330,7 @@ private fun KaiBuildTopBar(
         modifier = Modifier
             .fillMaxWidth()
             .clip(com.inspiredandroid.kai.ui.KaiShapes.card)
-            .background(com.inspiredandroid.kai.ui.BackgroundPrimary, com.inspiredandroid.kai.ui.KaiShapes.card)
+            .background(MaterialTheme.colorScheme.surface, com.inspiredandroid.kai.ui.KaiShapes.card)
             .border(com.inspiredandroid.kai.ui.KaiBorders.soft, com.inspiredandroid.kai.ui.KaiShapes.card),
     ) {
         Row(

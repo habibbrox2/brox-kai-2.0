@@ -40,7 +40,6 @@ import com.inspiredandroid.kai.data.ServiceEntry
 import com.inspiredandroid.kai.prefersReducedMotion
 import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.BorderSoft
-import com.inspiredandroid.kai.ui.ChatDarkBackground
 import com.inspiredandroid.kai.ui.KaiShapes
 import com.inspiredandroid.kai.ui.KaiTypography
 import com.inspiredandroid.kai.ui.QuickOptionGreen
@@ -92,7 +91,7 @@ internal fun TopBar(
     /** Removes the last exchange — only offered while interactive mode is on. */
     onGoBack: (() -> Unit)? = null,
 ) {
-    val topBarBg = ChatDarkBackground
+    val topBarBg = MaterialTheme.colorScheme.surface
     val topBarBorder = BorderStroke(1.dp, BorderSoft.copy(alpha = 0.5f))
     val topBarShape = KaiShapes.panel
 

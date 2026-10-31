@@ -27,15 +27,16 @@ import coil3.PlatformContext
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.network.ktor3.KtorNetworkFetcherFactory
 import coil3.svg.SvgDecoder
+import androidx.compose.material3.MaterialTheme
 import com.inspiredandroid.kai.data.AppSettings
 import com.inspiredandroid.kai.data.ThemeMode
 import com.inspiredandroid.kai.tools.AppPermission
 import com.inspiredandroid.kai.tools.PermissionController
 import com.inspiredandroid.kai.tools.SetupPermissionHandler
-import com.inspiredandroid.kai.ui.BackgroundPrimary
 import com.inspiredandroid.kai.ui.DarkColorScheme
 import com.inspiredandroid.kai.ui.LightColorScheme
 import com.inspiredandroid.kai.ui.MidnightColorScheme
+import com.inspiredandroid.kai.ui.OledColorScheme
 import com.inspiredandroid.kai.ui.Theme
 import com.inspiredandroid.kai.ui.build.KaiBuildScreen
 import com.inspiredandroid.kai.ui.chat.ChatScreen
@@ -45,7 +46,6 @@ import com.inspiredandroid.kai.ui.dashboard.DashboardScreen
 import com.inspiredandroid.kai.ui.rememberSandboxAwareUriHandler
 import com.inspiredandroid.kai.ui.settings.SettingsScreen
 import com.inspiredandroid.kai.ui.settings.SettingsTab
-import com.inspiredandroid.kai.ui.withBlackBackground
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import nl.marc_apps.tts.TextToSpeechInstance
@@ -170,7 +170,7 @@ private fun AppContent(
         ThemeMode.System -> if (systemInDark) darkColorScheme else lightColorScheme
         ThemeMode.Light -> lightColorScheme
         ThemeMode.Dark -> darkColorScheme
-        ThemeMode.OledBlack -> darkColorScheme.withBlackBackground()
+        ThemeMode.OledBlack -> OledColorScheme
         ThemeMode.Midnight -> MidnightColorScheme
     }
 
@@ -189,7 +189,7 @@ private fun AppContent(
                 NavHost(
                     navController,
                     startDestination = Home,
-                    modifier = Modifier.background(BackgroundPrimary),
+                    modifier = Modifier.background(MaterialTheme.colorScheme.background),
                 ) {
                     composable<Dashboard> {
                         PlatformBackHandler(true) {

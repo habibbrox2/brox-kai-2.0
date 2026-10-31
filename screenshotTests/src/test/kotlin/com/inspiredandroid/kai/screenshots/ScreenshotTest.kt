@@ -16,6 +16,8 @@ import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.inspiredandroid.kai.ui.DarkColorScheme
 import com.inspiredandroid.kai.ui.LightColorScheme
+import com.inspiredandroid.kai.ui.MidnightColorScheme
+import com.inspiredandroid.kai.ui.OledColorScheme
 import com.inspiredandroid.kai.ui.Theme
 import com.inspiredandroid.kai.ui.chat.ChatScreenContent
 import com.inspiredandroid.kai.ui.dynamicui.LocalPreviewImages
@@ -55,10 +57,10 @@ class ScreenshotTest {
         colorScheme: ColorScheme,
         content: @Composable () -> Unit,
     ) {
-        val theme = if (colorScheme == DarkColorScheme) {
-            "android:Theme.Material.NoActionBar"
-        } else {
+        val theme = if (colorScheme == LightColorScheme) {
             "android:Theme.Material.Light.NoActionBar"
+        } else {
+            "android:Theme.Material.NoActionBar"
         }
         unsafeUpdateConfig(theme = theme)
 
@@ -145,6 +147,40 @@ class ScreenshotTest {
                 initialSandboxOpen = true,
                 previewSandboxState = ScreenshotTestData.sandboxState,
                 previewSandboxLines = ScreenshotTestData.sandboxTerminalLines,
+            )
+        }
+    }
+
+    @Test
+    fun chatWithMessages_midnight() {
+        paparazzi.snap(MidnightColorScheme) {
+            ChatScreenContent(ScreenshotTestData.chatWithMessages, FakeTextToSpeechInstance())
+        }
+    }
+
+    @Test
+    fun chatWithMessages_oled() {
+        paparazzi.snap(OledColorScheme) {
+            ChatScreenContent(ScreenshotTestData.chatWithMessages, FakeTextToSpeechInstance())
+        }
+    }
+
+    @Test
+    fun settingsAgent_midnight() {
+        paparazzi.snap(MidnightColorScheme) {
+            SettingsScreenContent(
+                uiState = ScreenshotTestData.settingsAgent,
+                sandboxState = ScreenshotTestData.sandboxState,
+            )
+        }
+    }
+
+    @Test
+    fun settingsAgent_oled() {
+        paparazzi.snap(OledColorScheme) {
+            SettingsScreenContent(
+                uiState = ScreenshotTestData.settingsAgent,
+                sandboxState = ScreenshotTestData.sandboxState,
             )
         }
     }

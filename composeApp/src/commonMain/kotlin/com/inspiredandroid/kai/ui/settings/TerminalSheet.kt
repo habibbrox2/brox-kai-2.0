@@ -29,6 +29,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -63,7 +64,6 @@ import com.inspiredandroid.kai.SandboxSessions
 import com.inspiredandroid.kai.TerminalLine
 import com.inspiredandroid.kai.linux.LinuxDistro
 import com.inspiredandroid.kai.ui.AccentPrimary
-import com.inspiredandroid.kai.ui.BackgroundPrimary
 import com.inspiredandroid.kai.ui.DangerAlert
 import com.inspiredandroid.kai.ui.SurfaceRaised
 import com.inspiredandroid.kai.ui.TextPrimary
@@ -120,7 +120,7 @@ internal fun terminalColors(darkBackground: Boolean = false): TerminalColors {
         )
     }
     return TerminalColors(
-        bg = BackgroundPrimary,
+        bg = MaterialTheme.colorScheme.background,
         inputBg = SurfaceRaised,
         text = TextPrimary,
         prompt = AccentPrimary,

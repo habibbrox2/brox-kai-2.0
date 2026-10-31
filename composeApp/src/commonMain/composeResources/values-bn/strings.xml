@@ -514,4 +514,6 @@
     <string name="terminal_sandbox_not_ready">স্যান্ডবক্স প্রস্তুত নয়</string>
     <string name="chat_edit_submission_content_description">উত্তর সম্পাদনা করুন</string>
     <string name="chat_cancel_edit_content_description">সম্পাদনা বাতিল করুন</string>
+    <string name="settings_tab_data">ডেটা নিয়ন্ত্রণ</string>
+    <string name="settings_tab_account">অ্যাকাউন্ট ও প্ল্যান</string>
 </resources>

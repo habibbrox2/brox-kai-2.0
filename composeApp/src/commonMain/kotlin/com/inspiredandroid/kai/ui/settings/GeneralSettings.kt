@@ -179,7 +179,7 @@ private fun ThemeModeButton(
     onClick: () -> Unit,
     isOled: Boolean,
 ) {
-    val selectedBg = androidx.compose.ui.graphics.Color(0xFF22D3EE)
+    val selectedBg = AccentPrimary
     val selectedText = androidx.compose.ui.graphics.Color(0xFF0F172A)
     val unselectedBg = androidx.compose.ui.graphics.Color(0xFF1E293B)
     val unselectedText = androidx.compose.ui.graphics.Color(0xFFE2E8F0)
@@ -195,7 +195,7 @@ private fun ThemeModeButton(
                 if (!isSelected) {
                     BorderStroke(1.dp, unselectedBorder)
                 } else {
-                    BorderStroke(1.dp, androidx.compose.ui.graphics.Color(0xFF22D3EE))
+                    BorderStroke(1.dp, AccentPrimary)
                 },
                 SettingsShapes.pill,
             ),

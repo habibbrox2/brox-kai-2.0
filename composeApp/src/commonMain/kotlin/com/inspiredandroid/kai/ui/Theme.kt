@@ -52,9 +52,11 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 // ─── Core Brand Colors ───
 val broxNavy = Color(0xFF0B1026)
-val broxCyan = Color(0xFF22D3EE) // Modern cyan
 val broxDeepNavy = Color(0xFF050810)
 val broxCharcoal = Color(0xFF151B2B)
+val BackgroundPrimary = Color(0xFF0E0F12)
+val AccentPrimary = Color(0xFF22D3EE)
+val broxCyan = AccentPrimary
 val broxLightSurface = Color(0xFFF8FAFC)
 val broxMutedText = Color(0xFF64748B)
 
@@ -62,17 +64,15 @@ val broxMutedText = Color(0xFF64748B)
 
 /** Ultra-deep background */
 // ─── Brox Kai 2.0 Chat & Bubble Palette Tokens ───
-val ChatDarkBackground = Color(0xFF0E0F12)
+val ChatDarkBackground = BackgroundPrimary
 val WarmPaperBubble = Color(0xFFF3EEE4)
 val UserBubbleBlue = Color(0xFF7C96A8)
 val QuickOptionGreen = Color(0xFF9DD384)
-val DarkText = Color(0xFF0E0F12)
+val DarkText = BackgroundPrimary
 val LightText = Color(0xFFECEAE4)
 
-val OledBlack = Color(0xFF0E0F12)
-
-/** Primary background */
-val BackgroundPrimary = Color(0xFF0E0F12)
+/** True zero-luminance surface for AMOLED/OLED displays. */
+val OledBlack = Color(0xFF000000)
 
 /** Elevated surfaces */
 val SurfaceElevated = Color(0xFF0A0F1C)
@@ -88,12 +88,11 @@ val BorderSoft = Color(0x26FFFFFF)
 val BorderStrong = Color(0x40FFFFFF)
 
 /** Primary accent - vibrant cyan/teal */
-val AccentPrimary = Color(0xFF22D3EE)
 val AccentPrimaryHover = Color(0xFF67E8F9)
 val AccentPrimaryActive = Color(0xFF06B6D4)
 
 /** Accent gradient colors */
-val AccentGradientStart = Color(0xFF22D3EE)
+val AccentGradientStart = AccentPrimary
 val AccentGradientEnd = Color(0xFF3B82F6)
 
 /** Glow effects */
@@ -427,9 +426,9 @@ val MidnightColorScheme = darkColorScheme(
     onError = Color.White,
     errorContainer = DangerAlert.copy(alpha = 0.2f),
     onErrorContainer = TextPrimary,
-    background = Color(0xFF0E0F12),
+    background = broxDeepNavy,
     onBackground = TextPrimary,
-    surface = SurfaceElevated,
+    surface = broxNavy,
     onSurface = TextPrimary,
     surfaceVariant = SurfaceRaised,
     onSurfaceVariant = TextSecondary,
@@ -438,11 +437,11 @@ val MidnightColorScheme = darkColorScheme(
     inverseSurface = Color(0xFFF8FAFC),
     inverseOnSurface = OledBlack,
     inversePrimary = Color(0xFF0891B2),
-    surfaceContainerHighest = SurfaceRaised,
-    surfaceContainerHigh = SurfaceElevated,
-    surfaceContainer = Color(0xFF0A0F1C),
-    surfaceContainerLow = Color(0xFF070B16),
-    surfaceContainerLowest = Color(0xFF050810),
+    surfaceContainerHighest = broxCharcoal,
+    surfaceContainerHigh = SurfaceRaised,
+    surfaceContainer = broxNavy,
+    surfaceContainerLow = SurfaceElevated,
+    surfaceContainerLowest = broxDeepNavy,
 )
 
 /** Pure OLED black theme — 2026 Neural Minimal */
@@ -516,6 +515,8 @@ val ColorScheme.isOledFlavor: Boolean get() = background == OledBlack
 fun ColorScheme.withBlackBackground(): ColorScheme = copy(
     background = OledBlack,
     surface = OledBlack,
+    surfaceContainer = OledBlack,
+    surfaceContainerLow = OledBlack,
     surfaceContainerLowest = OledBlack,
 )
 
@@ -531,14 +532,8 @@ fun kaiAdaptiveCardColors(): CardColors = CardDefaults.cardColors(
 )
 
 @Composable
-fun kaiAdaptiveCardBorder(): BorderStroke? {
-    val scheme = MaterialTheme.colorScheme
-    return if (scheme.isOledFlavor || scheme == MidnightColorScheme) {
-        BorderStroke(1.dp, BorderSoft)
-    } else {
-        BorderStroke(1.dp, BorderSoft)
-    }
-}
+fun kaiAdaptiveCardBorder(): BorderStroke =
+    BorderStroke(1.dp, BorderSoft)
 
 @Composable
 fun Modifier.kaiAdaptiveCardSurface(shape: Shape = CardDefaults.shape): Modifier = this

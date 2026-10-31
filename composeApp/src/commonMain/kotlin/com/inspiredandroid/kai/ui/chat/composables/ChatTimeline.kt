@@ -41,6 +41,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.BackIcon
+import com.inspiredandroid.kai.prefersReducedMotion
 import com.inspiredandroid.kai.getBackgroundDispatcher
 import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.CardFill
@@ -49,13 +50,13 @@ import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
 import com.inspiredandroid.kai.ui.chat.ChatUiState
+import com.inspiredandroid.kai.ui.chat.deriveChatTimelineData
 import com.inspiredandroid.kai.ui.chat.History
 import com.inspiredandroid.kai.ui.chat.activities.ActivityDetails
 import com.inspiredandroid.kai.ui.chat.activities.ActivityMapper
 import com.inspiredandroid.kai.ui.chat.lastRenderedAssistant
 import com.inspiredandroid.kai.ui.components.LogoAnimation
 import com.inspiredandroid.kai.ui.components.VerticalScrollbarForList
-import com.inspiredandroid.kai.ui.dynamicui.FrozenSubmission
 import com.inspiredandroid.kai.ui.dynamicui.toSpeakableText
 import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.markdown.KaiUiBlock
@@ -120,106 +121,19 @@ fun ChatTimeline(
             }
         }
     }
-    // Compute frozen submissions + user-to-assistant mapping without mutating state during composition
-    val pairings = remember(uiState.history, uiState.isLoading) {
-        val history = uiState.history
-        val lastUserIdx = history.indexOfLast { it.role == History.Role.USER }
-
-        val frozen = history
-            .withIndex()
-            .filter { (_, h) -> h.role == History.Role.USER }
-            .mapNotNull { (i, h) ->
-                val sub = h.uiSubmission ?: return@mapNotNull null
-                val originId = (i - 1 downTo 0).firstNotNullOfOrNull { j ->
-                    history[j].takeIf {
-                        it.role == History.Role.ASSISTANT &&
-                            it.content.isNotEmpty() && !it.isThinking &&
-                            it.content == sub.sourceContent
-                    }?.id
-                } ?: (i - 1 downTo 0).firstNotNullOfOrNull { j ->
-                    history[j].takeIf {
-                        it.role == History.Role.ASSISTANT &&
-                            it.content.isNotEmpty() && !it.isThinking
-                    }?.id
-                } ?: return@mapNotNull null
-                originId to FrozenSubmission(
-                    values = sub.values,
-                    pressedEvent = sub.pressedEvent,
-                    isPending = uiState.isLoading && i == lastUserIdx,
-                )
-            }
-            .toMap()
-
-        val userIdByAssistant = history
-            .withIndex()
-            .filter { (_, h) -> h.role == History.Role.USER }
-            .mapNotNull { (i, h) ->
-                val originId = (i - 1 downTo 0).firstNotNullOfOrNull { j ->
-                    history[j].takeIf {
-                        it.role == History.Role.ASSISTANT &&
-                            it.content.isNotEmpty() && !it.isThinking &&
-                            it.content == (h.uiSubmission?.sourceContent ?: "")
-                    }?.id
-                } ?: (i - 1 downTo 0).firstNotNullOfOrNull { j ->
-                    history[j].takeIf {
-                        it.role == History.Role.ASSISTANT &&
-                            it.content.isNotEmpty() && !it.isThinking
-                    }?.id
-                } ?: return@mapNotNull null
-                originId to h.id
-            }
-            .toMap()
-
-        frozen to userIdByAssistant
+    val timelineData = remember(uiState.history, uiState.isLoading) {
+        deriveChatTimelineData(uiState.history, uiState.isLoading)
     }
-    val frozenByAssistantId = pairings.first
-    val userIdByAssistantId = pairings.second
+    val frozenByAssistantId = timelineData.frozenByAssistantId
+    val userIdByAssistantId = timelineData.userIdByAssistantId
+    val reasoningSegmentsByAssistantId = timelineData.reasoningSegmentsByAssistantId
+    val suppressedThinkingIds = timelineData.suppressedThinkingIds
     val executingToolsState = rememberTimelineExecutingTools(uiState.history)
 
     val fallbackStatusText = uiState.fallbackStatus?.let { status ->
         val failed = stringResource(Res.string.fallback_service_failed, status.serviceName, uiErrorText(status.errorReason))
         val next = status.nextServiceName?.let { stringResource(Res.string.fallback_trying_next, it) }
         if (next != null) "$failed\n$next" else failed
-    }
-
-    val (reasoningSegmentsByAssistantId, suppressedThinkingIds) = remember(uiState.history) {
-        val history = uiState.history
-
-        val byAnswerId = history
-            .withIndex()
-            .filter { (_, e) ->
-                e.role == History.Role.ASSISTANT &&
-                    !e.isThinking &&
-                    e.content.isNotEmpty()
-            }
-            .mapNotNull { (i, e) ->
-                val thinkingPrefix = history
-                    .take(i)
-                    .filter { it.role == History.Role.ASSISTANT && it.isThinking && it.content.isNotEmpty() }
-                    .map { it.content }
-                    .reversed()
-
-                val combined = buildList {
-                    addAll(thinkingPrefix)
-                    e.reasoningContent?.takeIf { it.isNotBlank() }?.let { add(it) }
-                }
-
-                if (combined.isNotEmpty()) e.id to combined.toImmutableList() else null
-            }
-            .toMap()
-
-        val suppressed = history
-            .withIndex()
-            .filter { (_, e) ->
-                e.role == History.Role.ASSISTANT && e.isThinking && e.content.isNotEmpty()
-            }
-            .filterIndexed { idx, (i, _) ->
-                history.drop(i + 1).any { it.role == History.Role.ASSISTANT && !it.isThinking && it.content.isNotEmpty() }
-            }
-            .map { (_, e) -> e.id }
-            .toSet()
-
-        byAnswerId to suppressed
     }
 
     val firstAssistantId = remember(uiState.history) {
@@ -329,9 +243,7 @@ fun ChatTimeline(
                     History.Role.TOOL -> {
                         val isShell = history.toolName == "execute_shell_command"
                         if (isShell) {
-                            val matchingToolCall = uiState.history.firstNotNullOfOrNull { h ->
-                                h.toolCalls?.firstOrNull { it.id == history.toolCallId || it.name == "execute_shell_command" }
-                            }
+                            val matchingToolCall = timelineData.findShellToolCall(history.toolCallId)
                             val shellDetails = if (matchingToolCall != null) {
                                 val parsedCmd = ActivityMapper.parseShellCommand(matchingToolCall.arguments)
                                 ActivityMapper.parseShellResult(parsedCmd, history.content)
@@ -350,9 +262,7 @@ fun ChatTimeline(
                                 isRunning = false,
                             )
                         } else {
-                            val matchingToolCall = uiState.history.firstNotNullOfOrNull { h ->
-                                h.toolCalls?.firstOrNull { it.id == history.toolCallId }
-                            }
+                            val matchingToolCall = history.toolCallId?.let(timelineData.toolCallsById::get)
                             val isError = history.content.contains("\"success\":false") || history.content.contains("\"error\"")
                             ToolExecutionCard(
                                 toolName = history.toolName ?: "tool",
@@ -425,7 +335,11 @@ fun ChatTimeline(
                     componentScope.launch {
                         val totalItems = listState.layoutInfo.totalItemsCount
                         if (totalItems > 0) {
-                            listState.animateScrollToItem(totalItems - 1)
+                            if (prefersReducedMotion()) {
+                                listState.scrollToItem(totalItems - 1)
+                            } else {
+                                listState.animateScrollToItem(totalItems - 1)
+                            }
                         }
                     }
                 },

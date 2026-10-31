@@ -58,6 +58,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.inspiredandroid.kai.prefersReducedMotion
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
@@ -91,7 +92,6 @@ import com.inspiredandroid.kai.data.EmailAccount
 import com.inspiredandroid.kai.data.Service
 import com.inspiredandroid.kai.linux.LinuxDistro
 import com.inspiredandroid.kai.ui.AccentPrimary
-import com.inspiredandroid.kai.ui.BackgroundPrimary
 import com.inspiredandroid.kai.ui.BorderSoft
 import com.inspiredandroid.kai.ui.CardFill
 import com.inspiredandroid.kai.ui.KaiTypography
@@ -109,7 +109,9 @@ import kai.composeapp.generated.resources.settings_ai_mistakes_warning
 import kai.composeapp.generated.resources.settings_documentation
 import kai.composeapp.generated.resources.settings_licenses
 import kai.composeapp.generated.resources.settings_licenses_close
+import kai.composeapp.generated.resources.settings_tab_account
 import kai.composeapp.generated.resources.settings_tab_agent
+import kai.composeapp.generated.resources.settings_tab_data
 import kai.composeapp.generated.resources.settings_tab_general
 import kai.composeapp.generated.resources.settings_tab_integrations
 import kai.composeapp.generated.resources.settings_tab_sandbox
@@ -261,11 +263,7 @@ fun SettingsScreenContent(
     }
 
     // Use OLED black background for pure dark theme
-    val backgroundColor = if (MaterialTheme.colorScheme.isOledFlavor) {
-        com.inspiredandroid.kai.ui.OledBlack
-    } else {
-        BackgroundPrimary
-    }
+    val backgroundColor = MaterialTheme.colorScheme.background
 
     Box(Modifier.fillMaxSize().background(backgroundColor).navigationBarsPadding().statusBarsPadding().imePadding()) {
         BoxWithConstraints(Modifier.fillMaxSize()) {
@@ -423,15 +421,20 @@ private fun SettingsTabSelector(
     val tabFocusRequesters = remember { tabs.map { _ -> FocusRequester() } }
     var focusedTabIndex by remember { mutableStateOf(tabs.indexOf(currentTab).coerceAtLeast(0)) }
 
-    LaunchedEffect(currentTab, viewportWidth, tabBounds[currentTab]) {
+    LaunchedEffect(currentTab, viewportWidth, tabBounds[currentTab], scrollState.maxValue) {
         val bounds = tabBounds[currentTab] ?: return@LaunchedEffect
-        if (viewportWidth == 0) return@LaunchedEffect
-        val target = when {
-            bounds.first < scrollState.value -> bounds.first
-            bounds.last > scrollState.value + viewportWidth -> bounds.last - viewportWidth
-            else -> return@LaunchedEffect
+        val target = settingsTabScrollTarget(
+            currentScroll = scrollState.value,
+            viewportWidth = viewportWidth,
+            maxScroll = scrollState.maxValue,
+            itemStart = bounds.first,
+            itemEnd = bounds.last,
+        ) ?: return@LaunchedEffect
+        if (prefersReducedMotion()) {
+            scrollState.scrollTo(target)
+        } else {
+            scrollState.animateScrollTo(target)
         }
-        scrollState.animateScrollTo(target.coerceIn(0, scrollState.maxValue))
     }
 
     // Sync focused tab with selected tab
@@ -441,11 +444,7 @@ private fun SettingsTabSelector(
 
     // Neural minimal tab bar container
     val isOled = MaterialTheme.colorScheme.isOledFlavor
-    val tabBarBg = if (isOled) {
-        com.inspiredandroid.kai.ui.CardFill
-    } else {
-        CardFill
-    }
+    val tabBarBg = CardFill
 
     Box(
         modifier = Modifier
@@ -462,28 +461,27 @@ private fun SettingsTabSelector(
                 SettingsShapes.pill,
             )
             .onKeyEvent { event ->
+                if (tabs.isEmpty()) return@onKeyEvent false
+
                 when (event.key) {
-                    Key.DirectionLeft, Key.Tab -> {
-                        if (event.key == Key.Tab && event.isShiftPressed) {
-                            focusedTabIndex = (focusedTabIndex - 1).coerceIn(0, tabs.size - 1)
-                            onSelectTab(tabs[focusedTabIndex])
-                            true
-                        } else if (event.key == Key.DirectionLeft) {
-                            focusedTabIndex = (focusedTabIndex - 1).coerceIn(0, tabs.size - 1)
-                            onSelectTab(tabs[focusedTabIndex])
-                            true
-                        } else {
-                            false
-                        }
+                    Key.DirectionLeft -> {
+                        val nextIndex = (focusedTabIndex - 1).coerceAtLeast(0)
+                        focusedTabIndex = nextIndex
+                        tabFocusRequesters[nextIndex].requestFocus()
+                        onSelectTab(tabs[nextIndex])
+                        true
                     }
 
                     Key.DirectionRight -> {
-                        focusedTabIndex = (focusedTabIndex + 1).coerceIn(0, tabs.size - 1)
-                        onSelectTab(tabs[focusedTabIndex])
+                        val nextIndex = (focusedTabIndex + 1).coerceAtMost(tabs.lastIndex)
+                        focusedTabIndex = nextIndex
+                        tabFocusRequesters[nextIndex].requestFocus()
+                        onSelectTab(tabs[nextIndex])
                         true
                     }
 
                     Key.Enter, Key.NumPadEnter -> {
+                        tabFocusRequesters[focusedTabIndex].requestFocus()
                         onSelectTab(tabs[focusedTabIndex])
                         true
                     }
@@ -511,8 +509,8 @@ private fun SettingsTabSelector(
                     SettingsTab.Tools -> stringResource(Res.string.settings_tab_tools)
                     SettingsTab.Integrations -> stringResource(Res.string.settings_tab_integrations)
                     SettingsTab.Sandbox -> stringResource(Res.string.settings_tab_sandbox)
-                    SettingsTab.Data -> "Data Control"
-                    SettingsTab.Account -> "Account & Plan"
+                    SettingsTab.Data -> stringResource(Res.string.settings_tab_data)
+                    SettingsTab.Account -> stringResource(Res.string.settings_tab_account)
                 }
 
                 val buttonColors = androidx.compose.material3.ButtonDefaults.buttonColors(
@@ -575,8 +573,8 @@ private fun SettingsTabSelector(
                             SettingsTab.Tools -> stringResource(Res.string.settings_tab_tools)
                             SettingsTab.Integrations -> stringResource(Res.string.settings_tab_integrations)
                             SettingsTab.Sandbox -> stringResource(Res.string.settings_tab_sandbox)
-                            SettingsTab.Data -> "Data Control"
-                            SettingsTab.Account -> "Account & Plan"
+                            SettingsTab.Data -> stringResource(Res.string.settings_tab_data)
+                            SettingsTab.Account -> stringResource(Res.string.settings_tab_account)
                         },
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                         color = if (isSelected) {

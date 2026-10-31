@@ -83,7 +83,6 @@ import com.inspiredandroid.kai.data.Service
 import com.inspiredandroid.kai.data.supportsAgenticFlows
 import com.inspiredandroid.kai.getBackgroundDispatcher
 import com.inspiredandroid.kai.onDragAndDropEventDropped
-import com.inspiredandroid.kai.ui.BackgroundPrimary
 import com.inspiredandroid.kai.ui.CardFill
 import com.inspiredandroid.kai.ui.DangerAlert
 import com.inspiredandroid.kai.ui.KaiShapes
@@ -371,7 +370,7 @@ private fun ChatModeScreen(
     }
 
     BoxWithConstraints(Modifier.fillMaxSize()) {
-        val expanded = chatWindowSizeClass(maxWidth) == ChatWindowSizeClass.Expanded
+        val expanded = ChatAdaptivePolicy.useExpandedLayout(maxWidth, hasSidePanel = isSandboxOpen)
         val isPreview = LocalInspectionMode.current
         // Hoisted unconditional to satisfy Koin/Compose ViewModel scoping rules
         val sandboxViewModel: SandboxViewModel? = if (isPreview) null else koinViewModel<SandboxViewModel>()
@@ -616,7 +615,7 @@ private fun ChatModeScreen(
                         } else {
                             androidx.compose.ui.graphics.Brush.verticalGradient(
                                 colors = listOf(
-                                    BackgroundPrimary,
+                                    MaterialTheme.colorScheme.background,
                                     OledBlack,
                                 ),
                             )

@@ -26,6 +26,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -40,8 +44,11 @@ import com.inspiredandroid.kai.ui.KaiTypography
 import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.isOledFlavor
+import com.inspiredandroid.kai.prefersReducedMotion
 import kai.composeapp.generated.resources.Res
+import kai.composeapp.generated.resources.settings_tab_account
 import kai.composeapp.generated.resources.settings_tab_agent
+import kai.composeapp.generated.resources.settings_tab_data
 import kai.composeapp.generated.resources.settings_tab_general
 import kai.composeapp.generated.resources.settings_tab_integrations
 import kai.composeapp.generated.resources.settings_tab_sandbox
@@ -58,7 +65,7 @@ fun SettingsNavRail(
     modifier: Modifier = Modifier,
 ) {
     val isOled = MaterialTheme.colorScheme.isOledFlavor
-    val railBg = if (isOled) CardFill else CardFill
+    val railBg = CardFill
     val railBorder = if (isOled) BorderSubtle else BorderSoft.copy(alpha = 0.6f)
 
     Box(
@@ -87,23 +94,23 @@ fun SettingsNavRail(
                     SettingsTab.Tools -> stringResource(Res.string.settings_tab_tools)
                     SettingsTab.Integrations -> stringResource(Res.string.settings_tab_integrations)
                     SettingsTab.Sandbox -> stringResource(Res.string.settings_tab_sandbox)
-                    SettingsTab.Data -> "Data Control"
-                    SettingsTab.Account -> "Account & Plan"
+                    SettingsTab.Data -> stringResource(Res.string.settings_tab_data)
+                    SettingsTab.Account -> stringResource(Res.string.settings_tab_account)
                 }
 
                 val bgColor by animateColorAsState(
                     targetValue = if (isSelected) AccentPrimary.copy(alpha = 0.16f) else Color.Transparent,
-                    animationSpec = tween(durationMillis = 200),
+                    animationSpec = tween(durationMillis = if (prefersReducedMotion()) 0 else 200),
                     label = "railBg",
                 )
                 val textColor by animateColorAsState(
                     targetValue = if (isSelected) AccentPrimary else TextSecondary,
-                    animationSpec = tween(durationMillis = 200),
+                    animationSpec = tween(durationMillis = if (prefersReducedMotion()) 0 else 200),
                     label = "railText",
                 )
                 val borderColor by animateColorAsState(
                     targetValue = if (isSelected) AccentPrimary.copy(alpha = 0.42f) else Color.Transparent,
-                    animationSpec = tween(durationMillis = 200),
+                    animationSpec = tween(durationMillis = if (prefersReducedMotion()) 0 else 200),
                     label = "railBorder",
                 )
 
@@ -122,7 +129,11 @@ fun SettingsNavRail(
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
-                        ) { onSelectTab(tab) },
+                        ) { onSelectTab(tab) }
+                        .semantics {
+                            role = Role.Tab
+                            selected = isSelected
+                        },
                     contentAlignment = Alignment.Center,
                 ) {
                     Column(

@@ -13,6 +13,8 @@ import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.inspiredandroid.kai.ui.DarkColorScheme
 import com.inspiredandroid.kai.ui.LightColorScheme
+import com.inspiredandroid.kai.ui.MidnightColorScheme
+import com.inspiredandroid.kai.ui.OledColorScheme
 import com.inspiredandroid.kai.ui.Theme
 import com.inspiredandroid.kai.ui.chat.ChatScreenContent
 import com.inspiredandroid.kai.ui.dynamicui.LocalPreviewImages
@@ -93,10 +95,10 @@ class TabletStoreScreenshotTest(
         colorScheme: ColorScheme,
         content: @Composable () -> Unit,
     ) {
-        val theme = if (colorScheme == DarkColorScheme) {
-            "android:Theme.Material.NoActionBar"
-        } else {
+        val theme = if (colorScheme == LightColorScheme) {
             "android:Theme.Material.Light.NoActionBar"
+        } else {
+            "android:Theme.Material.NoActionBar"
         }
         paparazzi.unsafeUpdateConfig(theme = theme)
         paparazzi.snapshot(name = "tablet_${playStoreLocale}_$name") {
@@ -172,6 +174,28 @@ class TabletStoreScreenshotTest(
                 previewSandboxState = ScreenshotTestData.sandboxState,
                 previewSandboxLines = ScreenshotTestData.sandboxTerminalLines,
             )
+        }
+    }
+
+    @Test
+    fun chatAndSettingsMidnightAndOled() {
+        snap("08_midnight_chat", MidnightColorScheme) {
+            ChatScreenContent(
+                uiState = ScreenshotTestData.localizedChatWithMessages(locale),
+                FakeTextToSpeechInstance(),
+            )
+        }
+        snap("09_midnight_settings", MidnightColorScheme) {
+            SettingsScreenContent(uiState = ScreenshotTestData.settingsAgent)
+        }
+        snap("10_oled_chat", OledColorScheme) {
+            ChatScreenContent(
+                uiState = ScreenshotTestData.localizedChatWithMessages(locale),
+                FakeTextToSpeechInstance(),
+            )
+        }
+        snap("11_oled_settings", OledColorScheme) {
+            SettingsScreenContent(uiState = ScreenshotTestData.settingsAgent)
         }
     }
 }

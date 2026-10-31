@@ -3,7 +3,7 @@ package com.inspiredandroid.kai.ui.chat
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.ui.AccentGlow
@@ -11,9 +11,7 @@ import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.BorderSoft
 import com.inspiredandroid.kai.ui.CardFill
 import com.inspiredandroid.kai.ui.DangerAlert
-import com.inspiredandroid.kai.ui.OledBlack
 import com.inspiredandroid.kai.ui.SuccessGreen
-import com.inspiredandroid.kai.ui.SurfaceRaised
 import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.WarningAmber
@@ -33,7 +31,7 @@ object ChatSpacing {
     val xxxl: Dp = 48.dp
 
     /** Width of the centered conversation column on expanded windows. */
-    val conversationColumnMax: Dp = 760.dp
+    val conversationColumnMax: Dp = ChatAdaptivePolicy.conversationColumnMax
 
     /** Minimum touch target enforced across the chat UI. */
     val minTouchTarget: Dp = 48.dp
@@ -85,10 +83,10 @@ object ChatStatusColors {
  */
 object ChatSurfaces {
     @Composable
-    fun page(): Color = OledBlack
+    fun page(): Color = MaterialTheme.colorScheme.background
 
     @Composable
-    fun elevated(): Color = SurfaceRaised
+    fun elevated(): Color = MaterialTheme.colorScheme.surfaceContainerHigh
 
     @Composable
     fun border(): Color = BorderSoft
@@ -97,5 +95,5 @@ object ChatSurfaces {
     fun assistantMessage(): Color = CardFill
 
     @Composable
-    fun composer(): Color = SurfaceRaised.copy(alpha = 0.9f)
+    fun composer(): Color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.9f)
 }
