@@ -7,6 +7,7 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   test:
@@ -112,3 +113,15 @@ jobs:
           git commit -m "Auto-fix: spotlessApply and updateScreenshots [skip ci]"
           git pull --rebase origin main
           git push origin HEAD:main
+
+      # Preserve XML failure messages and HTML stack traces even when a test task fails.
+      - name: Upload screenshot test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshot-test-reports-${{ github.run_id }}
+          path: |
+            screenshotTests/build/test-results/testDebugUnitTest/
+            screenshotTests/build/reports/tests/testDebugUnitTest/
+          if-no-files-found: warn
+          retention-days: 14
