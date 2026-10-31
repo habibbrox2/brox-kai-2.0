@@ -167,6 +167,8 @@ jobs:
       - name: Fail if unreviewed generated changes remain
         if: github.event_name == 'pull_request'
         run: |
+          # Review artifacts are temporary workspace files, not repository changes.
+          rm -f generated-changes-status.txt generated-changes-stat.txt generated-changes.patch generated-files.tar.gz
           if [ -n "$(git status --porcelain)" ]; then
             echo "::error::Unreviewed generated changes remain after the allowlisted commit."
             git status --short
