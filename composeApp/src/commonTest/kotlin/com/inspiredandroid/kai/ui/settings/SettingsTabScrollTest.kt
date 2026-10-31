@@ -29,7 +29,7 @@ class SettingsTabScrollTest {
                 maxScroll = 600,
                 itemStart = 80,
                 itemEnd = 220,
-            ),
+            ) ?: error("Expected scroll target"),
         )
     }
 
@@ -43,7 +43,7 @@ class SettingsTabScrollTest {
                 maxScroll = 600,
                 itemStart = 340,
                 itemEnd = 460,
-            ),
+            ) ?: error("Expected scroll target"),
         )
     }
 
@@ -57,7 +57,7 @@ class SettingsTabScrollTest {
                 maxScroll = 150,
                 itemStart = 340,
                 itemEnd = 460,
-            ),
+            ) ?: error("Expected scroll target"),
         )
     }
 
