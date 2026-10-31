@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "packageName": "com.inspiredandroid.kai",
+  "versionName": "2.0.77",
+  "versionCode": 192,
+  "assetName": "Brox-Kai-2.0-v2.0.77-Android.apk",
+  "downloadUrl": "https://github.com/habibbrox2/brox-kai-2.0/releases/download/v2.0.77/Brox-Kai-2.0-v2.0.77-Android.apk",
+  "sha256": "6f04040363fd960330930660b2757e192a46d54169dcc62320aade00d80120e4",
+  "signerCertificateSha256": "df9578135f0bd6a9ba6e9b625c3fd98f947125ad1c8f6f846aa1fced2a096ef2"
+}
