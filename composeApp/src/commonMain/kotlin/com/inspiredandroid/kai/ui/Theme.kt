@@ -25,6 +25,8 @@ import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.TextStyle
@@ -100,17 +103,68 @@ val AccentGlow = Color(0x3322D3EE)
 val AccentGlowStrong = Color(0x6622D3EE)
 val AccentGlowIntense = Color(0x9922D3EE)
 
-/** Text colors */
-val TextPrimary = Color(0xFFFFFFFF)
-val TextSecondary = Color(0xFFCBD5E1)
-val TextTertiary = Color(0xFF94A3B8)
-val TextMuted = Color(0xFF64748B)
-
 /** Status colors */
 val DangerAlert = Color(0xFFEF4444)
 val SuccessGreen = Color(0xFF10B981)
 val WarningAmber = Color(0xFFF59E0B)
 val InfoBlue = Color(0xFF3B82F6)
+
+// ─── Theme-aware color system ───
+data class KaiColorPalette(
+    val textPrimary: Color,
+    val textSecondary: Color,
+    val textTertiary: Color,
+    val textMuted: Color,
+    val surfaceElevated: Color,
+    val surfaceRaised: Color,
+    val cardFill: Color,
+    val cardSurface: Color,
+    val borderSubtle: Color,
+    val borderSoft: Color,
+    val borderStrong: Color,
+)
+
+val LocalKaiColors = compositionLocalOf {
+    KaiColorPalette(
+        textPrimary = Color(0xFFFFFFFF),
+        textSecondary = Color(0xFFCBD5E1),
+        textTertiary = Color(0xFF94A3B8),
+        textMuted = Color(0xFF64748B),
+        surfaceElevated = Color(0xFF0A0F1C),
+        surfaceRaised = Color(0xFF111827),
+        cardFill = Color(0x99111B2E),
+        cardSurface = Color(0xFF0F172A),
+        borderSubtle = Color(0x1AFFFFFF),
+        borderSoft = Color(0x26FFFFFF),
+        borderStrong = Color(0x40FFFFFF),
+    )
+}
+
+object KaiThemeColors {
+    var textPrimary: Color = Color(0xFFFFFFFF)
+    var textSecondary: Color = Color(0xFFCBD5E1)
+    var textTertiary: Color = Color(0xFF94A3B8)
+    var textMuted: Color = Color(0xFF64748B)
+    var surfaceElevated: Color = Color(0xFF0A0F1C)
+    var surfaceRaised: Color = Color(0xFF111827)
+    var cardFill: Color = Color(0x99111B2E)
+    var cardSurface: Color = Color(0xFF0F172A)
+    var borderSubtle: Color = Color(0x1AFFFFFF)
+    var borderSoft: Color = Color(0x26FFFFFF)
+    var borderStrong: Color = Color(0x40FFFFFF)
+}
+
+val TextPrimary: Color get() = KaiThemeColors.textPrimary
+val TextSecondary: Color get() = KaiThemeColors.textSecondary
+val TextTertiary: Color get() = KaiThemeColors.textTertiary
+val TextMuted: Color get() = KaiThemeColors.textMuted
+val SurfaceElevatedTheme: Color get() = KaiThemeColors.surfaceElevated
+val SurfaceRaisedTheme: Color get() = KaiThemeColors.surfaceRaised
+val CardFillTheme: Color get() = KaiThemeColors.cardFill
+val CardSurfaceTheme: Color get() = KaiThemeColors.cardSurface
+val BorderSubtleTheme: Color get() = KaiThemeColors.borderSubtle
+val BorderSoftTheme: Color get() = KaiThemeColors.borderSoft
+val BorderStrongTheme: Color get() = KaiThemeColors.borderStrong
 
 // KaiTypography - 2026 Modern Type Scale
 val KaiTypography = Typography(
@@ -680,18 +734,61 @@ fun Theme(
     colorScheme: ColorScheme,
     content: @Composable () -> Unit,
 ) {
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = KaiTypography,
-        shapes = Shapes(
-            extraSmall = KaiShapes.input,
-            small = KaiShapes.row,
-            medium = KaiShapes.card,
-            large = KaiShapes.section,
-            extraLarge = KaiShapes.panel,
-        ),
-    ) {
-        content()
+    val isLight = colorScheme.background.luminance() > 0.5f
+    val kaiColors = if (isLight) {
+        KaiColorPalette(
+            textPrimary = Color(0xFF0F172A),
+            textSecondary = Color(0xFF475569),
+            textTertiary = Color(0xFF64748B),
+            textMuted = Color(0xFF94A3B8),
+            surfaceElevated = Color(0xFFFFFFFF),
+            surfaceRaised = Color(0xFFF8FAFC),
+            cardFill = Color(0xFFFFFFFF),
+            cardSurface = Color(0xFFF1F5F9),
+            borderSubtle = Color(0x1A000000),
+            borderSoft = Color(0x33000000),
+            borderStrong = Color(0x4D000000),
+        )
+    } else {
+        KaiColorPalette(
+            textPrimary = Color(0xFFFFFFFF),
+            textSecondary = Color(0xFFCBD5E1),
+            textTertiary = Color(0xFF94A3B8),
+            textMuted = Color(0xFF64748B),
+            surfaceElevated = Color(0xFF0A0F1C),
+            surfaceRaised = Color(0xFF111827),
+            cardFill = Color(0x99111B2E),
+            cardSurface = Color(0xFF0F172A),
+            borderSubtle = Color(0x1AFFFFFF),
+            borderSoft = Color(0x26FFFFFF),
+            borderStrong = Color(0x40FFFFFF),
+        )
+    }
+    KaiThemeColors.textPrimary = kaiColors.textPrimary
+    KaiThemeColors.textSecondary = kaiColors.textSecondary
+    KaiThemeColors.textTertiary = kaiColors.textTertiary
+    KaiThemeColors.textMuted = kaiColors.textMuted
+    KaiThemeColors.surfaceElevated = kaiColors.surfaceElevated
+    KaiThemeColors.surfaceRaised = kaiColors.surfaceRaised
+    KaiThemeColors.cardFill = kaiColors.cardFill
+    KaiThemeColors.cardSurface = kaiColors.cardSurface
+    KaiThemeColors.borderSubtle = kaiColors.borderSubtle
+    KaiThemeColors.borderSoft = kaiColors.borderSoft
+    KaiThemeColors.borderStrong = kaiColors.borderStrong
+    CompositionLocalProvider(LocalKaiColors provides kaiColors) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = KaiTypography,
+            shapes = Shapes(
+                extraSmall = KaiShapes.input,
+                small = KaiShapes.row,
+                medium = KaiShapes.card,
+                large = KaiShapes.section,
+                extraLarge = KaiShapes.panel,
+            ),
+        ) {
+            content()
+        }
     }
 }
 

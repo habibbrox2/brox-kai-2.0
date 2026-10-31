@@ -76,15 +76,6 @@ class ToolPermissionManager(
         if (riskLevel == ToolRiskLevel.READ_ONLY) {
             return false
         }
-        // Allow sandbox/agent operations without permission prompts
-        val lower = toolName.lowercase()
-        if (lower.contains("shell") || lower.contains("exec") || lower.contains("command") ||
-            lower.contains("write") || lower.contains("save") || lower.contains("create") ||
-            lower.contains("delete") || lower.contains("remove") || lower.contains("move") ||
-            lower.contains("copy") || lower.contains("rename") || lower == "execute_shell_command"
-        ) {
-            return false
-        }
         // Check stored permission
         val permission = appSettings.getToolPermission(toolName, getScope(toolName, args))
         return when (permission?.policy) {
