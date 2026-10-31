@@ -224,4 +224,22 @@ class AutoUpdaterTest {
         kotlin.test.assertFails { AndroidUpdateManifest.parse(raw) }
     }
 
+
+    @Test
+    fun androidUpgradeUsesVersionCodeNotVersionName() {
+        val manifest = AndroidUpdateManifest(
+            schemaVersion = 1,
+            packageName = "com.inspiredandroid.kai",
+            versionName = "2.0.75",
+            versionCode = 190L,
+            assetName = "Brox-Kai-2.0-v2.0.75-Android.apk",
+            downloadUrl = "https://github.com/habibbrox2/brox-kai-2.0/releases/download/v2.0.75/Brox-Kai-2.0-v2.0.75-Android.apk",
+            sha256 = "a".repeat(64),
+            signerCertificateSha256 = "b".repeat(64),
+        )
+        assertTrue(manifest.isUpgradeFrom(189L))
+        assertFalse(manifest.isUpgradeFrom(190L))
+        assertFalse(manifest.isUpgradeFrom(191L))
+    }
+
 }
