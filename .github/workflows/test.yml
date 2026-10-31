@@ -90,13 +90,13 @@ jobs:
             echo "has_changes=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Fail if fork PR has changes
+      - name: Fail if pull request has generated changes
         if: |
-          steps.changes.outputs.has_changes == 'true' &&
-          steps.fork-check.outputs.is_fork == 'true'
+          github.event_name == 'pull_request' &&
+          steps.changes.outputs.has_changes == 'true'
         run: |
-          echo "::error::This PR from a fork requires formatting or screenshot updates."
-          echo "Please run the following commands locally and push the changes:"
+          echo "::error::This pull request requires formatting or screenshot updates."
+          echo "Please run the following commands locally, commit the results, and push them to the PR branch:"
           echo "  ./gradlew spotlessApply"
           echo "  ./gradlew :screenshotTests:updateScreenshots"
           echo "  ./scripts/convert-site-images-to-webp.sh"
@@ -105,7 +105,7 @@ jobs:
       - name: Commit and push changes
         if: |
           steps.changes.outputs.has_changes == 'true' &&
-          (github.event_name == 'push' || steps.fork-check.outputs.is_fork == 'false')
+          github.event_name == 'push'
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
