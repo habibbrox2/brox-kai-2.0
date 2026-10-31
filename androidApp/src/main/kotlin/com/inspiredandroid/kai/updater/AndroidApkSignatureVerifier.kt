@@ -60,26 +60,24 @@ internal class AndroidApkSignatureVerifier(
         return VerificationResult.Valid(archiveSigner)
     }
 
-    private fun getPackageInfo(packageName: String): PackageInfo? =
-        runCatching {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                context.packageManager.getPackageInfo(
-                    packageName,
-                    PackageManager.PackageInfoFlags.of(signingFlags().toLong()),
-                )
-            } else {
-                @Suppress("DEPRECATION")
-                context.packageManager.getPackageInfo(packageName, signingFlags())
-            }
-        }.getOrNull()
-
-    private fun signingFlags(): Int =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            PackageManager.GET_SIGNING_CERTIFICATES
+    private fun getPackageInfo(packageName: String): PackageInfo? = runCatching {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            context.packageManager.getPackageInfo(
+                packageName,
+                PackageManager.PackageInfoFlags.of(signingFlags().toLong()),
+            )
         } else {
             @Suppress("DEPRECATION")
-            PackageManager.GET_SIGNATURES
+            context.packageManager.getPackageInfo(packageName, signingFlags())
         }
+    }.getOrNull()
+
+    private fun signingFlags(): Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        PackageManager.GET_SIGNING_CERTIFICATES
+    } else {
+        @Suppress("DEPRECATION")
+        PackageManager.GET_SIGNATURES
+    }
 
     private fun PackageInfo.signerSha256(): String? {
         val certificates = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -92,10 +90,9 @@ internal class AndroidApkSignatureVerifier(
         return certificates.single().sha256Hex()
     }
 
-    private fun ByteArray.sha256Hex(): String =
-        MessageDigest.getInstance("SHA-256")
-            .digest(this)
-            .joinToString(separator = "") { byte -> "%02x".format(byte) }
+    private fun ByteArray.sha256Hex(): String = MessageDigest.getInstance("SHA-256")
+        .digest(this)
+        .joinToString(separator = "") { byte -> "%02x".format(byte) }
 
     sealed interface VerificationResult {
         data class Valid(val signerSha256: String) : VerificationResult
