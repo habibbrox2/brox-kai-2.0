@@ -1,0 +1,65 @@
+package com.inspiredandroid.kai.updater
+
+import java.io.File
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
+import org.junit.Test
+
+class AndroidUpdateApkPathValidationTest {
+    private val assetName = "Brox-Kai-2.0-v2.0.75-Android.apk"
+
+    @Test
+    fun acceptsNonEmptyApkDirectlyInsideUpdatesDirectory() {
+        withTemporaryDirectory { root ->
+            val updates = File(root, "updates").apply { mkdirs() }
+            val apk = File(updates, assetName).apply { writeBytes(byteArrayOf(1, 2, 3)) }
+            assertTrue(AndroidUpdateApkPathValidation.isValid(updates, apk, assetName))
+        }
+    }
+
+    @Test
+    fun rejectsApkOutsideUpdatesDirectory() {
+        withTemporaryDirectory { root ->
+            val updates = File(root, "updates").apply { mkdirs() }
+            val apk = File(root, assetName).apply { writeBytes(byteArrayOf(1)) }
+            assertFalse(AndroidUpdateApkPathValidation.isValid(updates, apk, assetName))
+        }
+    }
+
+    @Test
+    fun rejectsNestedApkPath() {
+        withTemporaryDirectory { root ->
+            val updates = File(root, "updates").apply { mkdirs() }
+            val nested = File(updates, "nested").apply { mkdirs() }
+            val apk = File(nested, assetName).apply { writeBytes(byteArrayOf(1)) }
+            assertFalse(AndroidUpdateApkPathValidation.isValid(updates, apk, assetName))
+        }
+    }
+
+    @Test
+    fun rejectsUnexpectedAssetName() {
+        withTemporaryDirectory { root ->
+            val updates = File(root, "updates").apply { mkdirs() }
+            val apk = File(updates, "renamed.apk").apply { writeBytes(byteArrayOf(1)) }
+            assertFalse(AndroidUpdateApkPathValidation.isValid(updates, apk, assetName))
+        }
+    }
+
+    @Test
+    fun rejectsEmptyApk() {
+        withTemporaryDirectory { root ->
+            val updates = File(root, "updates").apply { mkdirs() }
+            val apk = File(updates, assetName).apply { createNewFile() }
+            assertFalse(AndroidUpdateApkPathValidation.isValid(updates, apk, assetName))
+        }
+    }
+
+    private fun withTemporaryDirectory(block: (File) -> Unit) {
+        val root = createTempDir(prefix = "kai-update-test-")
+        try {
+            block(root)
+        } finally {
+            root.deleteRecursively()
+        }
+    }
+}

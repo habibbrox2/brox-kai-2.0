@@ -9,7 +9,7 @@ name: Auto Release
 #      is the fixed brand name, only the 2.0.x version changes per release.
 # The bump commit is pushed with the workflow GITHUB_TOKEN, which does not
 # retrigger workflows, so there is no release loop.
-# APK signing: if release keystore secrets are not set, the APK is signed with the debug keystore fallback so it installs cleanly on Android devices.
+# Production APK releases require the configured production keystore. Missing or invalid signing secrets fail before version bump/tag creation.
 
 on:
   push:
@@ -23,8 +23,34 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  signing-preflight:
+    name: Validate production Android signing
+    runs-on: ubuntu-latest
+    env:
+      KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
+      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      ENFORCE_RELEASE_SIGNING: "true"
+    steps:
+      - name: Validate signing secrets and keystore
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in KEYSTORE_B64 KEY_ALIAS KEYSTORE_PASSWORD; do
+            if [[ -z "${!name}" ]]; then
+              echo "::error::Required production signing secret ${name} is not configured."
+              exit 1
+            fi
+          done
+          KEYSTORE_PATH="$RUNNER_TEMP/brox-kai-release.jks"
+          printf '%s' "$KEYSTORE_B64" | base64 --decode > "$KEYSTORE_PATH"
+          test -s "$KEYSTORE_PATH"
+          keytool -list -keystore "$KEYSTORE_PATH" -storepass "$KEYSTORE_PASSWORD" -alias "$KEY_ALIAS" >/dev/null
+          echo "Production signing keystore and alias validated."
+
   bump:
     name: Bump version and tag
+    needs: signing-preflight
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.bump.outputs.version }}
@@ -88,24 +114,59 @@ jobs:
           yes | sdkmanager "build-tools;37.0.0"
           yes | sdkmanager "build-tools;36.0.0"
           yes | sdkmanager "ndk;29.0.14206865"
-      - name: Build Foss APK
+      - name: Configure production signing keystore
+        shell: bash
+        run: |
+          set -euo pipefail
+          KEYSTORE_PATH="$RUNNER_TEMP/brox-kai-release.jks"
+          printf '%s' "$KEYSTORE_B64" | base64 --decode > "$KEYSTORE_PATH"
+          test -s "$KEYSTORE_PATH"
+          keytool -list -keystore "$KEYSTORE_PATH" -storepass "$KEYSTORE_PASSWORD" -alias "$KEY_ALIAS" >/dev/null
+          echo "KEYSTORE_FILE=$KEYSTORE_PATH" >> "$GITHUB_ENV"
+      - name: Build production-signed Foss APK
         run: ./gradlew :androidApp:assembleFossRelease --stacktrace
-      - name: Sign APK
-        if: env.KEYSTORE_B64 != '' && env.KEY_ALIAS != '' && env.KEYSTORE_PASSWORD != ''
-        uses: r0adkll/sign-android-release@v1
-        env:
-          BUILD_TOOLS_VERSION: "36.0.0"
-        with:
-          releaseDirectory: androidApp/build/outputs/apk/foss/release
-          signingKeyBase64: ${{ secrets.KEYSTORE_B64 }}
-          alias: ${{ secrets.KEY_ALIAS }}
-          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEYSTORE_PASSWORD }}
+      - name: Verify APK signature
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="androidApp/build/outputs/apk/foss/release/androidApp-foss-release.apk"
+          test -s "$APK"
+          APKSIGNER="$ANDROID_HOME/build-tools/37.0.0/apksigner"
+          "$APKSIGNER" verify --verbose --print-certs "$APK" | tee "$RUNNER_TEMP/apk-signature.txt"
+          CERT_SHA256=$(sed -nE 's/.*certificate SHA-256 digest: ([0-9a-fA-F:]+).*/\1/p' "$RUNNER_TEMP/apk-signature.txt" | head -n1 | tr -d ':' | tr '[:upper:]' '[:lower:]')
+          APK_SHA256=$(sha256sum "$APK" | awk '{print $1}')
+          VERSION="${{ needs.bump.outputs.version }}"
+          VERSION_CODE=$(grep -oP 'android-versionCode = "\K[0-9]+' gradle/libs.versions.toml)
+          ASSET_NAME="Brox-Kai-2.0-v${VERSION}-Android.apk"
+          python3 - "$VERSION" "$VERSION_CODE" "$ASSET_NAME" "$APK_SHA256" "$CERT_SHA256" <<'PY'
+          import json, sys
+          version, version_code, asset_name, sha256, cert_sha256 = sys.argv[1:]
+          manifest = {
+              "schemaVersion": 1,
+              "packageName": "com.inspiredandroid.kai",
+              "versionName": version,
+              "versionCode": int(version_code),
+              "assetName": asset_name,
+              "downloadUrl": f"https://github.com/habibbrox2/brox-kai-2.0/releases/download/v{version}/{asset_name}",
+              "sha256": sha256,
+              "signerCertificateSha256": cert_sha256,
+          }
+          with open("update.json", "w", encoding="utf-8") as f:
+              json.dump(manifest, f, indent=2)
+              f.write("\n")
+          PY
+          test -s update.json
+          cat update.json
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: apk-package
-          path: androidApp/build/outputs/apk/foss/release/*.apk
+          path: androidApp/build/outputs/apk/foss/release/androidApp-foss-release.apk
+      - name: Upload update manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: update-manifest
+          path: update.json
 
   windows:
     name: Build MSI and Zip
@@ -161,16 +222,13 @@ jobs:
           # "Brox Kai 2.0" is the fixed brand name; only the version (2.0.x) changes per release
           VERSION="${{ needs.bump.outputs.version }}"
           cd dist
-          if [ -f androidApp-foss-release-signed.apk ]; then
-            mv androidApp-foss-release-signed.apk "Brox-Kai-2.0-v${VERSION}-Android.apk"
-            rm -f androidApp-foss-release*.apk
-          elif [ -f androidApp-foss-release.apk ]; then
+          if [ -f androidApp-foss-release.apk ]; then
             mv androidApp-foss-release.apk "Brox-Kai-2.0-v${VERSION}-Android.apk"
-            rm -f androidApp-foss-release*.apk
           else
-            echo "::error::No signed APK found! Android will reject an unsigned APK as an invalid package."
+            echo "::error::Expected signed APK artifact androidApp-foss-release.apk is missing."
             exit 1
           fi
+          test -s update.json
           mv *.msi "Brox-Kai-2.0-v${VERSION}-Windows-x64.msi"
           ls -la
       - name: Create GitHub Release
@@ -181,3 +239,4 @@ jobs:
           generate_release_notes: true
           files: |
             dist/Brox-Kai-*
+            dist/update.json

@@ -58,7 +58,11 @@ import org.koin.compose.koinInject
 import kotlin.math.roundToInt
 
 @Composable
-internal fun GeneralContent(uiState: SettingsUiState, actions: SettingsActions) {
+internal fun GeneralContent(
+    uiState: SettingsUiState,
+    actions: SettingsActions,
+    androidUpdateContent: (@Composable () -> Unit)? = null,
+) {
     StaggeredSettingsColumns(
         start = {
             if (uiState.showDaemonToggle) {
@@ -97,6 +101,7 @@ internal fun GeneralContent(uiState: SettingsUiState, actions: SettingsActions) 
             }
         },
     )
+    androidUpdateContent?.invoke()
 }
 
 @Composable
