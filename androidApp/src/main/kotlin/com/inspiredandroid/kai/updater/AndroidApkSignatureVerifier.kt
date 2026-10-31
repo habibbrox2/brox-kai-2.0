@@ -8,11 +8,10 @@ import java.io.File
 import java.security.MessageDigest
 
 /**
- * Verifies APK identity against the certificate of the currently installed application.
+ * Verifies APK package, version and signing identity before the installer is exposed.
  *
- * The release manifest's signer fingerprint is treated only as a claim. The trust anchor
- * is independently obtained from PackageManager for the installed app, preventing a
- * compromised manifest from authorizing an attacker-signed APK.
+ * The installed certificate is the trust anchor. The release manifest's fingerprint is
+ * only a claim and must match both the installed app and the downloaded APK.
  */
 internal class AndroidApkSignatureVerifier(
     private val context: Context,
@@ -25,35 +24,44 @@ internal class AndroidApkSignatureVerifier(
     fun verifyDownloadedApk(
         apkFile: File,
         expectedPackageName: String,
+        expectedVersionCode: Long,
         expectedSignerSha256: String,
     ): VerificationResult {
         if (!apkFile.isFile || apkFile.length() <= 0L) {
             return VerificationResult.Invalid("Downloaded APK is missing or empty")
         }
 
-        val installedSigner = installedSignerSha256()
+        val installedPackage = getPackageInfo(context.packageName)
+            ?: return VerificationResult.Invalid("Unable to read installed app metadata")
         val archiveInfo = context.packageManager.getPackageArchiveInfo(
             apkFile.absolutePath,
             signingFlags(),
         )
         val archiveSigner = archiveInfo?.signerSha256()
 
-        return when (
-            val validation = AndroidApkIdentityValidation.validate(
-                expectedPackageName = expectedPackageName,
-                installedPackageName = context.packageName,
-                apkPackageName = archiveInfo?.packageName,
-                expectedSignerSha256 = expectedSignerSha256,
-                installedSignerSha256 = installedSigner,
-                apkSignerSha256 = archiveSigner,
-            )
-        ) {
-            is AndroidApkIdentityValidation.Result.Valid ->
-                VerificationResult.Valid(validation.signerSha256)
-
-            is AndroidApkIdentityValidation.Result.Invalid ->
-                VerificationResult.Invalid(validation.reason)
+        val identityValidation = AndroidApkIdentityValidation.validate(
+            expectedPackageName = expectedPackageName,
+            installedPackageName = context.packageName,
+            apkPackageName = archiveInfo?.packageName,
+            expectedSignerSha256 = expectedSignerSha256,
+            installedSignerSha256 = installedPackage.signerSha256(),
+            apkSignerSha256 = archiveSigner,
+        )
+        if (identityValidation is AndroidApkIdentityValidation.Result.Invalid) {
+            return VerificationResult.Invalid(identityValidation.reason)
         }
+
+        val versionValidation = AndroidApkVersionValidation.validate(
+            installedVersionCode = installedPackage.appVersionCode(),
+            manifestVersionCode = expectedVersionCode,
+            apkVersionCode = archiveInfo?.appVersionCode() ?: 0L,
+        )
+        if (versionValidation is AndroidApkVersionValidation.Result.Invalid) {
+            return VerificationResult.Invalid(versionValidation.reason)
+        }
+
+        val validIdentity = identityValidation as AndroidApkIdentityValidation.Result.Valid
+        return VerificationResult.Valid(validIdentity.signerSha256)
     }
 
     private fun getPackageInfo(packageName: String): PackageInfo? = runCatching {
@@ -73,6 +81,13 @@ internal class AndroidApkSignatureVerifier(
     } else {
         @Suppress("DEPRECATION")
         PackageManager.GET_SIGNATURES
+    }
+
+    private fun PackageInfo.appVersionCode(): Long = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        longVersionCode
+    } else {
+        @Suppress("DEPRECATION")
+        versionCode.toLong()
     }
 
     private fun PackageInfo.signerSha256(): String? {
