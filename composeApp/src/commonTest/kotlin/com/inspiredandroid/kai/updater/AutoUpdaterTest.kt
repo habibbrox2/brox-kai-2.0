@@ -224,7 +224,6 @@ class AutoUpdaterTest {
         kotlin.test.assertFails { AndroidUpdateManifest.parse(raw) }
     }
 
-
     @Test
     fun androidUpgradeUsesVersionCodeNotVersionName() {
         val manifest = AndroidUpdateManifest(
@@ -241,5 +240,4 @@ class AutoUpdaterTest {
         assertFalse(manifest.isUpgradeFrom(190L))
         assertFalse(manifest.isUpgradeFrom(191L))
     }
-
 }
