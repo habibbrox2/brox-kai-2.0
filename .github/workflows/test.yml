@@ -150,6 +150,14 @@ jobs:
             androidApp/src/main/kotlin/com/inspiredandroid/kai/updater/AndroidApkSignatureVerifier.kt \
             androidApp/src/main/kotlin/com/inspiredandroid/kai/updater/AndroidUpdateDownloadWorker.kt \
             androidApp/src/main/kotlin/com/inspiredandroid/kai/updater/AndroidUpdateInstaller.kt \
+            androidApp/src/main/kotlin/com/inspiredandroid/kai/updater/AndroidUpdateSettingsSection.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/App.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/settings/SettingsScreen.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/settings/SettingsDetailPane.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/settings/GeneralSettings.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/updater/AndroidUpdateDiscovery.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/updater/AndroidUpdateDownloadRequestValidation.kt \
+            composeApp/src/commonTest/kotlin/com/inspiredandroid/kai/updater/AndroidUpdateDownloadRequestValidationTest.kt \
             composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/updater/AndroidApkVersionValidation.kt \
             composeApp/src/commonTest/kotlin/com/inspiredandroid/kai/updater/AndroidApkVersionValidationTest.kt \
             androidApp/build.gradle.kts \
