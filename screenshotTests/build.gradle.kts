@@ -50,6 +50,8 @@ dependencies {
     testImplementation(libs.compose.material3)
     testImplementation(libs.compose.components.resources)
     testImplementation(libs.multiplatform.settings.test)
+    testImplementation(libs.koin.compose)
+    testImplementation(libs.koin.core)
 }
 
 // Ensure composeApp resources are generated before screenshot tests
