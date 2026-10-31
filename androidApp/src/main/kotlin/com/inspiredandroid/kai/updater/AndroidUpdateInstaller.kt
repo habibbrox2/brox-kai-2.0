@@ -26,11 +26,7 @@ internal class AndroidUpdateInstaller(
         val updatesDirectory = File(context.filesDir, UPDATES_DIRECTORY).canonicalFile
         val candidate = runCatching { apkFile.canonicalFile }.getOrNull()
             ?: return InstallPreparation.Invalid("Downloaded APK path is invalid")
-        if (candidate.parentFile != updatesDirectory ||
-            candidate.name != manifest.assetName ||
-            !candidate.isFile ||
-            candidate.length() <= 0L
-        ) {
+        if (!AndroidUpdateApkPathValidation.isValid(updatesDirectory, candidate, manifest.assetName)) {
             return InstallPreparation.Invalid("Downloaded APK is outside the verified update directory")
         }
 
