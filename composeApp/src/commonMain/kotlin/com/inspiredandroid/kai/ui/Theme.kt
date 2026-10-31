@@ -735,8 +735,8 @@ fun Theme(
     content: @Composable () -> Unit,
 ) {
     val isLight = colorScheme.background.luminance() > 0.5f
-    val kaiColors = if (isLight) {
-        KaiColorPalette(
+    val kaiColors = when {
+        isLight -> KaiColorPalette(
             textPrimary = Color(0xFF0F172A),
             textSecondary = Color(0xFF475569),
             textTertiary = Color(0xFF64748B),
@@ -749,8 +749,33 @@ fun Theme(
             borderSoft = Color(0x33000000),
             borderStrong = Color(0x4D000000),
         )
-    } else {
-        KaiColorPalette(
+        colorScheme === OledColorScheme -> KaiColorPalette(
+            textPrimary = Color(0xFFFFFFFF),
+            textSecondary = Color(0xFFCBD5E1),
+            textTertiary = Color(0xFF94A3B8),
+            textMuted = Color(0xFF64748B),
+            surfaceElevated = Color(0xFF000000),
+            surfaceRaised = Color(0xFF0A0F1C),
+            cardFill = Color(0xE6000000),
+            cardSurface = Color(0xFF050810),
+            borderSubtle = Color(0x1AFFFFFF),
+            borderSoft = Color(0x33FFFFFF),
+            borderStrong = Color(0x4DFFFFFF),
+        )
+        colorScheme === MidnightColorScheme -> KaiColorPalette(
+            textPrimary = Color(0xFFECEAE4),
+            textSecondary = Color(0xFFCBD5E1),
+            textTertiary = Color(0xFF94A3B8),
+            textMuted = Color(0xFF64748B),
+            surfaceElevated = Color(0xFF0A0F1C),
+            surfaceRaised = Color(0xFF111827),
+            cardFill = Color(0xB3111B2E),
+            cardSurface = Color(0xFF0F172A),
+            borderSubtle = Color(0x26FFFFFF),
+            borderSoft = Color(0x33FFFFFF),
+            borderStrong = Color(0x4DFFFFFF),
+        )
+        else -> KaiColorPalette(
             textPrimary = Color(0xFFFFFFFF),
             textSecondary = Color(0xFFCBD5E1),
             textTertiary = Color(0xFF94A3B8),
