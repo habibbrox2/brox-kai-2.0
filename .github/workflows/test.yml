@@ -95,11 +95,12 @@ jobs:
           github.event_name == 'pull_request' &&
           steps.changes.outputs.has_changes == 'true'
         run: |
-          echo "::error::This pull request requires formatting or screenshot updates."
-          echo "Please run the following commands locally, commit the results, and push them to the PR branch:"
-          echo "  ./gradlew spotlessApply"
-          echo "  ./gradlew :screenshotTests:updateScreenshots"
-          echo "  ./scripts/convert-site-images-to-webp.sh"
+          echo "::error::This pull request requires formatting or generated asset updates."
+          echo "Generated/modified files:"
+          git status --short
+          echo "Diff summary:"
+          git diff --stat
+          echo "Please commit the generated results to the PR branch."
           exit 1
 
       - name: Commit and push changes
