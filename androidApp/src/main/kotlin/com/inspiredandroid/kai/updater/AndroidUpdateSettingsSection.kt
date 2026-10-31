@@ -1,6 +1,5 @@
 package com.inspiredandroid.kai.updater
 
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
@@ -22,13 +21,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import androidx.work.getWorkInfosForUniqueWorkFlow
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -48,10 +48,47 @@ internal fun AndroidUpdateSettingsSection() {
         .collectAsState(initial = emptyList())
 
     var checking by remember { mutableStateOf(false) }
-    var discoveryMessage by remember { mutableStateOf("Check GitHub for the latest stable release.") }
-    var manifest by remember { mutableStateOf<AndroidUpdateManifest?>(null) }
-    var downloadedApk by remember { mutableStateOf<File?>(null) }
-    var installerMessage by remember { mutableStateOf<String?>(null) }
+    var discoveryMessage by rememberSaveable { mutableStateOf("Check GitHub for the latest stable release.") }
+    val manifestSaver = remember {
+        listSaver<AndroidUpdateManifest?, Any>(
+            save = { value ->
+                value?.let {
+                    listOf(
+                        it.schemaVersion,
+                        it.packageName,
+                        it.versionName,
+                        it.versionCode,
+                        it.assetName,
+                        it.downloadUrl,
+                        it.sha256,
+                        it.signerCertificateSha256,
+                    )
+                } ?: emptyList()
+            },
+            restore = { saved ->
+                if (saved.size != 8) {
+                    null
+                } else {
+                    runCatching {
+                        AndroidUpdateManifest(
+                            schemaVersion = saved[0] as Int,
+                            packageName = saved[1] as String,
+                            versionName = saved[2] as String,
+                            versionCode = saved[3] as Long,
+                            assetName = saved[4] as String,
+                            downloadUrl = saved[5] as String,
+                            sha256 = saved[6] as String,
+                            signerCertificateSha256 = saved[7] as String,
+                        )
+                    }.getOrNull()
+                }
+            },
+        )
+    }
+    var manifest by rememberSaveable(stateSaver = manifestSaver) { mutableStateOf<AndroidUpdateManifest?>(null) }
+    var downloadedApkPath by rememberSaveable { mutableStateOf<String?>(null) }
+    val downloadedApk = remember(downloadedApkPath) { downloadedApkPath?.let(::File) }
+    var installerMessage by rememberSaveable { mutableStateOf<String?>(null) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult(),
@@ -68,13 +105,18 @@ internal fun AndroidUpdateSettingsSection() {
                         .onSuccess { installerMessage = "Android's installer was opened. Confirm the update there to continue." }
                         .onFailure { installerMessage = "Android could not open the package installer." }
                 }
+
                 is AndroidUpdateInstaller.InstallPreparation.PermissionRequired ->
                     installerMessage = "Installation permission is still required."
+
                 is AndroidUpdateInstaller.InstallPreparation.Unsupported ->
                     installerMessage = result.reason
+
                 is AndroidUpdateInstaller.InstallPreparation.Invalid ->
                     installerMessage = "APK verification failed: ${result.reason}"
             }
+        } else {
+            installerMessage = "Update details expired. Check for updates and download the APK again."
         }
     }
 
@@ -86,15 +128,18 @@ internal fun AndroidUpdateSettingsSection() {
                 try {
                     context.startActivity(result.installIntent)
                     installerMessage = "Android's installer was opened. Confirm the update there to continue."
-                } catch (_: ActivityNotFoundException) {
+                } catch (_: Exception) {
                     installerMessage = "Android could not open the package installer."
                 }
             }
+
             is AndroidUpdateInstaller.InstallPreparation.PermissionRequired -> {
                 installerMessage = "Allow installation from this source, then return here to verify the APK again."
                 permissionLauncher.launch(result.settingsIntent)
             }
+
             is AndroidUpdateInstaller.InstallPreparation.Unsupported -> installerMessage = result.reason
+
             is AndroidUpdateInstaller.InstallPreparation.Invalid -> installerMessage = "APK verification failed: ${result.reason}"
         }
     }
@@ -105,7 +150,7 @@ internal fun AndroidUpdateSettingsSection() {
         val currentManifest = manifest ?: return@LaunchedEffect
         val file = runCatching { File(path).canonicalFile }.getOrNull() ?: return@LaunchedEffect
         if (file.name == currentManifest.assetName && file.isFile && file.length() > 0L) {
-            downloadedApk = file
+            downloadedApkPath = file.absolutePath
             installerMessage = "Download complete. Verify and install when ready."
         }
     }
@@ -132,7 +177,7 @@ internal fun AndroidUpdateSettingsSection() {
                     checking = true
                     discoveryMessage = "Checking the latest stable GitHub release…"
                     manifest = null
-                    downloadedApk = null
+                    downloadedApkPath = null
                     installerMessage = null
                     scope.launch {
                         val result = runCatching {
@@ -145,9 +190,11 @@ internal fun AndroidUpdateSettingsSection() {
                                     AndroidUpdateDiscovery.Result.UpToDate -> {
                                         discoveryMessage = "This installation is up to date."
                                     }
+
                                     is AndroidUpdateDiscovery.Result.InvalidRelease -> {
                                         discoveryMessage = "Update metadata could not be validated: ${update.reason}"
                                     }
+
                                     is AndroidUpdateDiscovery.Result.UpdateAvailable -> {
                                         manifest = update.manifest
                                         discoveryMessage = "Version ${update.manifest.versionName} is available."
@@ -215,6 +262,9 @@ internal fun AndroidUpdateSettingsSection() {
                 val error = failed.outputData.getString(AndroidUpdateDownloadWorker.KEY_ERROR)
                 Text(error ?: "Update download failed.", color = MaterialTheme.colorScheme.error)
             }
+            if (!isDownloading && workInfos.any { it.state == WorkInfo.State.CANCELLED }) {
+                Text("Update download cancelled.", style = MaterialTheme.typography.bodySmall)
+            }
             installerMessage?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
         }
     }
@@ -227,16 +277,17 @@ private fun Context.installedVersionCode(): Long {
         @Suppress("DEPRECATION")
         packageManager.getPackageInfo(packageName, 0)
     }
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) info.longVersionCode else {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        info.longVersionCode
+    } else {
         @Suppress("DEPRECATION")
         info.versionCode.toLong()
     }
 }
 
 private fun formatBytes(value: Long): String {
-    if (value < 1024L) return "${value} B"
+    if (value < 1024L) return "$value B"
     val kib = value / 1024.0
     if (kib < 1024.0) return "${"%.1f".format(kib)} KB"
     return "${"%.1f".format(kib / 1024.0)} MB"
 }
-

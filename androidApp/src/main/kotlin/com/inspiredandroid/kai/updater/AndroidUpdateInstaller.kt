@@ -30,6 +30,13 @@ internal class AndroidUpdateInstaller(
             return InstallPreparation.Invalid("Downloaded APK is outside the verified update directory")
         }
 
+        when (val checksum = AndroidUpdateChecksumVerifier.verify(candidate, manifest.sha256)) {
+            is AndroidUpdateChecksumVerifier.Result.Invalid ->
+                return InstallPreparation.Invalid(checksum.reason)
+
+            AndroidUpdateChecksumVerifier.Result.Valid -> Unit
+        }
+
         when (
             val verification = signatureVerifier.verifyDownloadedApk(
                 apkFile = candidate,
@@ -61,7 +68,7 @@ internal class AndroidUpdateInstaller(
         val contentUri = try {
             FileProvider.getUriForFile(
                 context,
-                "${context.packageName}.fileprovider",
+                "${context.packageName}.updateprovider",
                 candidate,
             )
         } catch (_: IllegalArgumentException) {

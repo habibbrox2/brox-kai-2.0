@@ -136,8 +136,7 @@ internal class AndroidUpdateDownloadWorker(
         error("Too many update download redirects")
     }
 
-    private fun isValidDownloadRequest(url: String, sha256: String, assetName: String): Boolean =
-        AndroidUpdateDownloadRequestValidation.isValid(url, sha256, assetName)
+    private fun isValidDownloadRequest(url: String, sha256: String, assetName: String): Boolean = AndroidUpdateDownloadRequestValidation.isValid(url, sha256, assetName)
 
     private fun failure(message: String): Result = Result.failure(workDataOf(KEY_ERROR to message))
 

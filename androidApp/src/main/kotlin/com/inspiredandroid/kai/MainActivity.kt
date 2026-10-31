@@ -25,9 +25,9 @@ import androidx.navigation.compose.rememberNavController
 import com.inspiredandroid.kai.data.AppSettings
 import com.inspiredandroid.kai.data.DataRepository
 import com.inspiredandroid.kai.data.ThemeMode
-import com.inspiredandroid.kai.updater.AndroidUpdateSettingsSection
 import com.inspiredandroid.kai.ui.DarkColorScheme
 import com.inspiredandroid.kai.ui.LightColorScheme
+import com.inspiredandroid.kai.updater.AndroidUpdateSettingsSection
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.init
 import nl.marc_apps.tts.TextToSpeechEngine

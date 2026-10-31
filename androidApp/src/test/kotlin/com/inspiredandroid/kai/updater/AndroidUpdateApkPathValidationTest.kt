@@ -1,9 +1,10 @@
 package com.inspiredandroid.kai.updater
 
-import java.io.File
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.io.File
+import java.nio.file.Files
 
 class AndroidUpdateApkPathValidationTest {
     private val assetName = "Brox-Kai-2.0-v2.0.75-Android.apk"
@@ -55,7 +56,7 @@ class AndroidUpdateApkPathValidationTest {
     }
 
     private fun withTemporaryDirectory(block: (File) -> Unit) {
-        val root = createTempDir(prefix = "kai-update-test-")
+        val root = Files.createTempDirectory("kai-update-test-").toFile()
         try {
             block(root)
         } finally {
