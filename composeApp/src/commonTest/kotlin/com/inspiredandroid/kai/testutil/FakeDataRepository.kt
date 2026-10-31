@@ -47,6 +47,8 @@ class FakeDataRepository : DataRepository {
     override val fallbackStatus: MutableStateFlow<FallbackStatus?> = MutableStateFlow(null)
 
     val askCalls = mutableListOf<Pair<String?, List<PlatformFile>>>()
+    val confirmToolExecutionCalls = mutableListOf<Triple<String, Boolean, Boolean>>()
+    val denyToolExecutionCalls = mutableListOf<String>()
     var clearHistoryCalls = 0
     var askException: Exception? = null
 
@@ -319,6 +321,14 @@ class FakeDataRepository : DataRepository {
 
     override fun restoreCurrentConversation() {
         restoreCurrentConversationCalls++
+    }
+
+    override fun confirmToolExecution(toolCallId: String, allowOnce: Boolean, alwaysAllow: Boolean) {
+        confirmToolExecutionCalls.add(Triple(toolCallId, allowOnce, alwaysAllow))
+    }
+
+    override fun denyToolExecution(toolCallId: String) {
+        denyToolExecutionCalls.add(toolCallId)
     }
 
     override fun getToolDefinitions(): List<ToolInfo> = CommonTools.commonToolDefinitions
