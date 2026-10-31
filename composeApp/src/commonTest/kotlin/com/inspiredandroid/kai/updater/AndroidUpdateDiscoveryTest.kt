@@ -4,6 +4,7 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.assertTrue
 
 class AndroidUpdateDiscoveryTest {
     private fun release(
@@ -80,6 +81,34 @@ class AndroidUpdateDiscoveryTest {
         val api = "[${release("v2.0.76", includeManifest = false)}]"
         val result = AndroidUpdateDiscovery.check(189L) { api }
         assertIs<AndroidUpdateDiscovery.Result.InvalidRelease>(result)
+    }
+
+    @Test
+    fun reportsForbiddenGitHubApiResponse() = runTest {
+        val result = AndroidUpdateDiscovery.check(189L) { throw HttpRequestException(statusCode = 403) }
+        val invalid = assertIs<AndroidUpdateDiscovery.Result.InvalidRelease>(result)
+        assertTrue(invalid.reason.contains("HTTP 403"))
+    }
+
+    @Test
+    fun reportsGitHubRateLimit() = runTest {
+        val result = AndroidUpdateDiscovery.check(189L) { throw HttpRequestException(statusCode = 429) }
+        val invalid = assertIs<AndroidUpdateDiscovery.Result.InvalidRelease>(result)
+        assertTrue(invalid.reason.contains("rate limit"))
+    }
+
+    @Test
+    fun reportsGitHubServerError() = runTest {
+        val result = AndroidUpdateDiscovery.check(189L) { throw HttpRequestException(statusCode = 503) }
+        val invalid = assertIs<AndroidUpdateDiscovery.Result.InvalidRelease>(result)
+        assertTrue(invalid.reason.contains("HTTP 503"))
+    }
+
+    @Test
+    fun reportsTimeout() = runTest {
+        val result = AndroidUpdateDiscovery.check(189L) { throw HttpRequestException(timedOut = true) }
+        val invalid = assertIs<AndroidUpdateDiscovery.Result.InvalidRelease>(result)
+        assertTrue(invalid.reason.contains("timed out"))
     }
 
     @Test

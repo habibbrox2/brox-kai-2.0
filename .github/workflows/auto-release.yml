@@ -156,6 +156,21 @@ jobs:
               f.write("\n")
           PY
           test -s update.json
+          python3 - "$VERSION" "$VERSION_CODE" "$ASSET_NAME" <<'PY'
+          import json, re, sys
+          version, version_code, asset_name = sys.argv[1:]
+          with open("update.json", encoding="utf-8") as f:
+              m = json.load(f)
+          expected_url = f"https://github.com/habibbrox2/brox-kai-2.0/releases/download/v{version}/{asset_name}"
+          assert m.get("schemaVersion") == 1, "Invalid manifest schemaVersion"
+          assert m.get("packageName") == "com.inspiredandroid.kai", "Invalid packageName"
+          assert m.get("versionName") == version, "Manifest versionName mismatch"
+          assert m.get("versionCode") == int(version_code) and int(version_code) > 0, "Invalid versionCode"
+          assert m.get("assetName") == asset_name, "Manifest assetName mismatch"
+          assert m.get("downloadUrl") == expected_url, "Manifest downloadUrl mismatch"
+          assert re.fullmatch(r"[a-f0-9]{64}", m.get("sha256", "")), "Invalid APK SHA-256"
+          assert re.fullmatch(r"[a-f0-9]{64}", m.get("signerCertificateSha256", "")), "Invalid signer SHA-256"
+          PY
           cat update.json
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4

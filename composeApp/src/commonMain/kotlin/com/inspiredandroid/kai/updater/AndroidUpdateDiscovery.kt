@@ -1,6 +1,7 @@
 package com.inspiredandroid.kai.updater
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
@@ -38,6 +39,15 @@ object AndroidUpdateDiscovery {
         data class InvalidRelease(val reason: String) : Result
     }
 
+    private fun httpFailureReason(exception: HttpRequestException): String = when (exception.statusCode) {
+        403 -> "GitHub API access was forbidden (HTTP 403); rate limit or repository access may be restricted"
+        404 -> "GitHub update resource was not found (HTTP 404)"
+        429 -> "GitHub API rate limit exceeded (HTTP 429); try again later"
+        in 500..599 -> "GitHub service is temporarily unavailable (HTTP " + exception.statusCode + ")"
+        null -> if (exception.timedOut) "GitHub request timed out" else "Network request failed"
+        else -> "GitHub request failed (HTTP " + exception.statusCode + ")"
+    }
+
     suspend fun check(
         installedVersionCode: Long,
         fetchText: suspend (String) -> String = { url ->
@@ -53,8 +63,12 @@ object AndroidUpdateDiscovery {
         if (installedVersionCode <= 0L) return Result.InvalidRelease("Invalid installed version code")
         val releases = try {
             releaseJson.decodeFromString<List<GitHubRelease>>(fetchText(RELEASES_URL))
+        } catch (exception: HttpRequestException) {
+            return Result.InvalidRelease(httpFailureReason(exception))
+        } catch (_: SerializationException) {
+            return Result.InvalidRelease("GitHub releases response was not valid JSON")
         } catch (_: Exception) {
-            return Result.InvalidRelease("Unable to read GitHub releases")
+            return Result.InvalidRelease("Network error while reading GitHub releases")
         }
         val stable = releases
             .filter { !it.draft && !it.prerelease && it.tag_name.matches(Regex("^v2\\.0\\.[0-9]+$")) }
@@ -71,8 +85,13 @@ object AndroidUpdateDiscovery {
 
         val manifest = try {
             AndroidUpdateManifest.parse(fetchText(manifestAsset.browser_download_url))
+        } catch (exception: HttpRequestException) {
+            val detail = exception.statusCode?.let { "HTTP $it" } ?: if (exception.timedOut) "request timed out" else "network request failed"
+            return Result.InvalidRelease("Unable to download update manifest: $detail")
+        } catch (_: SerializationException) {
+            return Result.InvalidRelease("Update manifest was not valid JSON")
         } catch (_: Exception) {
-            return Result.InvalidRelease("Unable to parse update manifest")
+            return Result.InvalidRelease("Network error while reading update manifest")
         }
         when (val validation = manifest.validateForRelease(stable.tag_name)) {
             ManifestValidation.Valid -> Unit
