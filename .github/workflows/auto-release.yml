@@ -153,7 +153,7 @@ jobs:
           }
           with open("update.json", "w", encoding="utf-8") as f:
               json.dump(manifest, f, indent=2)
-              f.write("\\n")
+              f.write("\n")
           PY
           test -s update.json
           cat update.json
@@ -239,3 +239,4 @@ jobs:
           generate_release_notes: true
           files: |
             dist/Brox-Kai-*
+            dist/update.json
