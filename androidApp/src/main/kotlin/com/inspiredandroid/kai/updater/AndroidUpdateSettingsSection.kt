@@ -53,6 +53,14 @@ internal fun AndroidUpdateSettingsSection() {
     var downloadedApk by remember { mutableStateOf<File?>(null) }
     var installerMessage by remember { mutableStateOf<String?>(null) }
 
+    var onPermissionReturned by remember { mutableStateOf<() -> Unit>({}) }
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult(),
+    ) {
+        // Permission is not proof of installability: verify the APK again after returning.
+        onPermissionReturned()
+    }
+
     fun launchVerifiedInstall() {
         val currentManifest = manifest ?: return
         val apk = downloadedApk ?: return
@@ -67,23 +75,13 @@ internal fun AndroidUpdateSettingsSection() {
             }
             is AndroidUpdateInstaller.InstallPreparation.PermissionRequired -> {
                 installerMessage = "Allow installation from this source, then return here to verify the APK again."
-                permissionLauncherHolder?.invoke(result.settingsIntent)
+                permissionLauncher.launch(result.settingsIntent)
             }
             is AndroidUpdateInstaller.InstallPreparation.Unsupported -> installerMessage = result.reason
             is AndroidUpdateInstaller.InstallPreparation.Invalid -> installerMessage = "APK verification failed: ${result.reason}"
         }
     }
-
-    val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.StartActivityForResult(),
-    ) {
-        // Permission is not treated as proof of installability. Re-run all path, package,
-        // version and signer checks after returning from Android Settings.
-        launchVerifiedInstall()
-    }
-
-    // Keep a stable callback for the local install action above without retaining an Activity.
-    permissionLauncherHolder = { intent -> permissionLauncher.launch(intent) }
+    onPermissionReturned = { launchVerifiedInstall() }
 
     LaunchedEffect(workInfos, manifest) {
         val completed = workInfos.firstOrNull { it.state == WorkInfo.State.SUCCEEDED } ?: return@LaunchedEffect
@@ -226,8 +224,3 @@ private fun formatBytes(value: Long): String {
     return "${"%.1f".format(kib / 1024.0)} MB"
 }
 
-/**
- * The composable is hosted by one Activity. This holder is assigned during composition and is
- * only used by the click callback; the launcher itself owns lifecycle-safe result delivery.
- */
-private var permissionLauncherHolder: ((android.content.Intent) -> Unit)? = null
