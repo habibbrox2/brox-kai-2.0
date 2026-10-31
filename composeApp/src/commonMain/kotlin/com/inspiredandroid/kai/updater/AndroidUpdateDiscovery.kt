@@ -51,7 +51,11 @@ internal object AndroidUpdateDiscovery {
         },
     ): Result {
         if (installedVersionCode <= 0L) return Result.InvalidRelease("Invalid installed version code")
-        val releases = releaseJson.decodeFromString<List<GitHubRelease>>(fetchText(RELEASES_URL))
+        val releases = try {
+            releaseJson.decodeFromString<List<GitHubRelease>>(fetchText(RELEASES_URL))
+        } catch (_: Exception) {
+            return Result.InvalidRelease("Unable to read GitHub releases")
+        }
         val stable = releases
             .filter { !it.draft && !it.prerelease && it.tag_name.matches(Regex("^v2\\.0\\.[0-9]+$")) }
             .maxByOrNull { it.tag_name.removePrefix("v").substringAfterLast('.').toLongOrNull() ?: -1L }
