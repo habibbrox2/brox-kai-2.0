@@ -12,9 +12,9 @@ object AndroidUpdateDownloadRequestValidation {
     private const val RELEASE_PREFIX = "https://github.com/habibbrox2/brox-kai-2.0/releases/download/"
 
     fun isValid(url: String, sha256: String, assetName: String): Boolean {
-        if (!sha256Pattern.matches(sha256)) return false
-        val match = assetPattern.matchEntire(assetName) ?: return false
+        if (!SHA256_PATTERN.matches(sha256)) return false
+        val match = ASSET_PATTERN.matchEntire(assetName) ?: return false
         val tag = "v${match.groupValues[1]}"
-        return url == "$releasePrefix$tag/$assetName"
+        return url == "$RELEASE_PREFIX$tag/$assetName"
     }
 }
