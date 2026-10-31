@@ -6,6 +6,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
@@ -20,6 +21,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
@@ -169,19 +172,18 @@ private fun QuickStartCards(onQuickStart: (String) -> Unit) {
             accentColor = UserBubbleBlue,
         ),
     )
-    androidx.compose.foundation.layout.FlowRow(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
+            .horizontalScroll(rememberScrollState())
             .padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(ChatSpacing.sm),
-        verticalArrangement = Arrangement.spacedBy(ChatSpacing.sm),
-        maxItemsInEachRow = 2,
     ) {
         items.forEach { item ->
             QuickStartCard(
                 item = item,
                 onClick = { onQuickStart(item.prompt) },
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.widthIn(min = 200.dp, max = 260.dp),
             )
         }
     }

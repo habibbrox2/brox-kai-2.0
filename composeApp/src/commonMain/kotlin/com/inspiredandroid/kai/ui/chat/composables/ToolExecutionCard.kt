@@ -394,7 +394,7 @@ fun ToolExecutionCard(
                 ) {
                     Text(text = toolIcon, style = KaiTypography.titleSmall)
                     Text(
-                        text = "Used tool: $toolName",
+                        text = "Tool call",
                         style = KaiTypography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
                         fontFamily = FontFamily.Monospace,
                         color = textSlate,

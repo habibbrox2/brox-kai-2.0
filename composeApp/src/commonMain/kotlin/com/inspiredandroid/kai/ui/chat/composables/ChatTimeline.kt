@@ -1,10 +1,12 @@
 package com.inspiredandroid.kai.ui.chat.composables
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -161,113 +163,119 @@ fun ChatTimeline(
             ),
         ) {
             items(uiState.history, key = { it.id }, contentType = { it.role }) { history ->
-                when (history.role) {
-                    History.Role.USER -> {
-                        if (history.uiSubmission == null) {
-                            UserMessage(
-                                message = history.content,
-                                attachments = history.attachments,
-                            )
-                        }
-                    }
-
-                    History.Role.ASSISTANT -> {
-                        if (history.content.isNotEmpty() && !history.isThinking) {
-                            val isLastAssistant = history.id == lastAssistantId
-                            val frozen = frozenByAssistantId[history.id]
-                            val pairedUserId = userIdByAssistantId[history.id]
-                            BotMessage(
-                                message = history.content,
-                                textToSpeech = textToSpeech,
-                                isSpeaking = uiState.isSpeaking && uiState.isSpeakingContentId == history.id,
-                                setIsSpeaking = {
-                                    uiState.actions.setIsSpeaking(it, history.id)
-                                },
-                                onRegenerate = if (isLastAssistant) uiState.actions.regenerate else null,
-                                isInteractive = isLastAssistant && !uiState.isLoading && frozen == null,
-                                onUiCallback = { event, data ->
-                                    uiState.actions.submitUiCallback(event, data)
-                                },
-                                frozen = frozen,
-                                onResubmit = if (pairedUserId != null && !uiState.isLoading) {
-                                    { event, data -> uiState.actions.resubmit(pairedUserId, event, data) }
-                                } else {
-                                    null
-                                },
-                                reasoningSegments = reasoningSegmentsByAssistantId[history.id] ?: persistentListOf(),
-                                isFirstMessage = history.id == firstAssistantId,
-                            )
-                            if (history.fallbackServiceName != null) {
-                                Text(
-                                    text = stringResource(Res.string.fallback_answered_by, history.fallbackServiceName),
-                                    style = KaiTypography.labelSmall,
-                                    color = TextSecondary,
-                                    modifier = Modifier.padding(start = 16.dp, bottom = 8.dp),
+                AnimatedVisibility(
+                    visible = true,
+                    enter = fadeIn(animationSpec = tween(durationMillis = 300)) +
+                        slideInVertically(animationSpec = tween(durationMillis = 300)) { it / 4 },
+                ) {
+                    when (history.role) {
+                        History.Role.USER -> {
+                            if (history.uiSubmission == null) {
+                                UserMessage(
+                                    message = history.content,
+                                    attachments = history.attachments,
                                 )
                             }
-                        } else if (history.isThinking &&
-                            history.content.isNotEmpty() &&
-                            history.id !in suppressedThinkingIds
-                        ) {
-                            BotMessage(
-                                message = "",
-                                textToSpeech = null,
-                                isSpeaking = false,
-                                setIsSpeaking = {},
-                                reasoningSegments = reasoningSegmentsByAssistantId[history.id]
-                                    ?: persistentListOf(history.content),
-                                isFirstMessage = history.id == firstAssistantId,
-                            )
                         }
-                    }
 
-                    History.Role.TOOL_EXECUTING -> {
-                        val isShell = history.content == "execute_shell_command" || history.toolName == "execute_shell_command"
-                        if (isShell) {
-                            val cmd = history.toolName.takeUnless { it == "execute_shell_command" } ?: history.content
-                            ShellExecutionCard(
-                                command = cmd,
-                                isRunning = true,
-                            )
-                        } else {
-                            ToolExecutionCard(
-                                toolName = history.toolName ?: history.content,
-                                isRunning = true,
-                            )
+                        History.Role.ASSISTANT -> {
+                            if (history.content.isNotEmpty() && !history.isThinking) {
+                                val isLastAssistant = history.id == lastAssistantId
+                                val frozen = frozenByAssistantId[history.id]
+                                val pairedUserId = userIdByAssistantId[history.id]
+                                BotMessage(
+                                    message = history.content,
+                                    textToSpeech = textToSpeech,
+                                    isSpeaking = uiState.isSpeaking && uiState.isSpeakingContentId == history.id,
+                                    setIsSpeaking = {
+                                        uiState.actions.setIsSpeaking(it, history.id)
+                                    },
+                                    onRegenerate = if (isLastAssistant) uiState.actions.regenerate else null,
+                                    isInteractive = isLastAssistant && !uiState.isLoading && frozen == null,
+                                    onUiCallback = { event, data ->
+                                        uiState.actions.submitUiCallback(event, data)
+                                    },
+                                    frozen = frozen,
+                                    onResubmit = if (pairedUserId != null && !uiState.isLoading) {
+                                        { event, data -> uiState.actions.resubmit(pairedUserId, event, data) }
+                                    } else {
+                                        null
+                                    },
+                                    reasoningSegments = reasoningSegmentsByAssistantId[history.id] ?: persistentListOf(),
+                                    isFirstMessage = history.id == firstAssistantId,
+                                )
+                                if (history.fallbackServiceName != null) {
+                                    Text(
+                                        text = stringResource(Res.string.fallback_answered_by, history.fallbackServiceName),
+                                        style = KaiTypography.labelSmall,
+                                        color = TextSecondary,
+                                        modifier = Modifier.padding(start = 16.dp, bottom = 8.dp),
+                                    )
+                                }
+                            } else if (history.isThinking &&
+                                history.content.isNotEmpty() &&
+                                history.id !in suppressedThinkingIds
+                            ) {
+                                BotMessage(
+                                    message = "",
+                                    textToSpeech = null,
+                                    isSpeaking = false,
+                                    setIsSpeaking = {},
+                                    reasoningSegments = reasoningSegmentsByAssistantId[history.id]
+                                        ?: persistentListOf(history.content),
+                                    isFirstMessage = history.id == firstAssistantId,
+                                )
+                            }
                         }
-                    }
 
-                    History.Role.TOOL -> {
-                        val isShell = history.toolName == "execute_shell_command"
-                        if (isShell) {
-                            val matchingToolCall = timelineData.findShellToolCall(history.toolCallId)
-                            val shellDetails = if (matchingToolCall != null) {
-                                val parsedCmd = ActivityMapper.parseShellCommand(matchingToolCall.arguments)
-                                ActivityMapper.parseShellResult(parsedCmd, history.content)
+                        History.Role.TOOL_EXECUTING -> {
+                            val isShell = history.content == "execute_shell_command" || history.toolName == "execute_shell_command"
+                            if (isShell) {
+                                val cmd = history.toolName.takeUnless { it == "execute_shell_command" } ?: history.content
+                                ShellExecutionCard(
+                                    command = cmd,
+                                    isRunning = true,
+                                )
                             } else {
-                                ActivityMapper.parseShellResult(
-                                    ActivityDetails.ShellCommand(command = "execute_shell_command"),
-                                    history.content,
+                                ToolExecutionCard(
+                                    toolName = history.toolName ?: history.content,
+                                    isRunning = true,
                                 )
                             }
-                            ShellExecutionCard(
-                                command = shellDetails.command.ifEmpty { "execute_shell_command" },
-                                workingDirectory = shellDetails.workingDirectory,
-                                stdout = shellDetails.stdout,
-                                stderr = shellDetails.stderr,
-                                exitCode = shellDetails.exitCode,
-                                isRunning = false,
-                            )
-                        } else {
-                            val matchingToolCall = history.toolCallId?.let(timelineData.toolCallsById::get)
-                            val isError = history.content.contains("\"success\":false") || history.content.contains("\"error\"")
-                            ToolExecutionCard(
-                                toolName = history.toolName ?: "tool",
-                                arguments = matchingToolCall?.arguments,
-                                result = history.content,
-                                isRunning = false,
-                                isError = isError,
-                            )
+                        }
+
+                        History.Role.TOOL -> {
+                            val isShell = history.toolName == "execute_shell_command"
+                            if (isShell) {
+                                val matchingToolCall = timelineData.findShellToolCall(history.toolCallId)
+                                val shellDetails = if (matchingToolCall != null) {
+                                    val parsedCmd = ActivityMapper.parseShellCommand(matchingToolCall.arguments)
+                                    ActivityMapper.parseShellResult(parsedCmd, history.content)
+                                } else {
+                                    ActivityMapper.parseShellResult(
+                                        ActivityDetails.ShellCommand(command = "execute_shell_command"),
+                                        history.content,
+                                    )
+                                }
+                                ShellExecutionCard(
+                                    command = shellDetails.command.ifEmpty { "execute_shell_command" },
+                                    workingDirectory = shellDetails.workingDirectory,
+                                    stdout = shellDetails.stdout,
+                                    stderr = shellDetails.stderr,
+                                    exitCode = shellDetails.exitCode,
+                                    isRunning = false,
+                                )
+                            } else {
+                                val matchingToolCall = history.toolCallId?.let(timelineData.toolCallsById::get)
+                                val isError = history.content.contains("\"success\":false") || history.content.contains("\"error\"")
+                                ToolExecutionCard(
+                                    toolName = history.toolName ?: "tool",
+                                    arguments = matchingToolCall?.arguments,
+                                    result = history.content,
+                                    isRunning = false,
+                                    isError = isError,
+                                )
+                            }
                         }
                     }
                 }
