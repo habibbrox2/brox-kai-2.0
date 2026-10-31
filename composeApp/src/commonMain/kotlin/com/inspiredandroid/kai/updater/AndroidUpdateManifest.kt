@@ -15,6 +15,8 @@ data class AndroidUpdateManifest(
     val sha256: String,
     val signerCertificateSha256: String,
 ) {
+    fun isUpgradeFrom(installedVersionCode: Long): Boolean = versionCode > installedVersionCode
+
     fun validateForRelease(tagName: String): ManifestValidation {
         if (schemaVersion != 1) return ManifestValidation.Invalid("Unsupported manifest schema")
         if (packageName != EXPECTED_PACKAGE_NAME) return ManifestValidation.Invalid("Unexpected package name")
