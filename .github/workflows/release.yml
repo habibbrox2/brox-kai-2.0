@@ -79,13 +79,42 @@ jobs:
           set -euo pipefail
           APK="androidApp/build/outputs/apk/foss/release/androidApp-foss-release.apk"
           test -s "$APK"
-          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs "$APK"
-          sha256sum "$APK"
+          APKSIGNER="$ANDROID_HOME/build-tools/36.0.0/apksigner"
+          "$APKSIGNER" verify --verbose --print-certs "$APK" | tee "$RUNNER_TEMP/apk-signature.txt"
+          CERT_SHA256=$(sed -nE 's/.*certificate SHA-256 digest: ([0-9a-fA-F:]+).*/\1/p' "$RUNNER_TEMP/apk-signature.txt" | head -n1 | tr -d ':' | tr '[:upper:]' '[:lower:]')
+          APK_SHA256=$(sha256sum "$APK" | awk '{print $1}')
+          VERSION="${GITHUB_REF_NAME#v}"
+          VERSION_CODE=$(grep -oP 'android-versionCode = "\K[0-9]+' gradle/libs.versions.toml)
+          ASSET_NAME="Brox-Kai-2.0-v${VERSION}-Android.apk"
+          python3 - "$VERSION" "$VERSION_CODE" "$ASSET_NAME" "$APK_SHA256" "$CERT_SHA256" <<'PY'
+          import json, sys
+          version, version_code, asset_name, sha256, cert_sha256 = sys.argv[1:]
+          manifest = {
+              "schemaVersion": 1,
+              "packageName": "com.inspiredandroid.kai",
+              "versionName": version,
+              "versionCode": int(version_code),
+              "assetName": asset_name,
+              "downloadUrl": f"https://github.com/habibbrox2/brox-kai-2.0/releases/download/v{version}/{asset_name}",
+              "sha256": sha256,
+              "signerCertificateSha256": cert_sha256,
+          }
+          with open("update.json", "w", encoding="utf-8") as f:
+              json.dump(manifest, f, indent=2)
+              f.write("\\n")
+          PY
+          test -s update.json
+          cat update.json
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: signed-apk
-          path: androidApp/build/outputs/apk/foss/release/androidApp-foss-release-signed.apk
+          path: androidApp/build/outputs/apk/foss/release/androidApp-foss-release.apk
+      - name: Upload update manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: update-manifest
+          path: update.json
 
   dmg:
     name: Generate DMG
@@ -343,6 +372,10 @@ jobs:
         uses: actions/download-artifact@v4.1.7
         with:
           name: signed-apk
+      - name: Download update manifest
+        uses: actions/download-artifact@v4.1.7
+        with:
+          name: update-manifest
 
       - name: Download DMG Artifact
         uses: actions/download-artifact@v4.1.7
@@ -385,7 +418,8 @@ jobs:
       - name: Rename assets
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
-          mv androidApp-foss-release-signed.apk "Kai-${VERSION}-android.apk"
+          mv androidApp-foss-release.apk "Brox-Kai-2.0-v${VERSION}-Android.apk"
+          test -s update.json
           mv *.dmg "Kai-${VERSION}-macos.dmg"
           mv *.msi "Kai-${VERSION}-windows.msi"
           mv *.deb "Kai-${VERSION}-linux.deb"
@@ -433,6 +467,8 @@ jobs:
           body_path: changelog.txt
           files: |
             Kai-*
+            Brox-Kai-2.0-v*-Android.apk
+            update.json
             SHA256SUMS
 
       - name: Sync winget-pkgs fork
