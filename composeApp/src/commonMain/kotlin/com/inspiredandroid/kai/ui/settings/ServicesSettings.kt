@@ -1194,7 +1194,7 @@ private fun ServiceSettings(
             isLoading = isFetchingModels,
             errorMessage = modelFetchError,
             onRetry = onRetryFetchModels,
-            canRetry = apiKey.isNotBlank() || !isCloudflare,
+            canRetry = apiKey.isNotBlank(),
         )
     }
 }
@@ -1354,7 +1354,7 @@ private fun OpenAICompatibleSettings(
         ModelFetchFeedback(
             isFetchingModels = isFetchingModels,
             error = modelFetchError,
-            canRetry = apiKey.isNotBlank(),
+            canRetry = apiKey.isNotBlank() || !isCloudflare,
             onRetry = onRetryFetchModels,
             showEmpty = false,
         )
@@ -1367,7 +1367,7 @@ private fun OpenAICompatibleSettings(
             isLoading = isFetchingModels,
             errorMessage = modelFetchError,
             onRetry = onRetryFetchModels,
-            canRetry = apiKey.isNotBlank(),
+            canRetry = apiKey.isNotBlank() || !isCloudflare,
         )
         Spacer(Modifier.height(8.dp))
     }

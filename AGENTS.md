@@ -43,5 +43,8 @@
 - The existing `.github/workflows/test.yml` runs `spotlessApply`, updates screenshots, converts site images, and may commit/push generated changes. Do not treat it as a read-only check or trigger it casually.
 - Never claim a target passes unless its command completed successfully in this checkout.
 
+## Subagent delegation
+- Always utilize specialized subagents whenever necessary (such as for broad codebase research, deep investigation, or parallelizable subtasks) to ensure clean context and focused execution.
+
 ## Git commit messages
 - Do **not** add "Generated with Codebuff", "Co-Authored-By: Codebuff", or similar AI attribution/footer lines to commit messages. Keep commit messages clean and descriptive.
