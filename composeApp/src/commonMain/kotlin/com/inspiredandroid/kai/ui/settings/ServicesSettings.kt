@@ -1204,8 +1204,13 @@ private fun OpenAICompatibleSettings(
         ),
     )
     if (baseUrl.isNotBlank()) {
+        val endpointPreview = if (isCloudflare) {
+            "https://api.cloudflare.com/client/v4/accounts/${baseUrl.trim()}/ai/v1/chat/completions"
+        } else {
+            "${Service.normalizeOpenAICompatibleBaseUrl(baseUrl)}${Service.OpenAICompatible.chatUrl}"
+        }
         Text(
-            text = "${Service.normalizeOpenAICompatibleBaseUrl(baseUrl)}${Service.OpenAICompatible.chatUrl}",
+            text = endpointPreview,
             style = KaiTypography.bodySmall,
             color = TextSecondary,
             modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 4.dp),
