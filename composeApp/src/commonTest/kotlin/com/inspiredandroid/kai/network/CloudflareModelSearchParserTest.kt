@@ -50,6 +50,18 @@ class CloudflareModelSearchParserTest {
     }
 
     @Test
+    fun `extracts Cloudflare API error messages from non-success envelopes`() {
+        assertEquals(
+            "Authentication error: invalid API token",
+            parseCloudflareModelSearchError(
+                """{"success":false,"errors":[{"code":10000,"message":"Authentication error: invalid API token"}]}""",
+            ),
+        )
+        assertEquals(null, parseCloudflareModelSearchError("""{"success":true,"result":[]}"""))
+        assertEquals(null, parseCloudflareModelSearchError("not-json"))
+    }
+
+    @Test
     fun `rejects malformed result shape`() {
         assertFailsWith<IllegalArgumentException> {
             parseCloudflareModelSearchPage("""{"success":true,"result":{}}""")
