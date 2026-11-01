@@ -36,6 +36,6 @@ data class ChatActions(
     val sendSmsDraft: (String) -> Unit,
     val discardSmsDraft: (String) -> Unit,
     val consumeComposerPrefill: () -> Unit,
-    val confirmToolExecution: (toolCallId: String, allowOnce: Boolean, alwaysAllow: Boolean) -> Unit = { _, _, _ -> },
+    val confirmToolExecution: (toolCallId: String, allowOnce: Boolean, alwaysAllow: Boolean, allowSession: Boolean) -> Unit = { _, _, _, _ -> },
     val denyToolExecution: (toolCallId: String) -> Unit = {},
 )

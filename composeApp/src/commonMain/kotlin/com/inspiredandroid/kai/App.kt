@@ -169,6 +169,15 @@ private fun AppContent(
     }
 
     val themeMode by appSettings.themeModeFlow.collectAsStateWithLifecycle()
+    val appLanguage by appSettings.appLanguageFlow.collectAsStateWithLifecycle()
+
+    LaunchedEffect(appLanguage) {
+        try {
+            java.util.Locale.setDefault(java.util.Locale.forLanguageTag(appLanguage.code))
+        } catch (_: Exception) {
+            // best-effort; ignore on platforms without Locale support
+        }
+    }
     val systemInDark = isSystemInDarkTheme()
     val effectiveColorScheme = when (themeMode) {
         ThemeMode.System -> if (systemInDark) darkColorScheme else lightColorScheme

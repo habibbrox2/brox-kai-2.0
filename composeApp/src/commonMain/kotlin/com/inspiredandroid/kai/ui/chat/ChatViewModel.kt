@@ -83,8 +83,8 @@ class ChatViewModel(
         sendSmsDraft = ::sendSmsDraft,
         discardSmsDraft = ::discardSmsDraft,
         consumeComposerPrefill = ::consumeComposerPrefill,
-        confirmToolExecution = { toolCallId, allowOnce, alwaysAllow ->
-            dataRepository.confirmToolExecution(toolCallId, allowOnce, alwaysAllow)
+        confirmToolExecution = { toolCallId, allowOnce, alwaysAllow, allowSession ->
+            dataRepository.confirmToolExecution(toolCallId, allowOnce, alwaysAllow, allowSession)
         },
         denyToolExecution = { toolCallId ->
             dataRepository.denyToolExecution(toolCallId)

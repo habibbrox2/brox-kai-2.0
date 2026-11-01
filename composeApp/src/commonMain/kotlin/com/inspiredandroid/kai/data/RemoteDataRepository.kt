@@ -198,7 +198,7 @@ class RemoteDataRepository(
     private val localInferenceEngine: LocalInferenceEngine? = null,
 ) : DataRepository {
 
-    private val toolPermissionManager = ToolPermissionManager(appSettings)
+    private val toolPermissionManager = ToolPermissionManager(appSettings, mcpServerManager)
 
     private data class PendingToolExecution(
         val deferred: CompletableDeferred<ToolConfirmationResult>,
@@ -764,6 +764,8 @@ class RemoteDataRepository(
                 val perm = appSettings.getToolPermission(name, scope)
                 if (perm?.policy == ToolPermissionPolicy.ALLOW_ONCE) {
                     toolPermissionManager.consumeAllowOnce(name, scope)
+                } else if (perm?.policy == ToolPermissionPolicy.ALLOW_SESSION) {
+                    toolPermissionManager.recordAllowSession(name, scope)
                 }
             }
             val result = try {
@@ -1468,6 +1470,8 @@ class RemoteDataRepository(
                             val perm = appSettings.getToolPermission(name, scope)
                             if (perm?.policy == ToolPermissionPolicy.ALLOW_ONCE) {
                                 toolPermissionManager.consumeAllowOnce(name, scope)
+                            } else if (perm?.policy == ToolPermissionPolicy.ALLOW_SESSION) {
+                                toolPermissionManager.recordAllowSession(name, scope)
                             }
                         }
                         val result = toolExecutor.executeTool(name, arguments, conversationIdSnapshot)
@@ -2081,6 +2085,12 @@ class RemoteDataRepository(
         appSettings.setThemeMode(mode)
     }
 
+    override fun getAppLanguage(): AppLanguage = appSettings.getAppLanguage()
+
+    override fun setAppLanguage(language: AppLanguage) {
+        appSettings.setAppLanguage(language)
+    }
+
     private var interactiveModeFlag = appSettings.getCurrentInteractiveMode()
 
     override fun setInteractiveMode(enabled: Boolean) {
@@ -2401,11 +2411,13 @@ class RemoteDataRepository(
         _openAssistRequested.value = false
     }
 
-    override fun confirmToolExecution(toolCallId: String, allowOnce: Boolean, alwaysAllow: Boolean) {
+    override fun confirmToolExecution(toolCallId: String, allowOnce: Boolean, alwaysAllow: Boolean, allowSession: Boolean) {
         val pending = pendingToolExecutions[toolCallId]
         if (pending != null) {
             if (alwaysAllow) {
                 toolPermissionManager.recordAlwaysAllow(pending.toolName, pending.scope)
+            } else if (allowSession) {
+                toolPermissionManager.recordAllowSession(pending.toolName, pending.scope)
             } else if (allowOnce) {
                 toolPermissionManager.recordAllowOnce(pending.toolName, pending.scope)
             }

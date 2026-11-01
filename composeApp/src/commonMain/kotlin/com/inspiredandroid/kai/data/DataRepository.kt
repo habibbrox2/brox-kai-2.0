@@ -119,6 +119,10 @@ interface DataRepository {
     fun getThemeMode(): ThemeMode
     fun setThemeMode(mode: ThemeMode)
 
+    // App language
+    fun getAppLanguage(): AppLanguage
+    fun setAppLanguage(language: AppLanguage)
+
     // Interactive mode
     fun setInteractiveMode(enabled: Boolean)
     fun isInteractiveModeActive(): Boolean
@@ -203,7 +207,7 @@ interface DataRepository {
     fun importSettingsFromJson(json: String, sections: Set<ImportSection>, replace: Boolean): Int
 
     // Tool confirmation
-    fun confirmToolExecution(toolCallId: String, allowOnce: Boolean = false, alwaysAllow: Boolean = false)
+    fun confirmToolExecution(toolCallId: String, allowOnce: Boolean = false, alwaysAllow: Boolean = false, allowSession: Boolean = false)
     fun denyToolExecution(toolCallId: String)
 
     // Background ask with tools (no chat history update, supports tool-calling loop).

@@ -49,6 +49,19 @@ expect fun prefersReducedMotion(): Boolean
 
 expect fun getAppFilesDirectory(): String
 
+/**
+ * Returns the SIM operator as MCC+MNC (e.g. "47001") if available, or null.
+ * Android: TelephonyManager.getSimOperator(); iOS: CoreTelephony.
+ * Desktop/Web return null.
+ */
+expect fun getSimOperatorCode(): String?
+
+/**
+ * Returns a map of device/platform information usable by the agent.
+ * Keys include at least "platform" and "appVersion"; platforms may add more.
+ */
+expect fun getDeviceInfo(): Map<String, Any>
+
 expect fun getAvailableTools(): List<Tool>
 
 /**

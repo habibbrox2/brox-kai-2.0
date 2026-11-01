@@ -42,5 +42,9 @@ fun buildAgentToolSet(
 
     platformExtras()
 
+    // MCP server management tools let the chat agent add/remove/toggle/connect servers
+    // on behalf of the user, in addition to the per-server MCP tools below.
+    addAll(McpManagementTools.getMcpManagementTools(mcpServerManager))
+
     addAll(mcpServerManager.getEnabledMcpTools(reservedNames = mapTo(HashSet()) { it.schema.name }))
 }

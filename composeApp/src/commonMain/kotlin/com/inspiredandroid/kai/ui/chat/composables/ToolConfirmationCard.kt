@@ -43,6 +43,7 @@ fun ToolConfirmationCard(
     arguments: String,
     onDeny: () -> Unit,
     onAllowOnce: () -> Unit,
+    onAllowSession: () -> Unit = {},
     onAlwaysAllow: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -127,6 +128,16 @@ fun ToolConfirmationCard(
                 ),
             ) {
                 Text("Allow once", style = KaiTypography.labelMedium)
+            }
+            Button(
+                onClick = onAllowSession,
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF6366F1),
+                ),
+            ) {
+                Text("Allow session", style = KaiTypography.labelMedium)
             }
             Button(
                 onClick = onAlwaysAllow,

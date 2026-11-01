@@ -95,6 +95,42 @@ val popularMcpServers = listOf(
         url = "https://subwayinfo.nyc/mcp",
         description = "Real-time NYC transit info",
     ),
+    PopularMcpServer(
+        name = "GitHub",
+        url = "https://api.githubcopilot.com/mcp/",
+        description = "GitHub repos, issues, PRs, and code search (requires a GitHub token)",
+        requiresAuth = true,
+    ),
+    PopularMcpServer(
+        name = "Notion",
+        url = "https://mcp.notion.com/mcp",
+        description = "Notion pages, databases, and search (requires a Notion integration token)",
+        requiresAuth = true,
+    ),
+    PopularMcpServer(
+        name = "Figma",
+        url = "https://mcp.figma.com/mcp",
+        description = "Figma design context and components (requires a Figma personal access token)",
+        requiresAuth = true,
+    ),
+    PopularMcpServer(
+        name = "Supabase",
+        url = "https://mcp.supabase.com/mcp",
+        description = "Supabase projects, database, and auth (requires a Supabase access token)",
+        requiresAuth = true,
+    ),
+    PopularMcpServer(
+        name = "Tavily",
+        url = "https://mcp.tavily.com/mcp",
+        description = "Advanced web search and research (requires a Tavily API key)",
+        requiresAuth = true,
+    ),
+    PopularMcpServer(
+        name = "Firecrawl",
+        url = "https://mcp.firecrawl.dev/v2/mcp",
+        description = "Web scraping and crawling. Note: Firecrawl uses a per-key URL (https://mcp.firecrawl.dev/<API_KEY>/v2/mcp) — paste your full URL in the add form",
+        requiresAuth = true,
+    ),
 )
 
 /** Merge [defaults] into [existing], keeping any header key the user already set (case-insensitive). */

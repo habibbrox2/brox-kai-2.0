@@ -9,6 +9,7 @@ import com.inspiredandroid.kai.data.DataRepository
 import com.inspiredandroid.kai.data.ImportSection
 import com.inspiredandroid.kai.data.Service
 import com.inspiredandroid.kai.data.TaskScheduler
+import com.inspiredandroid.kai.data.AppLanguage
 import com.inspiredandroid.kai.data.ThemeMode
 import com.inspiredandroid.kai.data.supportsAgenticFlows
 import com.inspiredandroid.kai.getBackgroundDispatcher
@@ -83,6 +84,7 @@ class SettingsViewModel(
         soulText = dataRepository.getSoulText(),
         isDynamicUiEnabled = dataRepository.isDynamicUiEnabled(),
         themeMode = dataRepository.getThemeMode(),
+        appLanguage = dataRepository.getAppLanguage(),
         isMemoryEnabled = dataRepository.isMemoryEnabled(),
         memories = dataRepository.getMemories().toImmutableList(),
         isSchedulingEnabled = dataRepository.isSchedulingEnabled(),
@@ -156,6 +158,7 @@ class SettingsViewModel(
         onSaveSoul = ::onSaveSoul,
         onToggleDynamicUi = ::onToggleDynamicUi,
         onChangeThemeMode = ::onChangeThemeMode,
+        onChangeAppLanguage = ::onChangeAppLanguage,
         onToggleMemory = ::onToggleMemory,
         onDeleteMemory = ::onDeleteMemory,
         onUpdateMemory = ::onUpdateMemory,
@@ -504,6 +507,11 @@ class SettingsViewModel(
     private fun onChangeThemeMode(mode: ThemeMode) {
         dataRepository.setThemeMode(mode)
         _state.update { it.copy(themeMode = mode) }
+    }
+
+    private fun onChangeAppLanguage(language: AppLanguage) {
+        dataRepository.setAppLanguage(language)
+        _state.update { it.copy(appLanguage = language) }
     }
 
     private fun onToggleMemory(enabled: Boolean) {

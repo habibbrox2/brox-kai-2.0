@@ -78,6 +78,7 @@ internal class AndroidUpdateInstaller(
         val installIntent = Intent(Intent.ACTION_VIEW).apply {
             setDataAndType(contentUri, APK_MIME_TYPE)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         return InstallPreparation.Ready(installIntent)
     }

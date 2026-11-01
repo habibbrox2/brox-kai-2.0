@@ -12,6 +12,7 @@ data class ToolPermission(
 enum class ToolPermissionPolicy {
     ASK_ALWAYS,
     ALLOW_ONCE,
+    ALLOW_SESSION,
     ALWAYS_ALLOW,
 }
 

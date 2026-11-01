@@ -302,8 +302,9 @@ fun ChatTimeline(
                                 toolCallId = toolCallId,
                                 arguments = history.content,
                                 onDeny = { uiState.actions.denyToolExecution(toolCallId) },
-                                onAllowOnce = { uiState.actions.confirmToolExecution(toolCallId, true, false) },
-                                onAlwaysAllow = { uiState.actions.confirmToolExecution(toolCallId, false, true) },
+                                onAllowOnce = { uiState.actions.confirmToolExecution(toolCallId, true, false, false) },
+                                onAllowSession = { uiState.actions.confirmToolExecution(toolCallId, false, false, true) },
+                                onAlwaysAllow = { uiState.actions.confirmToolExecution(toolCallId, false, true, false) },
                             )
                         }
                     }

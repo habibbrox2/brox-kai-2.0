@@ -16,6 +16,7 @@ class KaiApplication : Application() {
     private val taskScheduler: TaskScheduler by inject()
 
     override fun onCreate() {
+        com.inspiredandroid.kai.AppContextHolder.context = this
         super.onCreate()
         startKoin {
             androidContext(this@KaiApplication)

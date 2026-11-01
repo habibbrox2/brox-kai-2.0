@@ -3,6 +3,7 @@ package com.inspiredandroid.kai.ui.settings
 import androidx.compose.runtime.Immutable
 import com.inspiredandroid.kai.data.ImportSection
 import com.inspiredandroid.kai.data.Service
+import com.inspiredandroid.kai.data.AppLanguage
 import com.inspiredandroid.kai.data.ThemeMode
 import com.inspiredandroid.kai.inference.LocalModel
 import com.inspiredandroid.kai.mcp.PopularMcpServer
@@ -24,6 +25,7 @@ data class SettingsActions(
     val onSaveSoul: (String) -> Unit,
     val onToggleDynamicUi: (Boolean) -> Unit,
     val onChangeThemeMode: (ThemeMode) -> Unit,
+    val onChangeAppLanguage: (AppLanguage) -> Unit,
     val onToggleMemory: (Boolean) -> Unit,
     val onDeleteMemory: (String) -> Unit,
     val onUpdateMemory: (String, String) -> Unit,
@@ -89,6 +91,7 @@ data class SettingsActions(
             onSaveSoul = {},
             onToggleDynamicUi = {},
             onChangeThemeMode = {},
+            onChangeAppLanguage = {},
             onToggleMemory = {},
             onDeleteMemory = {},
             onUpdateMemory = { _, _ -> },

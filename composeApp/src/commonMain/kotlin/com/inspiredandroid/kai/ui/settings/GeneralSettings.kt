@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.data.AppSettings
+import com.inspiredandroid.kai.data.AppLanguage
 import com.inspiredandroid.kai.data.ThemeMode
 import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.BorderSoft
@@ -74,6 +75,12 @@ internal fun GeneralContent(
                 DynamicUiToggle(
                     isDynamicUiEnabled = uiState.isDynamicUiEnabled,
                     onToggleDynamicUi = actions.onToggleDynamicUi,
+                )
+            }
+            SettingsCard {
+                LanguageSwitch(
+                    appLanguage = uiState.appLanguage,
+                    onChangeAppLanguage = actions.onChangeAppLanguage,
                 )
             }
             SettingsCard {
@@ -128,6 +135,40 @@ private fun DynamicUiToggle(
             checked = isDynamicUiEnabled,
             onCheckedChange = onToggleDynamicUi,
         )
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+internal fun LanguageSwitch(
+    appLanguage: AppLanguage,
+    onChangeAppLanguage: (AppLanguage) -> Unit,
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = "Language",
+            style = KaiTypography.titleMedium,
+            color = TextPrimary,
+        )
+        Text(
+            text = "App display language (default: Bengali)",
+            style = KaiTypography.bodyMedium,
+            color = TextSecondary,
+            modifier = Modifier.padding(top = 4.dp, bottom = 12.dp),
+        )
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            AppLanguage.entries.forEach { language ->
+                ThemeModeButton(
+                    label = language.displayName,
+                    isSelected = language == appLanguage,
+                    onClick = { onChangeAppLanguage(language) },
+                )
+            }
+        }
     }
 }
 

@@ -17,6 +17,7 @@ import com.inspiredandroid.kai.data.ServiceInstance
 import com.inspiredandroid.kai.data.SmsDraft
 import com.inspiredandroid.kai.data.SmsSyncState
 import com.inspiredandroid.kai.data.SystemPromptVariant
+import com.inspiredandroid.kai.data.AppLanguage
 import com.inspiredandroid.kai.data.ThemeMode
 import com.inspiredandroid.kai.data.ensureSelectedModelPresent
 import com.inspiredandroid.kai.inference.DownloadError
@@ -323,7 +324,7 @@ class FakeDataRepository : DataRepository {
         restoreCurrentConversationCalls++
     }
 
-    override fun confirmToolExecution(toolCallId: String, allowOnce: Boolean, alwaysAllow: Boolean) {
+    override fun confirmToolExecution(toolCallId: String, allowOnce: Boolean, alwaysAllow: Boolean, allowSession: Boolean) {
         confirmToolExecutionCalls.add(Triple(toolCallId, allowOnce, alwaysAllow))
     }
 
@@ -422,6 +423,14 @@ class FakeDataRepository : DataRepository {
 
     override fun setThemeMode(mode: ThemeMode) {
         themeMode = mode
+    }
+
+    private var appLanguage: AppLanguage = AppLanguage.Bengali
+
+    override fun getAppLanguage(): AppLanguage = appLanguage
+
+    override fun setAppLanguage(language: AppLanguage) {
+        appLanguage = language
     }
 
     private var interactiveMode = false

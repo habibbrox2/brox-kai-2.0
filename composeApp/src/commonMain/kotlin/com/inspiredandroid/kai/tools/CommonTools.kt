@@ -1,6 +1,8 @@
 package com.inspiredandroid.kai.tools
 
 import com.inspiredandroid.kai.data.AppSettings
+import com.inspiredandroid.kai.getDeviceInfo
+import com.inspiredandroid.kai.getSimOperatorCode
 import com.inspiredandroid.kai.data.MemoryCategory
 import com.inspiredandroid.kai.data.MemoryStore
 import com.inspiredandroid.kai.httpClient
@@ -50,17 +52,42 @@ private data class IpLocationResponse(
     val connection: IpConnectionInfo? = null,
     val timezone: IpTimezoneInfo? = null,
     val message: String? = null,
+    val continent: String? = null,
+    val org: String? = null,
+    val asn: String? = null,
 )
 
 @Serializable
 private data class IpConnectionInfo(
     val isp: String? = null,
     val org: String? = null,
+    val asn: Int? = null,
 )
 
 @Serializable
 private data class IpTimezoneInfo(
     val id: String? = null,
+    val utc: String? = null,
+)
+
+// Fallback (ipapi.co) response shape (HTTPS, free tier)
+@Serializable
+private data class IpApiResponse(
+    val ip: String? = null,
+    val city: String? = null,
+    val region: String? = null,
+    val region_code: String? = null,
+    val country_name: String? = null,
+    val country_code: String? = null,
+    val postal: String? = null,
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    val timezone: String? = null,
+    val utc_offset: String? = null,
+    val org: String? = null,
+    val asn: String? = null,
+    val error: Boolean? = null,
+    val reason: String? = null,
 )
 
 /**
@@ -80,37 +107,77 @@ object CommonTools {
     val ipLocationTool = object : Tool {
         override val schema = ToolSchema(
             name = "get_location_from_ip",
-            description = "Get the user's estimated location based on their IP address. Returns city, region, country, coordinates, and timezone.",
-            parameters = emptyMap(),
+            description = "Get an estimated location for an IP address (or the caller's IP if none is given). Returns city, region, country, coordinates, timezone, ISP and more. Uses ipwho.is with ip-api.com fallback.",
+            parameters = mapOf(
+                "ip" to ParameterSchema(type = "string", description = "Optional IP address to look up. If omitted, the caller's public IP is used.", required = false),
+            ),
         )
 
-        override suspend fun execute(args: Map<String, Any>): Any = try {
-            val response: IpLocationResponse = locationClient.get("https://ipwho.is/").body()
-            if (response.success) {
-                mapOf(
-                    "success" to true,
-                    "city" to response.city,
-                    "region" to response.region,
-                    "country" to response.country,
-                    "country_code" to response.countryCode,
-                    "latitude" to response.latitude,
-                    "longitude" to response.longitude,
-                    "timezone" to response.timezone?.id,
-                    "zip" to response.postal,
-                    "isp" to response.connection?.isp,
-                    "ip" to response.ip,
-                )
-            } else {
-                mapOf(
+        override suspend fun execute(args: Map<String, Any>): Any {
+            val ip = args["ip"]?.toString()?.trim()?.takeIf { it.isNotEmpty() }
+
+            // Primary: ipwho.is
+            try {
+                val url = if (ip == null) "https://ipwho.is/" else "https://ipwho.is/$ip"
+                val response: IpLocationResponse = locationClient.get(url).body()
+                if (response.success) {
+                    return mapOf(
+                        "success" to true,
+                        "source" to "ipwho.is",
+                        "ip" to (response.ip ?: ip),
+                        "city" to response.city,
+                        "region" to response.region,
+                        "country" to response.country,
+                        "country_code" to response.countryCode,
+                        "continent" to response.continent,
+                        "latitude" to response.latitude,
+                        "longitude" to response.longitude,
+                        "timezone" to response.timezone?.id,
+                        "utc_offset" to response.timezone?.utc,
+                        "zip" to response.postal,
+                        "isp" to (response.connection?.isp ?: response.org),
+                        "org" to (response.connection?.org ?: response.org),
+                        "asn" to (response.connection?.asn ?: response.asn),
+                        "google_maps_url" to (if (response.latitude != null && response.longitude != null) "https://www.google.com/maps?q=${response.latitude},${response.longitude}" else null),
+                    )
+                }
+            } catch (_: Exception) {
+                // fall through to fallback
+            }
+
+            // Fallback: ipapi.co (HTTPS)
+            try {
+                val url = if (ip == null) "https://ipapi.co/json/" else "https://ipapi.co/$ip/json/"
+                val response: IpApiResponse = locationClient.get(url).body()
+                if (response.error != true) {
+                    return mapOf(
+                        "success" to true,
+                        "source" to "ipapi.co",
+                        "ip" to (response.ip ?: ip),
+                        "city" to response.city,
+                        "region" to response.region,
+                        "country" to response.country_name,
+                        "country_code" to response.country_code,
+                        "latitude" to response.latitude,
+                        "longitude" to response.longitude,
+                        "timezone" to response.timezone,
+                        "utc_offset" to response.utc_offset,
+                        "zip" to response.postal,
+                        "org" to response.org,
+                        "asn" to response.asn,
+                        "google_maps_url" to (if (response.latitude != null && response.longitude != null) "https://www.google.com/maps?q=${response.latitude},${response.longitude}" else null),
+                    )
+                }
+                return mapOf(
                     "success" to false,
-                    "error" to (response.message ?: "Failed to get location"),
+                    "error" to (response.reason ?: "Failed to get location"),
+                )
+            } catch (e: Exception) {
+                return mapOf(
+                    "success" to false,
+                    "error" to "Failed to get location: ${e.message}",
                 )
             }
-        } catch (e: Exception) {
-            mapOf(
-                "success" to false,
-                "error" to "Failed to get location: ${e.message}",
-            )
         }
     }
 
@@ -236,6 +303,197 @@ object CommonTools {
         descriptionRes = Res.string.tool_open_url_description,
     )
 
+    val dialPhoneTool = object : Tool {
+        override val schema = ToolSchema(
+            name = "dial_phone",
+            description = "Open the phone dialer with a given phone number. Does not place the call automatically - the user must confirm. Use when the user asks to call or dial a number.",
+            parameters = mapOf(
+                "number" to ParameterSchema(type = "string", description = "Phone number to dial (digits, spaces, +, -, parentheses allowed)", required = true),
+            ),
+        )
+
+        override suspend fun execute(args: Map<String, Any>): Any {
+            val raw = args["number"]?.toString()?.trim()
+                ?: return mapOf("success" to false, "error" to "Phone number is required")
+            if (raw.isEmpty()) {
+                return mapOf("success" to false, "error" to "Phone number is required")
+            }
+            // Keep only dialable characters
+            val sanitized = raw.filter { it.isDigit() || it == '+' || it == '*' || it == '#' || it == ',' || it == ';' }
+            if (sanitized.isEmpty() || !sanitized.any { it.isDigit() }) {
+                return mapOf("success" to false, "error" to "Invalid phone number")
+            }
+            val telUrl = "tel:$sanitized"
+            return try {
+                val opened = openUrl(telUrl)
+                if (opened) {
+                    mapOf("success" to true, "number" to sanitized, "message" to "Dialer opened")
+                } else {
+                    mapOf("success" to false, "error" to "Failed to open dialer")
+                }
+            } catch (e: Exception) {
+                mapOf("success" to false, "error" to "Failed to open dialer: ${e.message}")
+            }
+        }
+    }
+
+    val dialPhoneToolInfo = ToolInfo(
+        id = "dial_phone",
+        name = "Dial Phone",
+        description = "Open the phone dialer with a given number",
+    )
+
+    val dialUssdTool = object : Tool {
+        override val schema = ToolSchema(
+            name = "dial_ussd",
+            description = "Dial a USSD code (e.g. *121# or *101#) to check SIM balance, data, or operator info. Opens the dialer; the result is shown on screen. Use when the user wants to check SIM/operator balance.",
+            parameters = mapOf(
+                "code" to ParameterSchema(type = "string", description = "USSD code to dial, e.g. *121# or *101#", required = true),
+            ),
+        )
+
+        override suspend fun execute(args: Map<String, Any>): Any {
+            val raw = args["code"]?.toString()?.trim()
+                ?: return mapOf("success" to false, "error" to "USSD code is required")
+            if (raw.isEmpty()) {
+                return mapOf("success" to false, "error" to "USSD code is required")
+            }
+            // Keep dialable USSD characters: digits, *, #, and +
+            val sanitized = raw.filter { it.isDigit() || it == '*' || it == '#' || it == '+' }
+            if (sanitized.isEmpty() || !sanitized.contains('#')) {
+                // Most USSD codes end with #; warn but still attempt
+            }
+            if (sanitized.isEmpty()) {
+                return mapOf("success" to false, "error" to "Invalid USSD code")
+            }
+            val telUrl = "tel:$sanitized"
+            return try {
+                val opened = openUrl(telUrl)
+                if (opened) {
+                    mapOf("success" to true, "code" to sanitized, "message" to "USSD dialer opened; check your screen for the result")
+                } else {
+                    mapOf("success" to false, "error" to "Failed to open dialer")
+                }
+            } catch (e: Exception) {
+                mapOf("success" to false, "error" to "Failed to dial USSD: ${e.message}")
+            }
+        }
+    }
+
+    val dialUssdToolInfo = ToolInfo(
+        id = "dial_ussd",
+        name = "Dial USSD",
+        description = "Dial a USSD code to check SIM balance",
+    )
+
+    private val bdOperatorBalanceCodes = mapOf(
+        "gp" to "*566#",
+        "grameenphone" to "*566#",
+        "robi" to "*222#",
+        "banglalink" to "*124#",
+        "bl" to "*124#",
+        "teletalk" to "*152#",
+        "airtel" to "*778#",
+    )
+
+    private val bdMccMncToOperator = mapOf(
+        "47001" to "gp",
+        "47002" to "robi",
+        "47003" to "banglalink",
+        "47004" to "teletalk",
+        "47007" to "airtel",
+    )
+
+    val detectSimOperatorTool = object : Tool {
+        override val schema = ToolSchema(
+            name = "detect_sim_operator",
+            description = "Detect the SIM operator on the device (Bangladesh operators supported). Returns the operator code (MCC+MNC) and resolved operator name if known.",
+            parameters = emptyMap(),
+        )
+
+        override suspend fun execute(args: Map<String, Any>): Any {
+            val code = getSimOperatorCode()
+            if (code.isNullOrBlank()) {
+                return mapOf("success" to false, "error" to "SIM operator could not be detected (unsupported platform or no SIM)")
+            }
+            val op = bdMccMncToOperator[code]
+            return mapOf(
+                "success" to true,
+                "sim_operator_code" to code,
+                "operator" to (op ?: "unknown"),
+                "supported" to (op != null),
+            )
+        }
+    }
+
+    val detectSimOperatorToolInfo = ToolInfo(
+        id = "detect_sim_operator",
+        name = "Detect SIM Operator",
+        description = "Detect the SIM operator on the device",
+    )
+
+    val checkBdSimBalanceTool = object : Tool {
+        override val schema = ToolSchema(
+            name = "check_bd_sim_balance",
+            description = "Check SIM balance for Bangladesh operators (Grameenphone, Robi, Banglalink, Teletalk, Airtel) by dialing the operator's USSD balance code. If no operator is given, the device's SIM operator is auto-detected. Opens the dialer; result shown on screen.",
+            parameters = mapOf(
+                "operator" to ParameterSchema(type = "string", description = "Operator name: gp/grameenphone, robi, banglalink/bl, teletalk, airtel. Optional; auto-detected from SIM if omitted.", required = false),
+            ),
+        )
+
+        override suspend fun execute(args: Map<String, Any>): Any {
+            val opRaw = args["operator"]?.toString()?.trim()?.lowercase()
+            val op = if (opRaw.isNullOrEmpty()) {
+                val code = getSimOperatorCode()
+                val detected = code?.let { bdMccMncToOperator[it] }
+                detected ?: return mapOf("success" to false, "error" to "Could not auto-detect SIM operator; please specify operator")
+            } else {
+                opRaw
+            }
+            val code = bdOperatorBalanceCodes[op]
+                ?: return mapOf("success" to false, "error" to "Unknown operator: $op. Supported: gp, robi, banglalink, teletalk, airtel")
+            val telUrl = "tel:$code"
+            return try {
+                val opened = openUrl(telUrl)
+                if (opened) {
+                    mapOf("success" to true, "operator" to op, "code" to code, "message" to "USSD dialer opened; check your screen for the balance")
+                } else {
+                    mapOf("success" to false, "error" to "Failed to open dialer")
+                }
+            } catch (e: Exception) {
+                mapOf("success" to false, "error" to "Failed to dial USSD: ${e.message}")
+            }
+        }
+    }
+
+    val checkBdSimBalanceToolInfo = ToolInfo(
+        id = "check_bd_sim_balance",
+        name = "Check BD SIM Balance",
+        description = "Check Bangladesh SIM operator balance via USSD",
+    )
+
+    val deviceInfoTool = object : Tool {
+        override val schema = ToolSchema(
+            name = "get_device_info",
+            description = "Get information about the current device and app: platform, OS, app version, available processors, memory, etc.",
+            parameters = emptyMap(),
+        )
+
+        override suspend fun execute(args: Map<String, Any>): Any {
+            return try {
+                getDeviceInfo()
+            } catch (e: Exception) {
+                mapOf("success" to false, "error" to (e.message ?: "Failed to get device info"))
+            }
+        }
+    }
+
+    val deviceInfoToolInfo = ToolInfo(
+        id = "get_device_info",
+        name = "Device Info",
+        description = "Get device and app information",
+    )
+
     // Every tool the chat UI may have to name, on every platform. Entries whose availability is
     // decided by a master toggle in Settings → Agent (memory / scheduling / email / SMS /
     // notifications) or by a platform capability are marked `userToggleable = false` at their
@@ -247,6 +505,11 @@ object CommonTools {
         ipLocationToolInfo,
         openUrlToolInfo,
         FetchUrlTool.toolInfo,
+        deviceInfoToolInfo,
+        dialPhoneToolInfo,
+        dialUssdToolInfo,
+        checkBdSimBalanceToolInfo,
+        detectSimOperatorToolInfo,
     ) +
         listOf(memoryStoreToolInfo, memoryForgetToolInfo, memoryLearnToolInfo, memoryReinforceToolInfo) +
         SchedulingTools.schedulingToolDefinitions +
@@ -270,6 +533,21 @@ object CommonTools {
         }
         if (appSettings.isToolEnabled(FetchUrlTool.schema.name)) {
             add(FetchUrlTool)
+        }
+        if (appSettings.isToolEnabled(deviceInfoTool.schema.name)) {
+            add(deviceInfoTool)
+        }
+        if (appSettings.isToolEnabled(dialPhoneTool.schema.name)) {
+            add(dialPhoneTool)
+        }
+        if (appSettings.isToolEnabled(dialUssdTool.schema.name)) {
+            add(dialUssdTool)
+        }
+        if (appSettings.isToolEnabled(checkBdSimBalanceTool.schema.name)) {
+            add(checkBdSimBalanceTool)
+        }
+        if (appSettings.isToolEnabled(detectSimOperatorTool.schema.name)) {
+            add(detectSimOperatorTool)
         }
     }
 

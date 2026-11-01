@@ -33,6 +33,11 @@ enum class ThemeMode {
     Dark,
 }
 
+enum class AppLanguage(val code: String, val displayName: String) {
+    Bengali("bn", "বাংলা"),
+    English("en", "English"),
+}
+
 /**
  * Stricter than [detectImportSections]: only includes sections that contain actual user data,
  * skipping ones that exist purely because of default feature-toggle flags (e.g. `sms_enabled = false`,
@@ -328,6 +333,21 @@ class AppSettings(internal val settings: Settings) {
     fun setThemeMode(mode: ThemeMode) {
         settings.putString(KEY_THEME_MODE, mode.name)
         _themeModeFlow.value = mode
+    }
+
+    private val _appLanguageFlow = MutableStateFlow(loadInitialAppLanguage())
+    val appLanguageFlow: StateFlow<AppLanguage> = _appLanguageFlow
+
+    fun getAppLanguage(): AppLanguage = _appLanguageFlow.value
+
+    fun setAppLanguage(language: AppLanguage) {
+        settings.putString(KEY_APP_LANGUAGE, language.name)
+        _appLanguageFlow.value = language
+    }
+
+    private fun loadInitialAppLanguage(): AppLanguage {
+        val raw = settings.getString(KEY_APP_LANGUAGE, "")
+        return AppLanguage.entries.firstOrNull { it.name == raw } ?: AppLanguage.Bengali
     }
 
     fun getTtsRate(): Float = settings.getFloat(KEY_TTS_RATE, 1.0f)
@@ -636,6 +656,7 @@ class AppSettings(internal val settings: Settings) {
         const val KEY_SCHEDULING_ENABLED = "scheduling_enabled"
         const val KEY_DYNAMIC_UI_ENABLED = "dynamic_ui_enabled"
         const val KEY_THEME_MODE = "theme_mode"
+        const val KEY_APP_LANGUAGE = "app_language"
         const val KEY_DAEMON_ENABLED = "daemon_enabled"
         const val KEY_HEARTBEAT_CONFIG = "heartbeat_config"
         const val KEY_HEARTBEAT_PROMPT = "heartbeat_prompt"
