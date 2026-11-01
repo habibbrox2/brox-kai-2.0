@@ -3,27 +3,13 @@ package com.inspiredandroid.kai.ui.settings
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.inspiredandroid.kai.ui.AccentPrimary
-import com.inspiredandroid.kai.ui.BorderSoft
-import com.inspiredandroid.kai.ui.BorderStrong
-import com.inspiredandroid.kai.ui.BorderSubtle
-import com.inspiredandroid.kai.ui.CardFill
-import com.inspiredandroid.kai.ui.CardSurface
-import com.inspiredandroid.kai.ui.DangerAlert
-import com.inspiredandroid.kai.ui.SuccessGreen
-import com.inspiredandroid.kai.ui.SurfaceElevated
-import com.inspiredandroid.kai.ui.SurfaceRaised
-import com.inspiredandroid.kai.ui.TextPrimary
-import com.inspiredandroid.kai.ui.TextSecondary
-import com.inspiredandroid.kai.ui.TextTertiary
-import com.inspiredandroid.kai.ui.WarningAmber
+import com.inspiredandroid.kai.ui.theme.DesignTokens
 
 /**
- * Shared design tokens for the Brox Kai settings control center.
- * Updated for 2027 Minimal design system.
+ * Shared design tokens for the Brox Kai 2.0 settings control center.
+ * Updated for 2027 Premium AI Agent Workspace design system.
  */
 object SettingsSpacing {
     val xxs: Dp = 2.dp
@@ -51,50 +37,50 @@ object SettingsShapes {
 }
 
 object SettingsStatusColors {
-    val connected = SuccessGreen
-    val checking = WarningAmber
-    val error = DangerAlert
-    val unknown = TextTertiary
-    val attention = WarningAmber
-    val glow = AccentPrimary
+    val connected = DesignTokens.Success
+    val checking = DesignTokens.Warning
+    val error = DesignTokens.Error
+    val unknown = DesignTokens.TertiaryText
+    val attention = DesignTokens.Warning
+    val glow = DesignTokens.PrimaryCyan
 }
 
 object SettingsSurfaces {
     /** Page background - dark theme */
     @Composable
-    fun page(): Color = Color(0xFF0F172A)
+    fun page(): Color = DesignTokens.Background
 
     /** Glassmorphic card background with blur effect */
     @Composable
-    fun card(): Color = CardFill
+    fun card(): Color = DesignTokens.SurfaceElevated
 
     /** Card border - subtle neural border */
     @Composable
-    fun border(): Color = BorderSubtle
+    fun border(): Color = DesignTokens.BorderSubtle
 
     /** Raised surface for floating elements */
     @Composable
-    fun raised(): Color = SurfaceRaised
+    fun raised(): Color = DesignTokens.SurfaceRaised
 
     /** Elevated surface for panels */
     @Composable
-    fun elevated(): Color = SurfaceElevated
+    fun elevated(): Color = DesignTokens.SurfaceElevated
 
     /** Primary accent color for interactive elements */
     @Composable
-    fun accent(): Color = AccentPrimary
+    fun accent(): Color = DesignTokens.PrimaryCyan
 
     /** Text colors */
     @Composable
-    fun textPrimary(): Color = TextPrimary
+    fun textPrimary(): Color = DesignTokens.PrimaryText
 
     @Composable
-    fun textSecondary(): Color = TextSecondary
+    fun textSecondary(): Color = DesignTokens.SecondaryText
 
     @Composable
-    fun textTertiary(): Color = TextTertiary
+    fun textTertiary(): Color = DesignTokens.TertiaryText
 
     /** Danger/destructive color */
     @Composable
-    fun danger(): Color = DangerAlert
+    fun danger(): Color = DesignTokens.Error
 }

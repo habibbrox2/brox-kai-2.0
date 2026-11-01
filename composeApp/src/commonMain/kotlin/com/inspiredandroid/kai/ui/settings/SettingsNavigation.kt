@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,13 +36,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.prefersReducedMotion
-import com.inspiredandroid.kai.ui.AccentPrimary
-import com.inspiredandroid.kai.ui.BorderSoft
-import com.inspiredandroid.kai.ui.BorderSubtle
-import com.inspiredandroid.kai.ui.CardFill
 import com.inspiredandroid.kai.ui.KaiTypography
-import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.handCursor
+import com.inspiredandroid.kai.ui.theme.DesignTokens
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.settings_tab_account
 import kai.composeapp.generated.resources.settings_tab_agent
@@ -56,6 +51,9 @@ import kai.composeapp.generated.resources.settings_tab_tools
 import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.compose.resources.stringResource
 
+/**
+ * 2027 Premium AI Agent Workspace Settings Navigation Rail.
+ */
 @Composable
 fun SettingsNavRail(
     tabs: ImmutableList<SettingsTab>,
@@ -63,8 +61,8 @@ fun SettingsNavRail(
     onSelectTab: (SettingsTab) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val railBg = CardFill
-    val railBorder = BorderSoft.copy(alpha = 0.6f)
+    val railBg = SettingsSurfaces.card()
+    val railBorder = SettingsSurfaces.border()
 
     Box(
         modifier = modifier
@@ -98,17 +96,17 @@ fun SettingsNavRail(
                 }
 
                 val bgColor by animateColorAsState(
-                    targetValue = if (isSelected) AccentPrimary.copy(alpha = 0.16f) else Color.Transparent,
+                    targetValue = if (isSelected) DesignTokens.PrimaryCyan.copy(alpha = 0.16f) else Color.Transparent,
                     animationSpec = tween(durationMillis = if (prefersReducedMotion()) 0 else 200),
                     label = "railBg",
                 )
                 val textColor by animateColorAsState(
-                    targetValue = if (isSelected) AccentPrimary else TextSecondary,
+                    targetValue = if (isSelected) DesignTokens.PrimaryCyan else DesignTokens.SecondaryText,
                     animationSpec = tween(durationMillis = if (prefersReducedMotion()) 0 else 200),
                     label = "railText",
                 )
                 val borderColor by animateColorAsState(
-                    targetValue = if (isSelected) AccentPrimary.copy(alpha = 0.42f) else Color.Transparent,
+                    targetValue = if (isSelected) DesignTokens.PrimaryCyan.copy(alpha = 0.42f) else Color.Transparent,
                     animationSpec = tween(durationMillis = if (prefersReducedMotion()) 0 else 200),
                     label = "railBorder",
                 )
@@ -155,7 +153,7 @@ fun SettingsNavRail(
                                     .clip(CircleShape)
                                     .background(
                                         Brush.radialGradient(
-                                            colors = listOf(AccentPrimary, AccentPrimary.copy(alpha = 0.4f)),
+                                            colors = listOf(DesignTokens.PrimaryCyan, DesignTokens.PrimaryCyan.copy(alpha = 0.4f)),
                                         ),
                                     ),
                             )
