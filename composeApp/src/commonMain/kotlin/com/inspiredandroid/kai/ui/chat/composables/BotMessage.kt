@@ -62,6 +62,7 @@ import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.markdown.MarkdownContent
 import com.inspiredandroid.kai.ui.markdown.parseMarkdown
 import com.inspiredandroid.kai.ui.rememberCopyToClipboard
+import com.inspiredandroid.kai.ui.theme.DesignTokens
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.bot_message_copy_content_description
 import kai.composeapp.generated.resources.bot_message_thinking_expand_content_description
@@ -69,7 +70,6 @@ import kai.composeapp.generated.resources.bot_message_thinking_label
 import kai.composeapp.generated.resources.chat_cancel_edit_content_description
 import kai.composeapp.generated.resources.chat_edit_submission_content_description
 import kai.composeapp.generated.resources.ic_copy
-import com.inspiredandroid.kai.ui.theme.DesignTokens
 import kai.composeapp.generated.resources.logo
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
