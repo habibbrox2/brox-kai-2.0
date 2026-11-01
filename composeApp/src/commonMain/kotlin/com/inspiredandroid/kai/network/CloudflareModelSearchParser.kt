@@ -13,8 +13,7 @@ internal data class CloudflareModelSearchPage(
     val totalPages: Int?,
 )
 
-internal fun isValidCloudflareAccountId(value: String): Boolean =
-    value.trim().matches(Regex("[a-fA-F0-9]{32}"))
+internal fun isValidCloudflareAccountId(value: String): Boolean = value.trim().matches(Regex("[a-fA-F0-9]{32}"))
 
 /** Parses Cloudflare's v4 envelope without assuming the OpenAI { data: [...] } schema. */
 internal fun parseCloudflareModelSearchPage(body: String): CloudflareModelSearchPage {
