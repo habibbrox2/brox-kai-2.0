@@ -343,7 +343,11 @@ class Requests {
     ): Result<OpenAICompatibleModelResponseDto> = openAICompatibleResult {
         val modelsUrl = service.modelsUrl
             ?: return Result.failure(OpenAICompatibleGenericException("Models URL not configured for ${service.displayName}"))
-        val apiKey = getOptionalApiKey(service, credentials)
+        val apiKey = if (service == Service.Cloudflare) {
+            getApiKeyOrThrow(service, credentials)
+        } else {
+            getOptionalApiKey(service, credentials)
+        }
 
         // Cloudflare Workers AI uses the Cloudflare v4 envelope (result/result_info), not
         // the OpenAI-compatible { data: [...] } model-list response. Fetch all pages explicitly.
@@ -371,6 +375,12 @@ class Requests {
                     applySessionHeader(service, credentials, sessionId = null)
                 }
                 if (!response.status.isSuccess()) {
+                    if (service == Service.Cloudflare) {
+                        val responseBody = response.bodyAsText()
+                        val detail = parseCloudflareModelSearchError(responseBody)
+                            ?: "HTTP ${response.status.value}"
+                        throw OpenAICompatibleGenericException("Cloudflare model discovery failed: $detail")
+                    }
                     handleOpenAICompatibleError(service, credentials, response)
                 }
                 val parsedPage = try {
