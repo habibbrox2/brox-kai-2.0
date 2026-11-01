@@ -171,6 +171,7 @@ jobs:
             composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/data/AppSettings.kt \
             composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/data/RemoteDataRepository.kt \
             composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/data/ToolPermissionManager.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/network/CloudflareModelSearchParser.kt \
             composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/Theme.kt \
             composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/chat/ChatTimelineData.kt \
             composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/chat/ChatUiState.kt \
