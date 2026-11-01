@@ -31,15 +31,6 @@ enum class ThemeMode {
     System,
     Light,
     Dark,
-    Peach,
-    Lilac,
-    Dusk,
-    Seafoam,
-    Graphite,
-    Daybreak,
-    Sherbet,
-    Paper,
-    Carbon,
 }
 
 /**
