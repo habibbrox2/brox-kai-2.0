@@ -26,11 +26,16 @@ This provider entry targets **direct Workers AI**. It does not currently configu
 
 The curated MCP entry points to `https://mcp.cloudflare.com/mcp`. Select it from the popular MCP list and enter a Cloudflare API token in the Authorization field. The token is sent as a Bearer token. Use the minimum Cloudflare permissions required by the MCP tools you intend to enable.
 
-The MCP client supports the optional Skills-over-MCP extension:
-- `skills/list` discovers published skill metadata.
-- `resources/read` reads a skill document only when its URI uses the `skill://` scheme.
+The MCP client first probes the stateless MCP 2026-07-28 protocol using `server/discover`. When supported, every request includes the protocol-version header and required per-request metadata; older servers fall back to the legacy initialize handshake.
 
-Remote skill metadata and content are untrusted input. Brox Kai must treat them as instructions/data for the model context, never execute embedded scripts automatically. The existing MCP client does not implement Cloudflare OAuth login; configure an API token explicitly.
+Skills discovery is attempted only when the server advertises the `io.modelcontextprotocol/skills` extension:
+- `skills/list` discovers published skill metadata and follows pagination cursors.
+- `skills/get` confirms the metadata and resource manifest for a skill URI.
+- `resources/read` retrieves the skill document.
+
+The extension conventionally uses `skill://` URIs but can advertise other URI schemes; the server's `skills/get` response is authoritative. Reading content does not approve or activate a skill. Brox Kai currently does not verify the returned resource digests, so remote metadata and content must remain untrusted and be reviewed before use; embedded scripts are never executed automatically.
+
+The MCP client does not implement Cloudflare's interactive OAuth login. Cloudflare supports API tokens as Bearer credentials for CI/CD and automation, so configure a scoped API token explicitly.
 
 ## Cloudflare Skills marketplace
 
