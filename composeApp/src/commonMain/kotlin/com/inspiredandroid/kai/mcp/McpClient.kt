@@ -15,6 +15,7 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.decodeFromJsonElement
 
 class McpClient(
@@ -234,7 +235,7 @@ class McpClient(
      */
     suspend fun readSkill(uri: String): String {
         if (!uri.startsWith("skill://") || uri.length > 2048 ||
-            uri.any { it.isISOControl() } || uri.contains("..")
+            uri.any { it.code < 0x20 || it.code == 0x7f } || uri.contains("..")
         ) {
             throw McpException("Invalid skill resource URI")
         }
