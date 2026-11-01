@@ -481,26 +481,6 @@ val DarkColorScheme = darkColorScheme(
     surfaceContainerLowest = Color(0xFF121212),
 )
 
-/** Peach theme */
-val PeachColorScheme = lightColorScheme(
-    primary = Color(0xFFE85D04),
-    onPrimary = Color.White,
-    primaryContainer = Color(0xFFFFDAB9),
-    onPrimaryContainer = Color(0xFF8B3A00),
-    secondary = Color(0xFFF48C06),
-    onSecondary = Color.White,
-    tertiary = Color(0xFFFFB347),
-    onTertiary = Color(0xFF4A2C00),
-    background = Color(0xFFFFF7F0),
-    onBackground = Color(0xFF2D1810),
-    surface = Color(0xFFFFF0E6),
-    onSurface = Color(0xFF2D1810),
-    surfaceVariant = Color(0xFFFFE4D1),
-    onSurfaceVariant = Color(0xFF6B3A2A),
-    outline = Color(0xFFD2691E),
-    outlineVariant = Color(0xFFFFDAB9),
-)
-
 /** Lilac theme */
 val LilacColorScheme = lightColorScheme(
     primary = Color(0xFF6B46C1),

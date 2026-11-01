@@ -41,7 +41,6 @@ import com.inspiredandroid.kai.ui.GraphiteColorScheme
 import com.inspiredandroid.kai.ui.LightColorScheme
 import com.inspiredandroid.kai.ui.LilacColorScheme
 import com.inspiredandroid.kai.ui.PaperColorScheme
-import com.inspiredandroid.kai.ui.PeachColorScheme
 import com.inspiredandroid.kai.ui.SeafoamColorScheme
 import com.inspiredandroid.kai.ui.SherbetColorScheme
 import com.inspiredandroid.kai.ui.Theme
@@ -179,7 +178,6 @@ private fun AppContent(
         ThemeMode.System -> if (systemInDark) darkColorScheme else lightColorScheme
         ThemeMode.Light -> lightColorScheme
         ThemeMode.Dark -> darkColorScheme
-        ThemeMode.Peach -> PeachColorScheme
         ThemeMode.Lilac -> LilacColorScheme
         ThemeMode.Dusk -> DuskColorScheme
         ThemeMode.Seafoam -> SeafoamColorScheme

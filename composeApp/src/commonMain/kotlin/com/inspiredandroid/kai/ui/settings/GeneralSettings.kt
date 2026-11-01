@@ -141,7 +141,6 @@ internal fun ThemeModeSwitch(
         ThemeMode.System to stringResource(Res.string.settings_theme_system),
         ThemeMode.Light to stringResource(Res.string.settings_theme_light),
         ThemeMode.Dark to stringResource(Res.string.settings_theme_dark),
-        ThemeMode.Peach to "Peach",
         ThemeMode.Lilac to "Lilac",
         ThemeMode.Dusk to "Dusk",
         ThemeMode.Seafoam to "Seafoam",
