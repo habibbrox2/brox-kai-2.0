@@ -116,8 +116,8 @@ private val ALLOWED_UPDATE_HOSTS = setOf(
  * JVM implementation of [currentPlatformKey] from system properties.
  */
 internal actual fun currentPlatformKey(): String {
-    val os = System.getProperty("os.name", "").lowercase()
-    val arch = System.getProperty("os.arch", "").lowercase()
+    val os = (System.getProperty("os.name") ?: "").lowercase()
+    val arch = (System.getProperty("os.arch") ?: "").lowercase()
     return when {
         os.contains("windows") -> "windows"
 
