@@ -43,7 +43,6 @@ import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
 import com.inspiredandroid.kai.ui.components.LocalShowFullScreenImage
 import com.inspiredandroid.kai.ui.handCursor
-import com.inspiredandroid.kai.ui.isOledFlavor
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.ic_file
 import kotlinx.collections.immutable.ImmutableList
@@ -59,7 +58,6 @@ internal fun UserMessage(
     attachments: ImmutableList<Attachment> = persistentListOf(),
 ) {
     val showFullScreen = LocalShowFullScreenImage.current
-    val isOled = MaterialTheme.colorScheme.isOledFlavor
 
     SelectionContainer {
         Row(
@@ -125,11 +123,7 @@ internal fun UserMessage(
                         for (att in others) {
                             key("${att.fileName ?: att.mimeType}_${att.data.take(8)}") {
                                 val chipColors = SuggestionChipDefaults.suggestionChipColors(
-                                    containerColor = if (isOled) {
-                                        com.inspiredandroid.kai.ui.CardFill
-                                    } else {
-                                        CardFill
-                                    },
+                                    containerColor = CardFill,
                                     labelColor = TextPrimary,
                                 )
                                 SuggestionChip(

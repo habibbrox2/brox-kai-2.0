@@ -39,7 +39,6 @@ import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.components.KaiSlider
 import com.inspiredandroid.kai.ui.handCursor
-import com.inspiredandroid.kai.ui.isOledFlavor
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.settings_daemon_mode
 import kai.composeapp.generated.resources.settings_daemon_mode_description
@@ -49,8 +48,6 @@ import kai.composeapp.generated.resources.settings_theme
 import kai.composeapp.generated.resources.settings_theme_dark
 import kai.composeapp.generated.resources.settings_theme_description
 import kai.composeapp.generated.resources.settings_theme_light
-import kai.composeapp.generated.resources.settings_theme_midnight
-import kai.composeapp.generated.resources.settings_theme_oled
 import kai.composeapp.generated.resources.settings_theme_system
 import kai.composeapp.generated.resources.settings_ui_scale
 import org.jetbrains.compose.resources.stringResource
@@ -144,9 +141,6 @@ internal fun ThemeModeSwitch(
         ThemeMode.System to stringResource(Res.string.settings_theme_system),
         ThemeMode.Light to stringResource(Res.string.settings_theme_light),
         ThemeMode.Dark to stringResource(Res.string.settings_theme_dark),
-        ThemeMode.OledBlack to stringResource(Res.string.settings_theme_oled),
-        ThemeMode.Midnight to stringResource(Res.string.settings_theme_midnight),
-        ThemeMode.OGShine to "OG Shine",
         ThemeMode.Peach to "Peach",
         ThemeMode.Lilac to "Lilac",
         ThemeMode.Dusk to "Dusk",
@@ -157,8 +151,6 @@ internal fun ThemeModeSwitch(
         ThemeMode.Paper to "Paper",
         ThemeMode.Carbon to "Carbon",
     )
-
-    val isOled = MaterialTheme.colorScheme.isOledFlavor
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
@@ -184,7 +176,6 @@ internal fun ThemeModeSwitch(
                     label = label,
                     isSelected = mode == themeMode,
                     onClick = { onChangeThemeMode(mode) },
-                    isOled = isOled,
                 )
             }
         }
@@ -196,7 +187,6 @@ private fun ThemeModeButton(
     label: String,
     isSelected: Boolean,
     onClick: () -> Unit,
-    isOled: Boolean,
 ) {
     val selectedBg = AccentPrimary
     val selectedText = androidx.compose.ui.graphics.Color(0xFF0F172A)

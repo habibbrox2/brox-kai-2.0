@@ -102,7 +102,6 @@ import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.components.VerticalScrollbarForScroll
 import com.inspiredandroid.kai.ui.handCursor
-import com.inspiredandroid.kai.ui.isOledFlavor
 import com.inspiredandroid.kai.ui.kaiAdaptiveCardBorder
 import com.inspiredandroid.kai.ui.kaiAdaptiveCardColors
 import kai.composeapp.generated.resources.Res
@@ -361,12 +360,7 @@ fun SettingsScreenContent(
 
 @Composable
 private fun TopBar(onNavigateBack: () -> Unit) {
-    val isOled = MaterialTheme.colorScheme.isOledFlavor
-    val barBg = if (isOled) {
-        com.inspiredandroid.kai.ui.CardFill
-    } else {
-        CardFill
-    }
+    val barBg = CardFill
 
     Box(
         modifier = Modifier
@@ -375,11 +369,7 @@ private fun TopBar(onNavigateBack: () -> Unit) {
             .clip(SettingsShapes.panel)
             .background(barBg)
             .border(
-                if (isOled) {
-                    BorderStroke(1.dp, com.inspiredandroid.kai.ui.BorderSubtle)
-                } else {
-                    BorderStroke(1.dp, BorderSoft.copy(alpha = 0.6f))
-                },
+                BorderStroke(1.dp, BorderSoft.copy(alpha = 0.6f)),
                 SettingsShapes.panel,
             ),
     ) {
@@ -450,7 +440,6 @@ private fun SettingsTabSelector(
     }
 
     // Neural minimal tab bar container
-    val isOled = MaterialTheme.colorScheme.isOledFlavor
     val tabBarBg = CardFill
 
     Box(
@@ -463,7 +452,7 @@ private fun SettingsTabSelector(
             .border(
                 BorderStroke(
                     1.dp,
-                    if (isOled) com.inspiredandroid.kai.ui.BorderSubtle else BorderSoft.copy(alpha = 0.6f),
+                    BorderSoft.copy(alpha = 0.6f),
                 ),
                 SettingsShapes.pill,
             )
@@ -711,17 +700,8 @@ internal fun SettingsCard(
     onClick: (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
-    val isOled = MaterialTheme.colorScheme.isOledFlavor
-    val cardBg = if (isOled) {
-        com.inspiredandroid.kai.ui.OledBlack
-    } else {
-        androidx.compose.ui.graphics.Color(0xFF0F172A).copy(alpha = 0.92f)
-    }
-    val cardBorder = if (isOled) {
-        BorderStroke(1.dp, com.inspiredandroid.kai.ui.BorderSubtle)
-    } else {
-        BorderStroke(1.dp, BorderSoft.copy(alpha = 0.8f))
-    }
+    val cardBg = androidx.compose.ui.graphics.Color(0xFF0F172A).copy(alpha = 0.92f)
+    val cardBorder = BorderStroke(1.dp, BorderSoft.copy(alpha = 0.8f))
     val cardShape = SettingsShapes.card
 
     Box(
@@ -796,8 +776,6 @@ internal fun ToggleableHeadline(
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     val switchInteractionSource = remember { MutableInteractionSource() }
-    val isOled = MaterialTheme.colorScheme.isOledFlavor
-
     Row(
         modifier = Modifier
             .fillMaxWidth()

@@ -72,7 +72,6 @@ import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.components.KaiSearchField
 import com.inspiredandroid.kai.ui.handCursor
-import com.inspiredandroid.kai.ui.isOledFlavor
 import com.inspiredandroid.kai.ui.settings.SettingsModel
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.settings_model_label
@@ -124,17 +123,8 @@ internal fun ServiceSelector(
     Box {
         if (showLabel) {
             // Pill variant used by the Plan 7 top bar: icon + name + chevron.
-            val isOled = MaterialTheme.colorScheme.isOledFlavor
-            val pillBg = if (isOled) {
-                com.inspiredandroid.kai.ui.SurfaceRaised.copy(alpha = 0.9f)
-            } else {
-                SurfaceRaised
-            }
-            val pillBorder = if (isOled) {
-                com.inspiredandroid.kai.ui.BorderSoft
-            } else {
-                BorderSoft
-            }
+            val pillBg = SurfaceRaised.copy(alpha = 0.9f)
+            val pillBorder = BorderSoft
 
             Row(
                 modifier = Modifier
@@ -180,17 +170,8 @@ internal fun ServiceSelector(
                 )
             }
         } else {
-            val isOled = MaterialTheme.colorScheme.isOledFlavor
-            val circleBg = if (isOled) {
-                com.inspiredandroid.kai.ui.SurfaceRaised.copy(alpha = 0.9f)
-            } else {
-                SurfaceRaised
-            }
-            val circleBorder = if (isOled) {
-                com.inspiredandroid.kai.ui.BorderSoft
-            } else {
-                BorderSoft
-            }
+            val circleBg = SurfaceRaised.copy(alpha = 0.9f)
+            val circleBorder = BorderSoft
 
             Box(
                 modifier = Modifier
@@ -384,7 +365,6 @@ private fun ModelMenuItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val isOled = MaterialTheme.colorScheme.isOledFlavor
     val rowBackground = if (isCurrent) {
         com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.15f)
     } else {
@@ -424,7 +404,6 @@ private fun ServiceMenuItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val isOled = MaterialTheme.colorScheme.isOledFlavor
     val rowBackground = if (isCurrent) {
         com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.15f)
     } else {

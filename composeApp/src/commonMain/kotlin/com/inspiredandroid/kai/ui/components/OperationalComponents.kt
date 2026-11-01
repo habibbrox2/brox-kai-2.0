@@ -35,7 +35,6 @@ import com.inspiredandroid.kai.ui.SurfaceRaised
 import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.TextTertiary
-import com.inspiredandroid.kai.ui.isOledFlavor
 import com.inspiredandroid.kai.ui.kaiAdaptiveCardBorder
 import com.inspiredandroid.kai.ui.kaiAdaptiveCardColors
 import com.inspiredandroid.kai.ui.settings.SettingsSpacing
@@ -103,8 +102,8 @@ fun rememberOperationalStatusColors(): OperationalStatusColors = remember {
         installing = AccentPrimary,
         needsSetup = TextTertiary,
         error = DangerAlert,
-        active = TextSecondary,
-        ready = TextSecondary,
+        active = Color(0xFFE2E8F0),
+        ready = Color(0xFFE2E8F0),
     )
 }
 
@@ -121,6 +120,8 @@ fun StatusBadge(
 ) {
     val colors = rememberOperationalStatusColors()
     val color = colors.forStatus(status)
+    // Use neutral text color for status dot
+    val dotColor = if (color == TextSecondary) Color(0xFF6B7280) else color
     Row(
         modifier = modifier.semantics {
             contentDescription = "Status: $label"
@@ -132,7 +133,7 @@ fun StatusBadge(
             modifier = Modifier
                 .size(8.dp)
                 .clip(CircleShape)
-                .background(color),
+                .background(dotColor),
         )
         Text(
             text = label,
@@ -155,17 +156,8 @@ fun CapabilityCountCard(
     modifier: Modifier = Modifier,
     status: OperationalStatus? = null,
 ) {
-    val isOled = MaterialTheme.colorScheme.isOledFlavor
-    val cardBg = if (isOled) {
-        com.inspiredandroid.kai.ui.CardFill
-    } else {
-        SurfaceRaised.copy(alpha = 0.5f)
-    }
-    val cardBorder = if (isOled) {
-        androidx.compose.foundation.BorderStroke(1.dp, com.inspiredandroid.kai.ui.BorderSoft)
-    } else {
-        BorderStroke(1.dp, BorderSoft)
-    }
+    val cardBg = SurfaceRaised.copy(alpha = 0.5f)
+    val cardBorder = BorderStroke(1.dp, BorderSoft)
     val cardShape = com.inspiredandroid.kai.ui.settings.SettingsShapes.card
 
     Card(
@@ -217,17 +209,8 @@ fun CollectionEmptyState(
     message: String,
     modifier: Modifier = Modifier,
 ) {
-    val isOled = MaterialTheme.colorScheme.isOledFlavor
-    val cardBg = if (isOled) {
-        com.inspiredandroid.kai.ui.CardFill
-    } else {
-        SurfaceRaised.copy(alpha = 0.4f)
-    }
-    val cardBorder = if (isOled) {
-        androidx.compose.foundation.BorderStroke(1.dp, com.inspiredandroid.kai.ui.BorderSoft)
-    } else {
-        BorderStroke(1.dp, BorderSoft.copy(alpha = 0.4f))
-    }
+    val cardBg = SurfaceRaised.copy(alpha = 0.4f)
+    val cardBorder = BorderStroke(1.dp, BorderSoft.copy(alpha = 0.4f))
     val cardShape = com.inspiredandroid.kai.ui.settings.SettingsShapes.card
 
     Box(

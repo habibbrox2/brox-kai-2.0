@@ -77,13 +77,11 @@ import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.BorderSoft
 import com.inspiredandroid.kai.ui.CardFill
 import com.inspiredandroid.kai.ui.KaiShapes
-import com.inspiredandroid.kai.ui.OledBlack
 import com.inspiredandroid.kai.ui.SurfaceRaised
 import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
 import com.inspiredandroid.kai.ui.handCursor
-import com.inspiredandroid.kai.ui.isOledFlavor
 import com.inspiredandroid.kai.ui.outlineTextFieldColors
 import com.inspiredandroid.kai.ui.settings.SettingsModel
 import io.github.vinceglb.filekit.PlatformFile
@@ -210,7 +208,7 @@ internal fun TrailingIcon(
             vectorResource(icon),
             modifier = Modifier.size(28.dp).then(pulseModifier),
             contentDescription = contentDescription,
-            tint = com.inspiredandroid.kai.ui.OledBlack,
+            tint = TextPrimary,
         )
     }
 }
@@ -355,17 +353,8 @@ fun QuestionInput(
         val maxComposerHeight = 240.dp
 
         // Floating neural minimal input pill
-        val isOled = MaterialTheme.colorScheme.isOledFlavor
-        val inputPillBg = if (isOled) {
-            com.inspiredandroid.kai.ui.CardFill
-        } else {
-            SurfaceRaised.copy(alpha = 0.9f)
-        }
-        val inputBorder = if (isOled) {
-            com.inspiredandroid.kai.ui.BorderSoft
-        } else {
-            BorderSoft.copy(alpha = 0.6f)
-        }
+        val inputPillBg = SurfaceRaised.copy(alpha = 0.9f)
+        val inputBorder = BorderSoft.copy(alpha = 0.6f)
 
         Box(
             modifier = Modifier

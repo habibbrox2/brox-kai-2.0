@@ -87,7 +87,6 @@ import com.inspiredandroid.kai.ui.CardFill
 import com.inspiredandroid.kai.ui.DangerAlert
 import com.inspiredandroid.kai.ui.KaiShapes
 import com.inspiredandroid.kai.ui.KaiTypography
-import com.inspiredandroid.kai.ui.OledBlack
 import com.inspiredandroid.kai.ui.SurfaceRaised
 import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.build.KaiBuildScreen
@@ -106,7 +105,6 @@ import com.inspiredandroid.kai.ui.chat.composables.uiErrorText
 import com.inspiredandroid.kai.ui.components.VerticalScrollbarForList
 import com.inspiredandroid.kai.ui.dynamicui.toSpeakableText
 import com.inspiredandroid.kai.ui.handCursor
-import com.inspiredandroid.kai.ui.isOledFlavor
 import com.inspiredandroid.kai.ui.sandbox.SandboxTabsContent
 import com.inspiredandroid.kai.ui.settings.SandboxUiState
 import com.inspiredandroid.kai.ui.settings.SandboxViewModel
@@ -581,24 +579,15 @@ private fun ChatModeScreen(
                         }
                     }
                 },
-                // Use OLED black background for pure dark theme with subtle neural minimal gradient
+                // Use subtle neural minimal gradient background
                 modifier = Modifier
                     .background(
-                        brush = if (MaterialTheme.colorScheme.isOledFlavor) {
-                            androidx.compose.ui.graphics.Brush.verticalGradient(
-                                colors = listOf(
-                                    com.inspiredandroid.kai.ui.OledBlack,
-                                    com.inspiredandroid.kai.ui.OledBlack,
-                                ),
-                            )
-                        } else {
-                            androidx.compose.ui.graphics.Brush.verticalGradient(
-                                colors = listOf(
-                                    MaterialTheme.colorScheme.background,
-                                    OledBlack,
-                                ),
-                            )
-                        },
+                        brush = androidx.compose.ui.graphics.Brush.verticalGradient(
+                            colors = listOf(
+                                MaterialTheme.colorScheme.surface,
+                                Color(0xFF1E293B),
+                            ),
+                        ),
                     )
                     .navigationBarsPadding()
                     .statusBarsPadding()

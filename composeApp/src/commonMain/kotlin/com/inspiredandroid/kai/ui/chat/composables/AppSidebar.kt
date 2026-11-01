@@ -69,7 +69,6 @@ import com.inspiredandroid.kai.ui.chat.ChatUiState
 import com.inspiredandroid.kai.ui.chat.ConversationSummary
 import com.inspiredandroid.kai.ui.components.KaiSearchField
 import com.inspiredandroid.kai.ui.handCursor
-import com.inspiredandroid.kai.ui.isOledFlavor
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.chat_history_heartbeat_label
 import kai.composeapp.generated.resources.ic_settings
@@ -121,29 +120,16 @@ fun AppSidebar(
     // Time-based grouping. Pinned conversations always float to the top group.
     val groups = remember(visibleConversations) { groupConversations(visibleConversations) }
 
-    // Glassmorphic sidebar background
-    val isOled = MaterialTheme.colorScheme.isOledFlavor
-    val sidebarBg = if (isOled) {
-        com.inspiredandroid.kai.ui.SurfaceRaised.copy(alpha = 0.95f)
-    } else {
-        SurfaceRaised.copy(alpha = 0.9f)
-    }
-    val sidebarBorder = if (isOled) {
-        com.inspiredandroid.kai.ui.BorderSoft
-    } else {
-        BorderSoft.copy(alpha = 0.3f)
-    }
+    // Neutral sidebar background
+    val sidebarBg = SurfaceRaised.copy(alpha = 0.9f)
+    val sidebarBorder = BorderSoft.copy(alpha = 0.3f)
 
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(sidebarBg)
             .border(
-                if (isOled) {
-                    BorderStroke(1.dp, sidebarBorder)
-                } else {
-                    BorderStroke(1.dp, BorderSoft.copy(alpha = 0.3f))
-                },
+                BorderStroke(1.dp, sidebarBorder),
                 com.inspiredandroid.kai.ui.settings.SettingsShapes.section,
             )
             .padding(ChatSpacing.sm),
@@ -155,7 +141,7 @@ fun AppSidebar(
             shape = ChatShapes.quickStartCard,
             colors = ButtonDefaults.buttonColors(
                 containerColor = com.inspiredandroid.kai.ui.AccentPrimary,
-                contentColor = com.inspiredandroid.kai.ui.OledBlack,
+                contentColor = TextPrimary,
             ),
         ) {
             Icon(
@@ -408,8 +394,6 @@ private fun SidebarLink(
     onClick: () -> Unit,
     isActive: Boolean = false,
 ) {
-    val isOled = MaterialTheme.colorScheme.isOledFlavor
-
     Box(
         modifier = Modifier
             .fillMaxWidth()

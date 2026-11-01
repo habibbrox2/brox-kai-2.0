@@ -32,7 +32,6 @@ import com.inspiredandroid.kai.ui.BorderSoft
 import com.inspiredandroid.kai.ui.CardFill
 import com.inspiredandroid.kai.ui.KaiShapes
 import com.inspiredandroid.kai.ui.KaiTypography
-import com.inspiredandroid.kai.ui.OledBlack
 import com.inspiredandroid.kai.ui.SurfaceRaised
 import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.TextSecondary
@@ -56,8 +55,6 @@ fun KaiDialog(
     dismissButton: KaiDialogButton? = null,
     modifier: Modifier = Modifier,
 ) {
-    val isOled = androidx.compose.material3.MaterialTheme.colorScheme.background == OledBlack
-
     val dialogFocusRequester = remember { FocusRequester() }
 
     Box(
@@ -79,7 +76,7 @@ fun KaiDialog(
                 }
             }
             .clip(KaiShapes.section)
-            .background(if (isOled) CardFill else SurfaceRaised)
+            .background(CardFill)
             .border(BorderStroke(1.dp, BorderSoft)),
     ) {
         Column(

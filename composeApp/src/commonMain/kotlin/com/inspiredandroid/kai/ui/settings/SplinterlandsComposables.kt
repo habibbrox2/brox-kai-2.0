@@ -62,7 +62,6 @@ import com.inspiredandroid.kai.ui.DangerAlert
 import com.inspiredandroid.kai.ui.KaiOutlinedTextField
 import com.inspiredandroid.kai.ui.KaiShapes
 import com.inspiredandroid.kai.ui.KaiTypography
-import com.inspiredandroid.kai.ui.OledBlack
 import com.inspiredandroid.kai.ui.SurfaceRaised
 import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.TextSecondary
@@ -641,7 +640,7 @@ private fun SplinterlandsAddAccountForm(
                     CircularProgressIndicator(
                         modifier = Modifier.size(16.dp),
                         strokeWidth = 2.dp,
-                        color = OledBlack,
+                        color = AccentPrimary,
                     )
                     Spacer(Modifier.width(8.dp))
                     Text("Testing...")

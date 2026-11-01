@@ -42,7 +42,6 @@ import com.inspiredandroid.kai.ui.components.CapabilityCountCard
 import com.inspiredandroid.kai.ui.components.CollectionEmptyState
 import com.inspiredandroid.kai.ui.components.OperationalStatus
 import com.inspiredandroid.kai.ui.handCursor
-import com.inspiredandroid.kai.ui.isOledFlavor
 import com.inspiredandroid.kai.ui.kaiAdaptiveCardBorder
 import com.inspiredandroid.kai.ui.kaiAdaptiveCardColors
 import kai.composeapp.generated.resources.Res
@@ -345,17 +344,8 @@ private fun ToolItem(
     onToggle: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val isOled = MaterialTheme.colorScheme.isOledFlavor
-    val cardBg = if (isOled) {
-        com.inspiredandroid.kai.ui.CardFill
-    } else {
-        SurfaceRaised.copy(alpha = 0.5f)
-    }
-    val cardBorder = if (isOled) {
-        androidx.compose.foundation.BorderStroke(1.dp, com.inspiredandroid.kai.ui.BorderSoft)
-    } else {
-        BorderStroke(1.dp, BorderSoft)
-    }
+    val cardBg = SurfaceRaised.copy(alpha = 0.5f)
+    val cardBorder = BorderStroke(1.dp, BorderSoft)
     val cardShape = com.inspiredandroid.kai.ui.settings.SettingsShapes.card
 
     Card(
@@ -394,7 +384,7 @@ private fun ToolItem(
                     checkedThumbColor = com.inspiredandroid.kai.ui.AccentPrimary,
                     checkedTrackColor = com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.3f),
                     uncheckedThumbColor = TextSecondary,
-                    uncheckedTrackColor = if (isOled) BorderSoft else BorderSoft.copy(alpha = 0.5f),
+                    uncheckedTrackColor = BorderSoft.copy(alpha = 0.5f),
                 ),
             )
         }

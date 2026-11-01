@@ -50,7 +50,7 @@ import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 // ═══════════════════════════════════════════════════════════════
-// BROX KAI 2.0 — 2026 NEURAL MINIMAL DESIGN SYSTEM
+// BROX KAI 2.0 — 2027 MINIMAL DESIGN SYSTEM
 // ═══════════════════════════════════════════════════════════════
 
 // ─── Core Brand Colors ───
@@ -58,50 +58,33 @@ val broxNavy = Color(0xFF0B1026)
 val broxDeepNavy = Color(0xFF050810)
 val broxCharcoal = Color(0xFF151B2B)
 val BackgroundPrimary = Color(0xFF0E0F12)
-val AccentPrimary = Color(0xFF22D3EE)
+val AccentPrimary = Color(0xFF06B6D4)
 val broxCyan = AccentPrimary
-val broxLightSurface = Color(0xFFF8FAFC)
+val broxLightSurface = Color(0xFFFFFFFF)
 val broxMutedText = Color(0xFF64748B)
 
-// ─── 2026 Design Tokens ───
+// ─── 2027 Design Tokens ───
 
-/** Ultra-deep background */
-// ─── Brox Kai 2.0 Chat & Bubble Palette Tokens ───
-val ChatDarkBackground = BackgroundPrimary
-val WarmPaperBubble = Color(0xFFF3EEE4)
-val UserBubbleBlue = Color(0xFF7C96A8)
-val QuickOptionGreen = Color(0xFF9DD384)
-val DarkText = BackgroundPrimary
-val LightText = Color(0xFFECEAE4)
-
-/** True zero-luminance surface for AMOLED/OLED displays. */
-val OledBlack = Color(0xFF000000)
-
-/** Elevated surfaces */
-val SurfaceElevated = Color(0xFF0A0F1C)
-val SurfaceRaised = Color(0xFF111827)
+/** Light theme surface */
+val SurfaceElevated = Color(0xFFFFFFFF)
+val SurfaceRaised = Color(0xFFE2E8F0)
 
 /** Card surfaces with subtle transparency */
-val CardFill = Color(0x99111B2E)
-val CardSurface = Color(0xFF0F172A)
+val CardFill = Color(0xFFFFFFFF)
+val CardSurface = Color(0xFFFAFAFA)
 
 /** Borders */
-val BorderSubtle = Color(0x1AFFFFFF)
-val BorderSoft = Color(0x26FFFFFF)
-val BorderStrong = Color(0x40FFFFFF)
+val BorderSubtle = Color(0x1A000000)
+val BorderSoft = Color(0x33000000)
+val BorderStrong = Color(0x4D000000)
 
 /** Primary accent - vibrant cyan/teal */
-val AccentPrimaryHover = Color(0xFF67E8F9)
-val AccentPrimaryActive = Color(0xFF06B6D4)
+val AccentPrimaryHover = Color(0xFF06B6D4)
+val AccentPrimaryActive = Color(0xFF0891B2)
 
 /** Accent gradient colors */
 val AccentGradientStart = AccentPrimary
 val AccentGradientEnd = Color(0xFF3B82F6)
-
-/** Glow effects */
-val AccentGlow = Color(0x3322D3EE)
-val AccentGlowStrong = Color(0x6622D3EE)
-val AccentGlowIntense = Color(0x9922D3EE)
 
 /** Status colors */
 val DangerAlert = Color(0xFFEF4444)
@@ -434,102 +417,6 @@ fun Modifier.cyanGlow(enabled: Boolean = true): Modifier = if (enabled) {
 
 // ─── Color Schemes ───
 
-/** Standard dark theme (grey-based) */
-val DarkColorScheme = darkColorScheme(
-    primary = AccentPrimary,
-    onPrimary = OledBlack,
-    primaryContainer = broxNavy,
-    onPrimaryContainer = TextPrimary,
-    secondary = broxDeepNavy,
-    onSecondary = TextPrimary,
-    tertiary = broxCharcoal,
-    onTertiary = TextPrimary,
-    error = DangerAlert,
-    onError = OledBlack,
-    errorContainer = DangerAlert.copy(alpha = 0.3f),
-    onErrorContainer = TextPrimary,
-    background = Color(0xFF121212),
-    onBackground = TextPrimary,
-    surface = Color(0xFF1E1E1E),
-    onSurface = TextPrimary,
-    surfaceVariant = Color(0xFF2A2A2A),
-    onSurfaceVariant = TextSecondary,
-    outline = BorderSoft,
-    outlineVariant = BorderSoft.copy(alpha = 0.5f),
-    inverseSurface = Color(0xFFE0E0E0),
-    inverseOnSurface = OledBlack,
-    inversePrimary = broxNavy,
-    surfaceContainerHighest = Color(0xFF2A2A2A),
-    surfaceContainerHigh = Color(0xFF242424),
-    surfaceContainer = Color(0xFF1E1E1E),
-    surfaceContainerLow = Color(0xFF1A1A1A),
-    surfaceContainerLowest = Color(0xFF121212),
-)
-
-/** Midnight theme — 2026 Neural Minimal */
-val MidnightColorScheme = darkColorScheme(
-    primary = AccentPrimary,
-    onPrimary = OledBlack,
-    primaryContainer = Color(0xFF164E63),
-    onPrimaryContainer = TextPrimary,
-    secondary = SurfaceRaised,
-    onSecondary = TextPrimary,
-    tertiary = SurfaceElevated,
-    onTertiary = TextPrimary,
-    error = DangerAlert,
-    onError = Color.White,
-    errorContainer = DangerAlert.copy(alpha = 0.2f),
-    onErrorContainer = TextPrimary,
-    background = broxDeepNavy,
-    onBackground = TextPrimary,
-    surface = broxNavy,
-    onSurface = TextPrimary,
-    surfaceVariant = SurfaceRaised,
-    onSurfaceVariant = TextSecondary,
-    outline = BorderSubtle,
-    outlineVariant = BorderSoft,
-    inverseSurface = Color(0xFFF8FAFC),
-    inverseOnSurface = OledBlack,
-    inversePrimary = Color(0xFF0891B2),
-    surfaceContainerHighest = broxCharcoal,
-    surfaceContainerHigh = SurfaceRaised,
-    surfaceContainer = broxNavy,
-    surfaceContainerLow = SurfaceElevated,
-    surfaceContainerLowest = broxDeepNavy,
-)
-
-/** Pure OLED black theme — 2026 Neural Minimal */
-val OledColorScheme = darkColorScheme(
-    primary = AccentPrimary,
-    onPrimary = OledBlack,
-    primaryContainer = Color(0xFF164E63),
-    onPrimaryContainer = TextPrimary,
-    secondary = SurfaceRaised,
-    onSecondary = TextPrimary,
-    tertiary = SurfaceElevated,
-    onTertiary = TextPrimary,
-    error = DangerAlert,
-    onError = Color.White,
-    errorContainer = DangerAlert.copy(alpha = 0.2f),
-    onErrorContainer = TextPrimary,
-    background = OledBlack,
-    onBackground = TextPrimary,
-    surface = OledBlack,
-    onSurface = TextPrimary,
-    surfaceVariant = SurfaceElevated,
-    onSurfaceVariant = TextSecondary,
-    outline = BorderSubtle,
-    outlineVariant = BorderSoft,
-    inverseSurface = Color(0xFFF8FAFC),
-    inverseOnSurface = OledBlack,
-    inversePrimary = Color(0xFF0891B2),
-    surfaceContainerHighest = SurfaceRaised,
-    surfaceContainerHigh = SurfaceElevated,
-    surfaceContainer = OledBlack,
-    surfaceContainerLow = OledBlack,
-    surfaceContainerLowest = OledBlack,
-)
-
 /** Light theme */
 val LightColorScheme = lightColorScheme(
     primary = broxNavy,
@@ -546,7 +433,7 @@ val LightColorScheme = lightColorScheme(
     onErrorContainer = broxNavy,
     background = Color(0xFFFFFFFF),
     onBackground = Color(0xFF000000),
-    surface = Color(0xFFF8FAFC),
+    surface = Color(0xFFFFFFFF),
     onSurface = Color(0xFF000000),
     surfaceVariant = Color(0xFFE2E8F0),
     onSurfaceVariant = Color(0xFF475569),
@@ -562,31 +449,36 @@ val LightColorScheme = lightColorScheme(
     surfaceContainerLowest = Color(0xFFFFFFFF),
 )
 
-/** OG Shine - neon cyan/green on black */
-val OGShineColorScheme = darkColorScheme(
-    primary = Color(0xFF00FF88),
-    onPrimary = Color(0xFF000000),
-    primaryContainer = Color(0xFF003D20),
-    onPrimaryContainer = Color(0xFF00FFAA),
-    secondary = Color(0xFF00D1E8),
-    onSecondary = Color(0xFF000000),
-    tertiary = Color(0xFF39FF14),
-    onTertiary = Color(0xFF000000),
+/** Dark theme */
+val DarkColorScheme = darkColorScheme(
+    primary = AccentPrimary,
+    onPrimary = Color(0xFFFFFFFF),
+    primaryContainer = broxNavy,
+    onPrimaryContainer = TextPrimary,
+    secondary = broxDeepNavy,
+    onSecondary = TextPrimary,
+    tertiary = broxCharcoal,
+    onTertiary = TextPrimary,
     error = DangerAlert,
     onError = Color.White,
-    background = Color(0xFF000000),
-    onBackground = Color(0xFF00FF88),
-    surface = Color(0xFF050505),
-    onSurface = Color(0xFF00FF88),
-    surfaceVariant = Color(0xFF0A0A0A),
-    onSurfaceVariant = Color(0xFF00D1E8),
-    outline = Color(0xFF00FF88),
-    outlineVariant = Color(0xFF003D20),
-    surfaceContainerHighest = Color(0xFF0A0A0A),
-    surfaceContainerHigh = Color(0xFF050505),
-    surfaceContainer = Color(0xFF000000),
-    surfaceContainerLow = Color(0xFF000000),
-    surfaceContainerLowest = Color(0xFF000000),
+    errorContainer = DangerAlert.copy(alpha = 0.3f),
+    onErrorContainer = TextPrimary,
+    background = Color(0xFF121212),
+    onBackground = TextPrimary,
+    surface = Color(0xFF1E1E1E),
+    onSurface = TextPrimary,
+    surfaceVariant = Color(0xFF2A2A2A),
+    onSurfaceVariant = TextSecondary,
+    outline = BorderSoft,
+    outlineVariant = BorderSoft.copy(alpha = 0.5f),
+    inverseSurface = Color(0xFFE0E0E0),
+    inverseOnSurface = Color(0xFFFFFFFF),
+    inversePrimary = broxNavy,
+    surfaceContainerHighest = Color(0xFF2A2A2A),
+    surfaceContainerHigh = Color(0xFF242424),
+    surfaceContainer = Color(0xFF1E1E1E),
+    surfaceContainerLow = Color(0xFF1A1A1A),
+    surfaceContainerLowest = Color(0xFF121212),
 )
 
 /** Peach theme */
@@ -769,27 +661,11 @@ val CarbonColorScheme = darkColorScheme(
     outlineVariant = Color(0xFF1E3A8A),
 )
 
-/** Check if current scheme is OLED flavor (pure black background) */
-val ColorScheme.isOledFlavor: Boolean get() = background == OledBlack
-
-/** Extension to create a pure black background variant */
-fun ColorScheme.withBlackBackground(): ColorScheme = copy(
-    background = OledBlack,
-    surface = OledBlack,
-    surfaceContainer = OledBlack,
-    surfaceContainerLow = OledBlack,
-    surfaceContainerLowest = OledBlack,
-)
-
 // ─── Card Colors & Borders ───
 
 @Composable
 fun kaiAdaptiveCardColors(): CardColors = CardDefaults.cardColors(
-    containerColor = if (MaterialTheme.colorScheme.isOledFlavor) {
-        CardFill
-    } else {
-        CardFill.copy(alpha = 0.5f)
-    },
+    containerColor = CardFill.copy(alpha = 0.5f),
 )
 
 @Composable
@@ -799,19 +675,11 @@ fun kaiAdaptiveCardBorder(): BorderStroke = BorderStroke(1.dp, BorderSoft)
 fun Modifier.kaiAdaptiveCardSurface(shape: Shape = CardDefaults.shape): Modifier = this
     .clip(shape)
     .background(
-        if (MaterialTheme.colorScheme.isOledFlavor) {
-            CardFill
-        } else {
-            CardFill.copy(alpha = 0.5f)
-        },
+        CardFill.copy(alpha = 0.5f),
         shape,
     )
     .then(
-        if (MaterialTheme.colorScheme.isOledFlavor || MaterialTheme.colorScheme == MidnightColorScheme) {
-            Modifier.border(1.dp, BorderSoft, shape)
-        } else {
-            Modifier
-        },
+        Modifier.border(1.dp, BorderSoft, shape),
     )
 
 /** Glassmorphic card colors for Settings and UI panels */
@@ -955,34 +823,6 @@ fun Theme(
             borderSubtle = Color(0x1A000000),
             borderSoft = Color(0x33000000),
             borderStrong = Color(0x4D000000),
-        )
-
-        colorScheme === OledColorScheme -> KaiColorPalette(
-            textPrimary = Color(0xFFFFFFFF),
-            textSecondary = Color(0xFFCBD5E1),
-            textTertiary = Color(0xFF94A3B8),
-            textMuted = Color(0xFF64748B),
-            surfaceElevated = Color(0xFF000000),
-            surfaceRaised = Color(0xFF0A0F1C),
-            cardFill = Color(0xE6000000),
-            cardSurface = Color(0xFF050810),
-            borderSubtle = Color(0x1AFFFFFF),
-            borderSoft = Color(0x33FFFFFF),
-            borderStrong = Color(0x4DFFFFFF),
-        )
-
-        colorScheme === MidnightColorScheme -> KaiColorPalette(
-            textPrimary = Color(0xFFECEAE4),
-            textSecondary = Color(0xFFCBD5E1),
-            textTertiary = Color(0xFF94A3B8),
-            textMuted = Color(0xFF64748B),
-            surfaceElevated = Color(0xFF0A0F1C),
-            surfaceRaised = Color(0xFF111827),
-            cardFill = Color(0xB3111B2E),
-            cardSurface = Color(0xFF0F172A),
-            borderSubtle = Color(0x26FFFFFF),
-            borderSoft = Color(0x33FFFFFF),
-            borderStrong = Color(0x4DFFFFFF),
         )
 
         else -> KaiColorPalette(

@@ -31,11 +31,6 @@ enum class ThemeMode {
     System,
     Light,
     Dark,
-    OledBlack,
-
-    /** Deep-navy dark theme: the brand navy surfaces instead of neutral grey. */
-    Midnight,
-    OGShine,
     Peach,
     Lilac,
     Dusk,
@@ -383,8 +378,8 @@ class AppSettings(internal val settings: Settings) {
                 ThemeMode.System
             }
         }
-        // Migrate the legacy boolean OLED toggle: true → OledBlack, false → System.
-        return if (settings.getBoolean(KEY_OLED_MODE_ENABLED, false)) ThemeMode.OledBlack else ThemeMode.System
+        // Default to System theme when no theme mode is set
+        ThemeMode.System
     }
 
     // Daemon mode
@@ -649,7 +644,6 @@ class AppSettings(internal val settings: Settings) {
         const val KEY_SCHEDULED_TASKS = "scheduled_tasks"
         const val KEY_SCHEDULING_ENABLED = "scheduling_enabled"
         const val KEY_DYNAMIC_UI_ENABLED = "dynamic_ui_enabled"
-        const val KEY_OLED_MODE_ENABLED = "oled_mode_enabled"
         const val KEY_THEME_MODE = "theme_mode"
         const val KEY_DAEMON_ENABLED = "daemon_enabled"
         const val KEY_HEARTBEAT_CONFIG = "heartbeat_config"

@@ -44,7 +44,6 @@ import com.inspiredandroid.kai.ui.CardFill
 import com.inspiredandroid.kai.ui.KaiTypography
 import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.handCursor
-import com.inspiredandroid.kai.ui.isOledFlavor
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.settings_tab_account
 import kai.composeapp.generated.resources.settings_tab_agent
@@ -64,9 +63,8 @@ fun SettingsNavRail(
     onSelectTab: (SettingsTab) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val isOled = MaterialTheme.colorScheme.isOledFlavor
     val railBg = CardFill
-    val railBorder = if (isOled) BorderSubtle else BorderSoft.copy(alpha = 0.6f)
+    val railBorder = BorderSoft.copy(alpha = 0.6f)
 
     Box(
         modifier = modifier

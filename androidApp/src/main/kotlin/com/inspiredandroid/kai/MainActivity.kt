@@ -61,8 +61,6 @@ class MainActivity : ComponentActivity() {
                 -> false
 
                 ThemeMode.Dark,
-                ThemeMode.OledBlack,
-                ThemeMode.Midnight,
                 ThemeMode.OGShine,
                 ThemeMode.Dusk,
                 ThemeMode.Graphite,

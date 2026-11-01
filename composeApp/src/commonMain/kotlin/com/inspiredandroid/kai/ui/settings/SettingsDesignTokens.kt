@@ -14,7 +14,6 @@ import com.inspiredandroid.kai.ui.BorderSubtle
 import com.inspiredandroid.kai.ui.CardFill
 import com.inspiredandroid.kai.ui.CardSurface
 import com.inspiredandroid.kai.ui.DangerAlert
-import com.inspiredandroid.kai.ui.OledBlack
 import com.inspiredandroid.kai.ui.SuccessGreen
 import com.inspiredandroid.kai.ui.SurfaceElevated
 import com.inspiredandroid.kai.ui.SurfaceRaised
@@ -25,7 +24,7 @@ import com.inspiredandroid.kai.ui.WarningAmber
 
 /**
  * Shared design tokens for the Brox Kai settings control center.
- * Updated for 2026 Neural Minimal design system.
+ * Updated for 2027 Minimal design system.
  */
 object SettingsSpacing {
     val xxs: Dp = 2.dp
@@ -62,9 +61,9 @@ object SettingsStatusColors {
 }
 
 object SettingsSurfaces {
-    /** Page background - OLED black in dark themes */
+    /** Page background - dark theme */
     @Composable
-    fun page(): Color = OledBlack
+    fun page(): Color = Color(0xFF0F172A)
 
     /** Glassmorphic card background with blur effect */
     @Composable
