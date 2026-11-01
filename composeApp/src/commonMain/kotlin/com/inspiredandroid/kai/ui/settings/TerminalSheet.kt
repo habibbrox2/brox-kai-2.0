@@ -63,6 +63,7 @@ import com.inspiredandroid.kai.SandboxController
 import com.inspiredandroid.kai.SandboxSessions
 import com.inspiredandroid.kai.TerminalLine
 import com.inspiredandroid.kai.linux.LinuxDistro
+import com.inspiredandroid.kai.ui.theme.DesignTokens
 import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.DangerAlert
 import com.inspiredandroid.kai.ui.SurfaceRaised
@@ -111,12 +112,12 @@ internal fun monoStyle(size: TextUnit, color: Color = Color.Unspecified) = TextS
 internal fun terminalColors(darkBackground: Boolean = false): TerminalColors {
     if (darkBackground) {
         return TerminalColors(
-            bg = TerminalDarkBg,
-            inputBg = Color(0xFF252525),
-            text = Color(0xFFD4D4D4),
-            prompt = Color(0xFF6CB6FF),
-            error = Color(0xFFF48771),
-            dimText = Color(0xFF666666),
+            bg = DesignTokens.TerminalBackground,
+            inputBg = DesignTokens.SurfaceElevated,
+            text = DesignTokens.PrimaryText,
+            prompt = DesignTokens.PrimaryCyan,
+            error = DesignTokens.Error,
+            dimText = DesignTokens.TertiaryText,
         )
     }
     return TerminalColors(
