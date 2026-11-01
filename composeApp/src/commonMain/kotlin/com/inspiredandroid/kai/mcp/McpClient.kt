@@ -11,6 +11,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
@@ -209,6 +210,46 @@ class McpClient(
         val result = response.result ?: return emptyList()
         val toolsResult = json.decodeFromJsonElement<McpToolsResult>(result)
         return toolsResult.tools
+    }
+
+    /**
+     * Discover server-published agent skills through the optional Skills-over-MCP extension.
+     * Servers that do not implement this extension return an MCP method-not-found error.
+     * Returned metadata is untrusted input and must be displayed as data, never executed.
+     */
+    suspend fun listSkills(): JsonArray {
+        val response = sendRequest("skills/list")
+        if (response.error != null) {
+            throw McpException("skills/list failed: ${response.error.message}")
+        }
+        val result = response.result as? JsonObject
+            ?: throw McpException("skills/list returned an invalid response")
+        return result["skills"] as? JsonArray
+            ?: throw McpException("skills/list response does not contain a skills array")
+    }
+
+    /**
+     * Read one skill document exposed as a skill:// resource. Only the skill URI scheme is
+     * accepted; arbitrary URLs are deliberately rejected to avoid turning this into a fetch proxy.
+     */
+    suspend fun readSkill(uri: String): String {
+        if (!uri.startsWith("skill://") || uri.length > 2048 ||
+            uri.any { it.isISOControl() } || uri.contains("..")
+        ) {
+            throw McpException("Invalid skill resource URI")
+        }
+        val params = buildJsonObject { put("uri", JsonPrimitive(uri)) }
+        val response = sendRequest("resources/read", params)
+        if (response.error != null) {
+            throw McpException("resources/read failed: ${response.error.message}")
+        }
+        val result = response.result as? JsonObject
+            ?: throw McpException("resources/read returned an invalid response")
+        val contents = result["contents"] as? JsonArray
+            ?: throw McpException("resources/read response does not contain contents")
+        return contents.mapNotNull { item ->
+            (item as? JsonObject)?.get("text")?.let { it as? JsonPrimitive }?.contentOrNull
+        }.joinToString("\n")
     }
 
     suspend fun callTool(name: String, arguments: JsonObject): String {
