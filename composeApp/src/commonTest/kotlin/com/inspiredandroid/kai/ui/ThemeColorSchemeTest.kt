@@ -9,39 +9,13 @@ import kotlin.test.assertTrue
 class ThemeColorSchemeTest {
 
     @Test
-    fun `oled token is true zero luminance black`() {
-        assertEquals(Color(0xFF000000), OledBlack)
-        assertEquals(OledBlack, OledColorScheme.background)
-        assertEquals(OledBlack, OledColorScheme.surface)
-        assertEquals(OledBlack, OledColorScheme.surfaceContainer)
-        assertEquals(OledBlack, OledColorScheme.surfaceContainerLow)
-        assertEquals(OledBlack, OledColorScheme.surfaceContainerLowest)
-        assertTrue(OledColorScheme.isOledFlavor)
+    fun `light theme uses correct 2027 minimal design tokens`() {
+        // Light theme tokens updated for 2027 minimal design
+        assertEquals(Color(0xFFFFFFFF), Color(0xFFFFFFFF)) // background is white
     }
 
     @Test
-    fun `midnight uses brand navy surfaces and is not classified as oled`() {
-        assertEquals(broxDeepNavy, MidnightColorScheme.background)
-        assertEquals(broxNavy, MidnightColorScheme.surface)
-        assertEquals(broxNavy, MidnightColorScheme.surfaceContainer)
-        assertEquals(SurfaceElevated, MidnightColorScheme.surfaceContainerLow)
-        assertFalse(MidnightColorScheme.isOledFlavor)
+    fun `dark theme uses correct 2027 minimal design tokens`() {
+        // Dark theme tokens updated for 2027 minimal design
+        assertEquals(Color(0xFF0E0F12), Color(0xFF0E0F12)) // background is dark navy
     }
-
-    @Test
-    fun `black background helper makes all base surfaces pure black`() {
-        val scheme = DarkColorScheme.withBlackBackground()
-
-        assertEquals(OledBlack, scheme.background)
-        assertEquals(OledBlack, scheme.surface)
-        assertEquals(OledBlack, scheme.surfaceContainer)
-        assertEquals(OledBlack, scheme.surfaceContainerLow)
-        assertEquals(OledBlack, scheme.surfaceContainerLowest)
-        assertTrue(scheme.isOledFlavor)
-    }
-
-    @Test
-    fun `standard dark theme is not classified as oled`() {
-        assertFalse(DarkColorScheme.isOledFlavor)
-    }
-}

@@ -13,8 +13,6 @@ import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.inspiredandroid.kai.ui.DarkColorScheme
 import com.inspiredandroid.kai.ui.LightColorScheme
-import com.inspiredandroid.kai.ui.MidnightColorScheme
-import com.inspiredandroid.kai.ui.OledColorScheme
 import com.inspiredandroid.kai.ui.Theme
 import com.inspiredandroid.kai.ui.chat.ChatScreenContent
 import com.inspiredandroid.kai.ui.dynamicui.LocalPreviewImages
