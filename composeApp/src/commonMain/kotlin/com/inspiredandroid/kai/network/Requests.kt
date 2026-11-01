@@ -163,7 +163,7 @@ class Requests(
             }
         }
     },
-)
+) {
 
     class DebugKtorLogger : Logger {
         override fun log(message: String) {
