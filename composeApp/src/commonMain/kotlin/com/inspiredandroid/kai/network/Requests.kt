@@ -343,8 +343,75 @@ class Requests {
     ): Result<OpenAICompatibleModelResponseDto> = openAICompatibleResult {
         val modelsUrl = service.modelsUrl
             ?: return Result.failure(OpenAICompatibleGenericException("Models URL not configured for ${service.displayName}"))
-        val url = resolveUrl(service, credentials, modelsUrl)
         val apiKey = getOptionalApiKey(service, credentials)
+
+        // Cloudflare Workers AI uses the Cloudflare v4 envelope (result/result_info), not
+        // the OpenAI-compatible { data: [...] } model-list response. Fetch all pages explicitly.
+        if (service == Service.Cloudflare) {
+            if (credentials.baseUrl.isBlank()) {
+                return Result.failure(
+                    OpenAICompatibleGenericException("Cloudflare Account ID is required to discover Workers AI models."),
+                )
+            }
+            val accountId = credentials.baseUrl.trim()
+                .substringAfter("/accounts/", missingDelimiterValue = credentials.baseUrl.trim())
+                .substringBefore("/")
+            if (!accountId.matches(Regex("[a-fA-F0-9]{32}"))) {
+                return Result.failure(OpenAICompatibleGenericException("Enter a valid 32-character Cloudflare Account ID."))
+            }
+
+            val allModels = mutableListOf<OpenAICompatibleModelResponseDto.Model>()
+            var page = 1
+            var totalPages = 1
+            val perPage = 100
+            while (page <= totalPages && page <= 20) {
+                val pageUrl = "${resolveUrl(service, credentials, modelsUrl)}?page=$page&per_page=$perPage"
+                val response = defaultClient.get(pageUrl) {
+                    apiKey?.let { bearerAuth(it) }
+                    applySessionHeader(service, credentials, sessionId = null)
+                }
+                if (!response.status.isSuccess()) {
+                    handleOpenAICompatibleError(service, credentials, response)
+                }
+                val envelope = anthropicJson.parseToJsonElement(response.bodyAsText()).jsonObject
+                if ((envelope["success"] as? JsonPrimitive)?.contentOrNull == "false") {
+                    val message = (envelope["errors"] as? JsonArray)
+                        ?.firstOrNull()
+                        ?.let { (it as? JsonObject)?.get("message") as? JsonPrimitive }
+                        ?.contentOrNull
+                    throw OpenAICompatibleGenericException(message ?: "Cloudflare model search failed.")
+                }
+                val models = envelope["result"] as? JsonArray
+                    ?: throw OpenAICompatibleGenericException("Cloudflare model search returned an invalid result.")
+                models.forEach { item ->
+                    val model = item as? JsonObject ?: return@forEach
+                    val id = sequenceOf("name", "id", "model_id", "model")
+                        .mapNotNull { key -> (model[key] as? JsonPrimitive)?.contentOrNull }
+                        .firstOrNull { it.isNotBlank() }
+                        ?: return@forEach
+                    val description = sequenceOf("description", "task")
+                        .mapNotNull { key -> (model[key] as? JsonPrimitive)?.contentOrNull }
+                        .firstOrNull { it.isNotBlank() }
+                    val owner = sequenceOf("source", "provider")
+                        .mapNotNull { key -> (model[key] as? JsonPrimitive)?.contentOrNull }
+                        .firstOrNull { it.isNotBlank() }
+                    allModels += OpenAICompatibleModelResponseDto.Model(
+                        id = id,
+                        name = id,
+                        owned_by = owner,
+                        description = description,
+                    )
+                }
+                val resultInfo = envelope["result_info"] as? JsonObject
+                totalPages = (resultInfo?.get("total_pages") as? JsonPrimitive)
+                    ?.contentOrNull?.toIntOrNull()
+                    ?: if (models.size == perPage) page + 1 else page
+                page++
+            }
+            return Result.success(OpenAICompatibleModelResponseDto(data = allModels.distinctBy { it.id }))
+        }
+
+        val url = resolveUrl(service, credentials, modelsUrl)
         val response: HttpResponse = defaultClient.get(url) {
             apiKey?.let { bearerAuth(it) }
             applySessionHeader(service, credentials, sessionId = null)
