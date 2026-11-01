@@ -9,6 +9,7 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.Url
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import kotlinx.serialization.json.Json
@@ -19,6 +20,16 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.decodeFromJsonElement
+
+internal fun isSameOriginMcpRedirect(source: String, target: String): Boolean = try {
+    val sourceUrl = Url(source)
+    val targetUrl = Url(target)
+    sourceUrl.protocol == targetUrl.protocol &&
+        sourceUrl.host.equals(targetUrl.host, ignoreCase = true) &&
+        sourceUrl.port == targetUrl.port
+} catch (_: Exception) {
+    false
+}
 
 internal const val MCP_CURRENT_PROTOCOL_VERSION = "2026-07-28"
 
@@ -138,6 +149,9 @@ class McpClient(
                 }
                 val location = response.headers["Location"]
                     ?: throw McpException("Redirect without Location header")
+                if (!isSameOriginMcpRedirect(currentUrl, location)) {
+                    throw McpException("Cross-origin MCP redirect rejected to protect configured credentials")
+                }
                 val redirectResult = McpUrlValidator.validate(location, allowPrivateIps)
                 if (!redirectResult.isValid) {
                     throw McpException("Redirect target rejected: ${redirectResult.error}")
@@ -257,6 +271,9 @@ class McpClient(
                 }
                 val location = response.headers["Location"]
                     ?: throw McpException("Redirect without Location header")
+                if (!isSameOriginMcpRedirect(currentUrl, location)) {
+                    throw McpException("Cross-origin MCP redirect rejected to protect configured credentials")
+                }
                 val redirectResult = McpUrlValidator.validate(location, allowPrivateIps)
                 if (!redirectResult.isValid) {
                     throw McpException("Redirect target rejected: ${redirectResult.error}")
