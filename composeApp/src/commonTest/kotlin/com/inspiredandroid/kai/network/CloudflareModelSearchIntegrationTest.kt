@@ -34,6 +34,7 @@ class CloudflareModelSearchIntegrationTest {
                         """.trimIndent(),
                         status = HttpStatusCode.OK,
                     )
+
                     "2" -> respond(
                         content = """
                             {
@@ -44,6 +45,7 @@ class CloudflareModelSearchIntegrationTest {
                         """.trimIndent(),
                         status = HttpStatusCode.OK,
                     )
+
                     else -> error("Unexpected Cloudflare model search page: ${request.url}")
                 }
             },

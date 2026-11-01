@@ -43,18 +43,20 @@ internal fun withMcpRequestMetadata(params: JsonElement?, protocolVersion: Strin
             "_meta",
             buildJsonObject {
                 put("io.modelcontextprotocol/protocolVersion", JsonPrimitive(protocolVersion))
-                put("io.modelcontextprotocol/clientInfo", buildJsonObject {
-                    put("name", JsonPrimitive("Brox Kai"))
-                    put("version", JsonPrimitive("2.0"))
-                })
+                put(
+                    "io.modelcontextprotocol/clientInfo",
+                    buildJsonObject {
+                        put("name", JsonPrimitive("Brox Kai"))
+                        put("version", JsonPrimitive("2.0"))
+                    },
+                )
                 put("io.modelcontextprotocol/clientCapabilities", buildJsonObject {})
             },
         )
     }
 }
 
-internal fun supportsMcpSkillsExtension(capabilities: JsonObject?): Boolean =
-    (capabilities?.get("extensions") as? JsonObject)?.containsKey("io.modelcontextprotocol/skills") == true
+internal fun supportsMcpSkillsExtension(capabilities: JsonObject?): Boolean = (capabilities?.get("extensions") as? JsonObject)?.containsKey("io.modelcontextprotocol/skills") == true
 
 class McpClient(
     private val url: String,
@@ -220,10 +222,13 @@ class McpClient(
         val params = buildJsonObject {
             put("protocolVersion", JsonPrimitive("2024-11-05"))
             put("capabilities", buildJsonObject {})
-            put("clientInfo", buildJsonObject {
-                put("name", JsonPrimitive("Brox Kai"))
-                put("version", JsonPrimitive("2.0"))
-            })
+            put(
+                "clientInfo",
+                buildJsonObject {
+                    put("name", JsonPrimitive("Brox Kai"))
+                    put("version", JsonPrimitive("2.0"))
+                },
+            )
         }
         val response = sendRequest(
             method = "initialize",
