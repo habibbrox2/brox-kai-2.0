@@ -15,9 +15,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
@@ -28,21 +28,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.data.Attachment
 import com.inspiredandroid.kai.decodeToImageBitmap
-import com.inspiredandroid.kai.ui.AccentGradientEnd
-import com.inspiredandroid.kai.ui.AccentGradientStart
-import com.inspiredandroid.kai.ui.AccentPrimary
-import com.inspiredandroid.kai.ui.CardFill
 import com.inspiredandroid.kai.ui.KaiShapes
 import com.inspiredandroid.kai.ui.KaiTypography
-import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
 import com.inspiredandroid.kai.ui.components.LocalShowFullScreenImage
 import com.inspiredandroid.kai.ui.handCursor
+import com.inspiredandroid.kai.ui.theme.DesignTokens
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.ic_file
 import kotlinx.collections.immutable.ImmutableList
@@ -51,6 +47,13 @@ import org.jetbrains.compose.resources.painterResource
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
+/**
+ * 2027 Premium AI Agent Workspace User Message Bubble.
+ *
+ * Implements Phase 4 specifications from docs/ui-upgrade-plan-7-premium-chat.md.
+ * Features calm dark obsidian / elevated surface background, subtle border,
+ * clean typography, and neat attachment chips.
+ */
 @OptIn(ExperimentalEncodingApi::class, ExperimentalLayoutApi::class)
 @Composable
 internal fun UserMessage(
@@ -62,11 +65,11 @@ internal fun UserMessage(
     SelectionContainer {
         Row(
             Modifier
-                .padding(horizontal = ChatSpacing.lg, vertical = ChatSpacing.md)
+                .padding(horizontal = ChatSpacing.lg, vertical = ChatSpacing.sm)
                 .fillMaxWidth(),
         ) {
             Spacer(Modifier.weight(1f))
-            val userBubbleShape = androidx.compose.foundation.shape.RoundedCornerShape(
+            val userBubbleShape = RoundedCornerShape(
                 topStart = 18.dp,
                 topEnd = 18.dp,
                 bottomStart = 18.dp,
@@ -76,19 +79,19 @@ internal fun UserMessage(
                 modifier = Modifier
                     .widthIn(min = 48.dp, max = 680.dp)
                     .shadow(
-                        elevation = 2.dp,
+                        elevation = 3.dp,
                         shape = userBubbleShape,
-                        ambientColor = androidx.compose.ui.graphics.Color(0x26000000),
-                        spotColor = androidx.compose.ui.graphics.Color(0x26000000),
+                        ambientColor = Color(0x33000000),
+                        spotColor = Color(0x33000000),
                     )
                     .clip(userBubbleShape)
-                    .background(com.inspiredandroid.kai.ui.AccentPrimary)
+                    .background(DesignTokens.SurfaceElevated, userBubbleShape)
                     .border(
                         width = 1.dp,
-                        color = com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.7f),
+                        color = DesignTokens.BorderSubtle,
                         shape = userBubbleShape,
                     )
-                    .padding(horizontal = 14.dp, vertical = 12.dp),
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
                 horizontalAlignment = Alignment.Start,
             ) {
                 val images = attachments.filter { it.mimeType.startsWith("image/") }
@@ -106,7 +109,7 @@ internal fun UserMessage(
                             bitmap = imageBitmap,
                             contentDescription = "Image attachment",
                             modifier = Modifier
-                                .widthIn(max = 200.dp)
+                                .widthIn(max = 240.dp)
                                 .clip(KaiShapes.xs)
                                 .handCursor()
                                 .clickable { showFullScreen(imageBitmap) },
@@ -123,18 +126,22 @@ internal fun UserMessage(
                         for (att in others) {
                             key("${att.fileName ?: att.mimeType}_${att.data.take(8)}") {
                                 val chipColors = SuggestionChipDefaults.suggestionChipColors(
-                                    containerColor = CardFill,
-                                    labelColor = TextPrimary,
+                                    containerColor = DesignTokens.SurfaceRaised,
+                                    labelColor = DesignTokens.PrimaryText,
                                 )
                                 SuggestionChip(
                                     onClick = {},
                                     colors = chipColors,
+                                    border = SuggestionChipDefaults.suggestionChipBorder(
+                                        enabled = true,
+                                        borderColor = DesignTokens.BorderSubtle,
+                                    ),
                                     icon = {
                                         Icon(
                                             modifier = Modifier.size(ChatSpacing.lg),
                                             painter = painterResource(Res.drawable.ic_file),
                                             contentDescription = "Attachment file",
-                                            tint = TextPrimary,
+                                            tint = DesignTokens.PrimaryCyan,
                                         )
                                     },
                                     label = { Text(truncateFileName(att.fileName ?: att.mimeType)) },
@@ -149,8 +156,8 @@ internal fun UserMessage(
                 if (message.isNotEmpty()) {
                     Text(
                         text = message,
-                        color = androidx.compose.ui.graphics.Color.White,
-                        style = KaiTypography.bodyLarge.copy(color = androidx.compose.ui.graphics.Color.White),
+                        color = DesignTokens.PrimaryText,
+                        style = KaiTypography.bodyLarge.copy(color = DesignTokens.PrimaryText),
                     )
                 }
             }

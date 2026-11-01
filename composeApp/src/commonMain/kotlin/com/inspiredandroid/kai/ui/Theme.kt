@@ -647,21 +647,21 @@ val CarbonColorScheme = darkColorScheme(
 
 @Composable
 fun kaiAdaptiveCardColors(): CardColors = CardDefaults.cardColors(
-    containerColor = CardFill.copy(alpha = 0.5f),
+    containerColor = LocalDesignTokens.current.SurfaceElevated,
 )
 
 @Composable
-fun kaiAdaptiveCardBorder(): BorderStroke = BorderStroke(1.dp, BorderSoft)
+fun kaiAdaptiveCardBorder(): BorderStroke = BorderStroke(1.dp, LocalDesignTokens.current.BorderSubtle)
 
 @Composable
 fun Modifier.kaiAdaptiveCardSurface(shape: Shape = CardDefaults.shape): Modifier = this
     .clip(shape)
     .background(
-        CardFill.copy(alpha = 0.5f),
+        LocalDesignTokens.current.SurfaceElevated,
         shape,
     )
     .then(
-        Modifier.border(1.dp, BorderSoft, shape),
+        Modifier.border(1.dp, LocalDesignTokens.current.BorderSubtle, shape),
     )
 
 /** Glassmorphic card colors for Settings and UI panels */

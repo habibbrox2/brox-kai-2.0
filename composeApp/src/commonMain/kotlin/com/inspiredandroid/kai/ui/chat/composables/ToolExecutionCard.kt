@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import com.inspiredandroid.kai.ui.theme.DesignTokens
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -81,9 +82,9 @@ fun ShellExecutionCard(
     }
 
     val terminalShape = RoundedCornerShape(12.dp)
-    val terminalBg = Color(0xFF090D14)
-    val headerBg = Color(0xFF131924)
-    val borderColor = Color(0xFF1E293B)
+    val terminalBg = DesignTokens.TerminalBackground
+    val headerBg = DesignTokens.SurfaceElevated
+    val borderColor = DesignTokens.BorderSubtle
     val textSlate = Color(0xFFCBD5E1)
     val textMuted = Color(0xFF64748B)
     val accentCyan = Color(0xFF38BDF8)
@@ -267,7 +268,7 @@ fun ShellExecutionCard(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color(0xFF06090F))
+                        .background(DesignTokens.Background)
                         .border(
                             width = 1.dp,
                             color = borderColor.copy(alpha = 0.5f),
@@ -349,7 +350,7 @@ fun ToolExecutionCard(
 
     val cardShape = RoundedCornerShape(10.dp)
     val cardBg = Color(0xFF111622)
-    val borderColor = Color(0xFF1E293B)
+    val borderColor = DesignTokens.BorderSubtle
     val textSlate = Color(0xFFCBD5E1)
     val textMuted = Color(0xFF64748B)
     val accentTeal = Color(0xFF2DD4BF)

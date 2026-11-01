@@ -30,7 +30,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.ui.AccentPrimary
-import com.inspiredandroid.kai.ui.CardFill
+import com.inspiredandroid.kai.ui.theme.DesignTokens
+import androidx.compose.foundation.border
 import com.inspiredandroid.kai.ui.DangerAlert
 import com.inspiredandroid.kai.ui.KaiShapes
 import com.inspiredandroid.kai.ui.KaiTypography
@@ -89,7 +90,8 @@ private fun AgentActivityItem(
         modifier = modifier
             .fillMaxWidth()
             .clip(KaiShapes.row)
-            .background(CardFill)
+            .background(DesignTokens.SurfaceElevated, KaiShapes.row)
+            .border(1.dp, DesignTokens.BorderSubtle, KaiShapes.row)
             .clickable(enabled = activity.isExpandable) {
                 if (activity.isExpandable) expanded = !expanded
             }
@@ -161,12 +163,12 @@ private fun ActivityStatusIndicator(
 ) {
     val (color, _) = when (status) {
         ActivityStatus.PENDING -> TextSecondary to ""
-        ActivityStatus.RUNNING -> AccentPrimary to ""
-        ActivityStatus.COMPLETED -> AccentPrimary to ""
-        ActivityStatus.FAILED -> DangerAlert to ""
+        ActivityStatus.RUNNING -> DesignTokens.AgentViolet to ""
+        ActivityStatus.COMPLETED -> DesignTokens.Success to ""
+        ActivityStatus.FAILED -> DesignTokens.Error to ""
         ActivityStatus.CANCELLED -> TextSecondary to ""
-        ActivityStatus.DENIED -> DangerAlert to ""
-        ActivityStatus.TIMEOUT -> DangerAlert to ""
+        ActivityStatus.DENIED -> DesignTokens.Error to ""
+        ActivityStatus.TIMEOUT -> DesignTokens.Error to ""
     }
 
     Box(
@@ -207,7 +209,8 @@ private fun ActivityDetailsView(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(KaiShapes.xs)
-                            .background(CardFill)
+                            .background(DesignTokens.SurfaceElevated, KaiShapes.row)
+            .border(1.dp, DesignTokens.BorderSubtle, KaiShapes.row)
                             .padding(8.dp),
                     )
                 }
@@ -225,7 +228,8 @@ private fun ActivityDetailsView(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(KaiShapes.xs)
-                            .background(CardFill)
+                            .background(DesignTokens.SurfaceElevated, KaiShapes.row)
+            .border(1.dp, DesignTokens.BorderSubtle, KaiShapes.row)
                             .padding(8.dp),
                         maxLines = 10,
                         overflow = TextOverflow.Ellipsis,
@@ -251,7 +255,8 @@ private fun ActivityDetailsView(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(KaiShapes.xs)
-                        .background(CardFill)
+                        .background(DesignTokens.SurfaceElevated, KaiShapes.row)
+            .border(1.dp, DesignTokens.BorderSubtle, KaiShapes.row)
                         .padding(8.dp),
                 )
                 details.workingDirectory?.let { cwd ->
@@ -271,7 +276,8 @@ private fun ActivityDetailsView(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(KaiShapes.xs)
-                                .background(CardFill)
+                                .background(DesignTokens.SurfaceElevated, KaiShapes.row)
+            .border(1.dp, DesignTokens.BorderSubtle, KaiShapes.row)
                                 .padding(8.dp),
                             maxLines = 15,
                             overflow = TextOverflow.Ellipsis,
@@ -288,7 +294,8 @@ private fun ActivityDetailsView(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(KaiShapes.xs)
-                                .background(CardFill)
+                                .background(DesignTokens.SurfaceElevated, KaiShapes.row)
+            .border(1.dp, DesignTokens.BorderSubtle, KaiShapes.row)
                                 .padding(8.dp),
                             maxLines = 10,
                             overflow = TextOverflow.Ellipsis,

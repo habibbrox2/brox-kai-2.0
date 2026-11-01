@@ -69,7 +69,8 @@ import kai.composeapp.generated.resources.bot_message_thinking_label
 import kai.composeapp.generated.resources.chat_cancel_edit_content_description
 import kai.composeapp.generated.resources.chat_edit_submission_content_description
 import kai.composeapp.generated.resources.ic_copy
-import kai.composeapp.generated.resources.ic_refresh
+import com.inspiredandroid.kai.ui.theme.DesignTokens
+import kai.composeapp.generated.resources.logo
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -115,10 +116,10 @@ internal fun BotMessage(
         bottomStart = 4.dp,
         bottomEnd = 18.dp,
     )
-    val botBubbleBg = Color(0xFF161B22)
-    val botBubbleBorder = Color(0xFF232B39)
-    val botTextColor = Color(0xFFECEAE4)
-    val botMutedColor = Color(0xFF94A3B8)
+    val botBubbleBg = DesignTokens.SurfaceElevated
+    val botBubbleBorder = DesignTokens.BorderSubtle
+    val botTextColor = DesignTokens.PrimaryText
+    val botMutedColor = DesignTokens.TertiaryText
 
     Column(
         modifier = Modifier
@@ -150,7 +151,7 @@ internal fun BotMessage(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(bottom = 6.dp),
                     ) {
-                        Text("🤖", style = KaiTypography.titleSmall)
+                        Icon(painter = painterResource(Res.drawable.logo), contentDescription = null, tint = Color.Unspecified, modifier = Modifier.size(16.dp))
                         Spacer(Modifier.size(6.dp))
                         Text(
                             text = "Brox Kai 2.0",
