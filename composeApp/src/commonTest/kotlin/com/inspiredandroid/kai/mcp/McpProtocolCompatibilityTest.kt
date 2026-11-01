@@ -40,4 +40,24 @@ class McpProtocolCompatibilityTest {
         assertFalse(supportsMcpSkillsExtension(buildJsonObject { put("tools", buildJsonObject {}) }))
         assertFalse(supportsMcpSkillsExtension(null))
     }
+    @Test
+    fun `redirects are restricted to the same origin`() {
+        assertTrue(isSameOriginMcpRedirect(
+            "https://mcp.cloudflare.com/mcp",
+            "https://mcp.cloudflare.com/oauth/callback",
+        ))
+        assertFalse(isSameOriginMcpRedirect(
+            "https://mcp.cloudflare.com/mcp",
+            "https://attacker.example/collect",
+        ))
+        assertFalse(isSameOriginMcpRedirect(
+            "https://mcp.cloudflare.com/mcp",
+            "http://mcp.cloudflare.com/mcp",
+        ))
+        assertFalse(isSameOriginMcpRedirect(
+            "https://mcp.cloudflare.com/mcp",
+            "https://mcp.cloudflare.com:8443/mcp",
+        ))
+    }
+
 }
