@@ -4,6 +4,7 @@ import com.inspiredandroid.kai.data.AppSettings
 import com.inspiredandroid.kai.data.SettingsJsonList
 import com.inspiredandroid.kai.network.tools.Tool
 import com.inspiredandroid.kai.network.tools.ToolInfo
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -126,6 +127,8 @@ class McpServerManager(private val appSettings: AppSettings) {
             // normally and expose its tools.
             val skills = try {
                 client.listSkills()
+            } catch (e: CancellationException) {
+                throw e
             } catch (_: Exception) {
                 JsonArray(emptyList())
             }
@@ -187,6 +190,8 @@ class McpServerManager(private val appSettings: AppSettings) {
             ?: return Result.failure(McpException("MCP server is not connected: $serverId"))
         return try {
             Result.success(client.readSkill(uri))
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             Result.failure(e)
         }
