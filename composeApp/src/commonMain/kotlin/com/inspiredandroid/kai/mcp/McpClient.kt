@@ -319,7 +319,7 @@ class McpClient(
                 ?: throw McpException("skills/list returned an invalid response")
             val pageSkills = result["skills"] as? JsonArray
                 ?: throw McpException("skills/list response does not contain a skills array")
-            skills += pageSkills
+            skills.addAll(pageSkills)
             val nextCursor = (result["nextCursor"] as? JsonPrimitive)?.contentOrNull
                 ?.takeIf { it.isNotBlank() }
             if (nextCursor != null && !seenCursors.add(nextCursor)) {
