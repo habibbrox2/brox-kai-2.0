@@ -16,11 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.inspiredandroid.kai.ui.BorderSoft
 import com.inspiredandroid.kai.ui.KaiShapes
-import com.inspiredandroid.kai.ui.SurfaceRaised
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
 import com.inspiredandroid.kai.ui.handCursor
+import com.inspiredandroid.kai.ui.theme.LocalDesignTokens
 
 @Composable
 fun KaiSearchField(
@@ -34,6 +33,7 @@ fun KaiSearchField(
         imeAction = ImeAction.Search,
     ),
 ) {
+    val tokens = LocalDesignTokens.current
     OutlinedTextField(
         value = query,
         onValueChange = onQueryChange,
@@ -41,25 +41,39 @@ fun KaiSearchField(
         shape = KaiShapes.input,
         singleLine = true,
         placeholder = { Text(placeholder) },
-        leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search") },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Filled.Search,
+                contentDescription = "Search",
+                tint = tokens.MutedText,
+            )
+        },
         trailingIcon = if (query.isNotEmpty()) {
             {
                 IconButton(
                     onClick = { onQueryChange("") },
                     modifier = Modifier.handCursor(),
                 ) {
-                    Icon(Icons.Filled.Clear, contentDescription = clearContentDescription)
+                    Icon(
+                        imageVector = Icons.Filled.Clear,
+                        contentDescription = clearContentDescription,
+                        tint = tokens.MutedText,
+                    )
                 }
             }
         } else {
             null
         },
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = BorderSoft,
-            unfocusedBorderColor = BorderSoft,
-            disabledBorderColor = BorderSoft,
-            focusedContainerColor = SurfaceRaised,
-            unfocusedContainerColor = SurfaceRaised,
+            focusedBorderColor = tokens.BorderFocus,
+            unfocusedBorderColor = tokens.BorderSubtle,
+            disabledBorderColor = tokens.BorderSubtle,
+            focusedContainerColor = tokens.SurfaceElevated,
+            unfocusedContainerColor = tokens.SurfaceElevated,
+            focusedTextColor = tokens.PrimaryText,
+            unfocusedTextColor = tokens.PrimaryText,
+            focusedPlaceholderColor = tokens.MutedText,
+            unfocusedPlaceholderColor = tokens.MutedText,
         ),
         keyboardOptions = keyboardOptions,
     )

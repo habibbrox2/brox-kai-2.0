@@ -1,7 +1,6 @@
 package com.inspiredandroid.kai.ui.chat.composables
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -10,16 +9,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.Add
@@ -31,65 +30,57 @@ import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Terminal
 import androidx.compose.material.icons.filled.Widgets
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.inspiredandroid.kai.ui.AccentPrimary
-import com.inspiredandroid.kai.ui.BorderSoft
-import com.inspiredandroid.kai.ui.KaiShapes
+import androidx.compose.ui.unit.sp
 import com.inspiredandroid.kai.ui.KaiTypography
-import com.inspiredandroid.kai.ui.SurfaceRaised
-import com.inspiredandroid.kai.ui.TextPrimary
-import com.inspiredandroid.kai.ui.TextSecondary
-import com.inspiredandroid.kai.ui.chat.ChatShapes
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
 import com.inspiredandroid.kai.ui.chat.ChatUiState
 import com.inspiredandroid.kai.ui.chat.ConversationSummary
 import com.inspiredandroid.kai.ui.components.KaiSearchField
+import com.inspiredandroid.kai.ui.components.LogoAnimation
 import com.inspiredandroid.kai.ui.handCursor
+import com.inspiredandroid.kai.ui.theme.LocalDesignTokens
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.chat_history_heartbeat_label
 import kai.composeapp.generated.resources.ic_settings
-import kai.composeapp.generated.resources.logo
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import kotlin.time.Clock
 import kotlin.time.Instant
 
 /**
- * Primary navigation sidebar (Plan 7, Phases 1 + 4).
+ * 2027 Premium Navigation Sidebar.
  *
  * New Chat + search on top, a time-grouped conversation list in the middle
  * (Pinned / Today / Yesterday / Previous 7 Days / Previous 30 Days / Older),
- * and app-level destinations plus the brand mark at the bottom. Item actions
- * (rename / pin / delete) live in a per-row dropdown menu.
+ * and app-level destinations plus the Brox Kai brand mark at the bottom.
  */
 @Composable
 fun AppSidebar(
@@ -108,6 +99,7 @@ fun AppSidebar(
     onOpenKaiBuild: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
+    val tokens = LocalDesignTokens.current
     var query by remember { mutableStateOf("") }
     val visibleConversations = remember(filteredConversations, query) {
         if (query.isBlank()) {
@@ -120,37 +112,65 @@ fun AppSidebar(
     // Time-based grouping. Pinned conversations always float to the top group.
     val groups = remember(visibleConversations) { groupConversations(visibleConversations) }
 
-    // Neutral sidebar background
-    val sidebarBg = SurfaceRaised.copy(alpha = 0.9f)
-    val sidebarBorder = BorderSoft.copy(alpha = 0.3f)
-
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(sidebarBg)
-            .border(
-                BorderStroke(1.dp, sidebarBorder),
-                com.inspiredandroid.kai.ui.settings.SettingsShapes.section,
-            )
+            .background(tokens.SurfaceDark)
+            .border(BorderStroke(1.dp, tokens.BorderSubtle))
             .padding(ChatSpacing.sm),
         verticalArrangement = Arrangement.spacedBy(ChatSpacing.xs),
     ) {
-        Button(
+        // Elevated 2027 "New Chat" primary action button
+        Surface(
             onClick = onNewChat,
-            modifier = Modifier.fillMaxWidth().handCursor(),
-            shape = ChatShapes.quickStartCard,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = com.inspiredandroid.kai.ui.AccentPrimary,
-                contentColor = TextPrimary,
-            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(44.dp)
+                .handCursor(),
+            shape = RoundedCornerShape(12.dp),
+            color = Color.Transparent,
+            border = BorderStroke(1.dp, tokens.PrimaryCyan.copy(alpha = 0.45f)),
         ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = null,
-                modifier = Modifier.size(18.dp),
-            )
-            Spacer(Modifier.width(8.dp))
-            Text("New chat", style = KaiTypography.labelLarge)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.horizontalGradient(
+                            listOf<Color>(
+                                tokens.PrimaryCyan.copy(alpha = 0.16f),
+                                Color(0xFF168BDB).copy(alpha = 0.08f),
+                            ),
+                        ),
+                    )
+                    .padding(horizontal = 14.dp),
+                contentAlignment = Alignment.CenterStart,
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clip(CircleShape)
+                            .background(tokens.PrimaryCyan.copy(alpha = 0.22f)),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null,
+                            tint = tokens.PrimaryCyan,
+                            modifier = Modifier.size(16.dp),
+                        )
+                    }
+                    Text(
+                        text = "New chat",
+                        style = KaiTypography.labelLarge,
+                        fontWeight = FontWeight.SemiBold,
+                        color = tokens.PrimaryText,
+                    )
+                }
+            }
         }
 
         KaiSearchField(
@@ -168,9 +188,10 @@ fun AppSidebar(
                 if (conversations.isEmpty()) return@forEach
                 item(key = "header_$label") {
                     Text(
-                        text = label,
-                        style = KaiTypography.labelSmall,
-                        color = TextSecondary,
+                        text = label.uppercase(),
+                        style = KaiTypography.labelSmall.copy(letterSpacing = 1.sp),
+                        fontWeight = FontWeight.Bold,
+                        color = tokens.MutedText.copy(alpha = 0.7f),
                         modifier = Modifier.padding(
                             start = ChatSpacing.xs,
                             top = ChatSpacing.sm,
@@ -194,14 +215,14 @@ fun AppSidebar(
                     Text(
                         text = if (query.isBlank()) "No chats yet" else "No matches",
                         style = KaiTypography.bodySmall,
-                        color = TextSecondary,
+                        color = tokens.MutedText,
                         modifier = Modifier.padding(vertical = ChatSpacing.md, horizontal = ChatSpacing.xs),
                     )
                 }
             }
         }
 
-        HorizontalDivider(color = BorderSoft.copy(alpha = 0.4f))
+        HorizontalDivider(color = tokens.BorderSubtle)
 
         onNavigateToDashboard?.let {
             SidebarLink(icon = Icons.Default.Dashboard, label = "Dashboard", onClick = it)
@@ -223,20 +244,40 @@ fun AppSidebar(
             onClick = onNavigateToSettings,
         )
 
+        // Polished 2027 Brand Footer
         Row(
-            modifier = Modifier.fillMaxWidth().padding(top = ChatSpacing.sm),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(ChatSpacing.sm),
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            com.inspiredandroid.kai.ui.components.LogoAnimation(
-                size = 32.dp,
-            )
-            Text(
-                text = "Brox Kai 2.0",
-                style = KaiTypography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = TextPrimary,
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                LogoAnimation(size = 28.dp)
+                Text(
+                    text = "Brox Kai",
+                    style = KaiTypography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = tokens.PrimaryText,
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(tokens.PrimaryCyan.copy(alpha = 0.12f))
+                    .border(BorderStroke(1.dp, tokens.PrimaryCyan.copy(alpha = 0.25f)), RoundedCornerShape(6.dp))
+                    .padding(horizontal = 6.dp, vertical = 2.dp),
+            ) {
+                Text(
+                    text = "v2.0",
+                    style = KaiTypography.labelSmall,
+                    fontWeight = FontWeight.SemiBold,
+                    color = tokens.PrimaryCyan,
+                )
+            }
         }
     }
 }
@@ -250,8 +291,10 @@ private fun ConversationRow(
     onRename: (String) -> Unit,
     onTogglePin: () -> Unit,
 ) {
+    val tokens = LocalDesignTokens.current
     var showMenu by remember { mutableStateOf(false) }
     var showRenameDialog by remember { mutableStateOf(false) }
+    val rowShape = RoundedCornerShape(10.dp)
 
     if (showRenameDialog) {
         RenameDialog(
@@ -268,87 +311,132 @@ private fun ConversationRow(
         modifier = Modifier
             .fillMaxWidth()
             .handCursor()
+            .clip(rowShape)
             .clickable(onClick = onSelect)
-            .clip(ChatShapes.quickStartCard)
             .background(
-                if (isSelected) AccentPrimary.copy(alpha = 0.15f) else Color.Transparent,
-                ChatShapes.quickStartCard,
+                if (isSelected) tokens.SurfaceElevated else Color.Transparent,
+                rowShape,
             )
             .border(
-                if (isSelected) BorderStroke(1.dp, AccentPrimary.copy(alpha = 0.4f)) else BorderStroke(0.dp, Color.Transparent),
-                ChatShapes.quickStartCard,
+                if (isSelected) BorderStroke(1.dp, tokens.PrimaryCyan.copy(alpha = 0.35f)) else BorderStroke(0.dp, Color.Transparent),
+                rowShape,
             ),
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = ChatSpacing.xs, vertical = ChatSpacing.xs),
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(ChatSpacing.xs),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
+            if (isSelected) {
+                Box(
+                    modifier = Modifier
+                        .width(3.dp)
+                        .height(18.dp)
+                        .clip(RoundedCornerShape(1.5.dp))
+                        .background(tokens.PrimaryCyan),
+                )
+            }
+
             Icon(
                 imageVector = if (conversation.isPinned) Icons.Default.PushPin else Icons.AutoMirrored.Filled.Chat,
                 contentDescription = null,
-                tint = if (isSelected) {
-                    com.inspiredandroid.kai.ui.AccentPrimary
-                } else {
-                    TextSecondary
+                tint = when {
+                    isSelected -> tokens.PrimaryCyan
+                    conversation.isPinned -> tokens.PrimaryCyan.copy(alpha = 0.85f)
+                    else -> tokens.MutedText
                 },
                 modifier = Modifier.size(16.dp),
             )
+
             Column(modifier = Modifier.weight(1f)) {
                 if (conversation.isHeartbeat) {
-                    Text(
-                        text = stringResource(Res.string.chat_history_heartbeat_label),
-                        style = KaiTypography.labelSmall,
-                        color = TextSecondary,
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(6.dp)
+                                .clip(CircleShape)
+                                .background(tokens.AgentViolet),
+                        )
+                        Text(
+                            text = stringResource(Res.string.chat_history_heartbeat_label),
+                            style = KaiTypography.labelSmall,
+                            color = tokens.AgentViolet,
+                        )
+                    }
                 }
                 Text(
                     text = conversation.title.ifBlank { "Untitled" },
                     style = KaiTypography.bodySmall,
-                    color = if (isSelected) {
-                        com.inspiredandroid.kai.ui.AccentPrimary
-                    } else {
-                        TextPrimary
-                    },
+                    fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
+                    color = if (isSelected) tokens.PrimaryText else tokens.SecondaryText,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
+
             Box {
                 IconButton(
                     onClick = { showMenu = true },
-                    modifier = Modifier.size(24.dp).handCursor(),
+                    modifier = Modifier.size(26.dp).handCursor(),
                 ) {
                     Icon(
                         imageVector = Icons.Default.MoreVert,
-                        contentDescription = null,
-                        tint = TextSecondary,
-                        modifier = Modifier.size(14.dp),
+                        contentDescription = "Options",
+                        tint = if (isSelected) tokens.SecondaryText else tokens.MutedText,
+                        modifier = Modifier.size(15.dp),
                     )
                 }
+
                 DropdownMenu(
                     expanded = showMenu,
                     onDismissRequest = { showMenu = false },
+                    modifier = Modifier
+                        .background(tokens.SurfaceElevated)
+                        .border(BorderStroke(1.dp, tokens.BorderSubtle), RoundedCornerShape(8.dp)),
                 ) {
                     DropdownMenuItem(
-                        text = { Text("Rename") },
-                        leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(16.dp)) },
+                        text = { Text("Rename", color = tokens.PrimaryText) },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = null,
+                                tint = tokens.SecondaryText,
+                                modifier = Modifier.size(16.dp),
+                            )
+                        },
                         onClick = {
                             showMenu = false
                             showRenameDialog = true
                         },
                     )
                     DropdownMenuItem(
-                        text = { Text(if (conversation.isPinned) "Unpin" else "Pin") },
-                        leadingIcon = { Icon(Icons.Default.PushPin, contentDescription = null, modifier = Modifier.size(16.dp)) },
+                        text = { Text(if (conversation.isPinned) "Unpin" else "Pin", color = tokens.PrimaryText) },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.PushPin,
+                                contentDescription = null,
+                                tint = tokens.SecondaryText,
+                                modifier = Modifier.size(16.dp),
+                            )
+                        },
                         onClick = {
                             showMenu = false
                             onTogglePin()
                         },
                     )
                     DropdownMenuItem(
-                        text = { Text("Delete") },
-                        leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(16.dp)) },
+                        text = { Text("Delete", color = Color(0xFFFF5252)) },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = null,
+                                tint = Color(0xFFFF5252),
+                                modifier = Modifier.size(16.dp),
+                            )
+                        },
                         onClick = {
                             showMenu = false
                             onDelete()
@@ -366,24 +454,56 @@ private fun RenameDialog(
     onConfirm: (String) -> Unit,
     onDismiss: () -> Unit,
 ) {
+    val tokens = LocalDesignTokens.current
     var text by remember { mutableStateOf(initial) }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Rename chat") },
+        title = {
+            Text(
+                text = "Rename chat",
+                style = KaiTypography.titleMedium,
+                color = tokens.PrimaryText,
+            )
+        },
         text = {
             OutlinedTextField(
                 value = text,
                 onValueChange = { text = it },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = tokens.BorderFocus,
+                    unfocusedBorderColor = tokens.BorderSubtle,
+                    focusedTextColor = tokens.PrimaryText,
+                    unfocusedTextColor = tokens.PrimaryText,
+                    focusedContainerColor = tokens.SurfaceElevated,
+                    unfocusedContainerColor = tokens.SurfaceElevated,
+                ),
             )
         },
         confirmButton = {
-            TextButton(onClick = { onConfirm(text) }) { Text("Save") }
+            TextButton(
+                onClick = { onConfirm(text) },
+                colors = androidx.compose.material3.ButtonDefaults.textButtonColors(
+                    contentColor = tokens.PrimaryCyan,
+                ),
+            ) {
+                Text("Save", fontWeight = FontWeight.SemiBold)
+            }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(
+                onClick = onDismiss,
+                colors = androidx.compose.material3.ButtonDefaults.textButtonColors(
+                    contentColor = tokens.MutedText,
+                ),
+            ) {
+                Text("Cancel")
+            }
         },
+        containerColor = tokens.SurfaceElevated,
+        shape = RoundedCornerShape(16.dp),
     )
 }
 
@@ -394,19 +514,21 @@ private fun SidebarLink(
     onClick: () -> Unit,
     isActive: Boolean = false,
 ) {
+    val tokens = LocalDesignTokens.current
+    val linkShape = RoundedCornerShape(10.dp)
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .handCursor()
             .clickable(onClick = onClick)
-            .clip(ChatShapes.quickStartCard)
+            .clip(linkShape)
             .background(
-                if (isActive) AccentPrimary.copy(alpha = 0.15f) else Color.Transparent,
-                ChatShapes.quickStartCard,
+                if (isActive) tokens.PrimaryCyan.copy(alpha = 0.12f) else Color.Transparent,
+                linkShape,
             )
             .border(
-                if (isActive) BorderStroke(1.dp, AccentPrimary.copy(alpha = 0.4f)) else BorderStroke(0.dp, Color.Transparent),
-                ChatShapes.quickStartCard,
+                if (isActive) BorderStroke(1.dp, tokens.PrimaryCyan.copy(alpha = 0.35f)) else BorderStroke(0.dp, Color.Transparent),
+                linkShape,
             ),
     ) {
         Row(
@@ -417,22 +539,14 @@ private fun SidebarLink(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = if (isActive) {
-                    com.inspiredandroid.kai.ui.AccentPrimary
-                } else {
-                    TextSecondary
-                },
+                tint = if (isActive) tokens.PrimaryCyan else tokens.SecondaryText,
                 modifier = Modifier.size(18.dp),
             )
             Text(
                 text = label,
                 style = KaiTypography.bodyMedium,
-                color = if (isActive) {
-                    com.inspiredandroid.kai.ui.AccentPrimary
-                } else {
-                    TextPrimary
-                },
-                fontWeight = if (isActive) FontWeight.Medium else FontWeight.Normal,
+                color = if (isActive) tokens.PrimaryCyan else tokens.PrimaryText,
+                fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Normal,
             )
         }
     }

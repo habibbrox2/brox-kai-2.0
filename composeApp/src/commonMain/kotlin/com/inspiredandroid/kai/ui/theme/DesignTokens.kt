@@ -17,6 +17,7 @@ object DesignTokens {
     val BackgroundOled: Color = Color(0xFF000000)
     val TerminalBackground: Color = Color(0xFF0B0D11)
     val Surface: Color = Color(0x0AFFFFFF) // rgba(255, 255, 255, 0.04)
+    val SurfaceDark: Color = Color(0xFF0F1117)
     val SurfaceElevated: Color = Color(0xFF171A23)
     val SurfaceRaised: Color = Color(0xFF1E2330)
 
@@ -24,11 +25,13 @@ object DesignTokens {
     val BorderSubtle: Color = Color(0x14FFFFFF) // rgba(255, 255, 255, 0.08)
     val BorderSoft: Color = Color(0x26FFFFFF)   // rgba(255, 255, 255, 0.15)
     val BorderStrong: Color = Color(0x40FFFFFF) // rgba(255, 255, 255, 0.25)
+    val BorderFocus: Color = Color(0x6600D7E8)
 
     // ─── Brand Colors (Brox Kai v2.0 Official Logo Pack) ───
     val BrandNavy: Color = Color(0xFF0B2B5B)
     val BrandCyan: Color = Color(0xFF00D1E8)
     val BrandBlue: Color = Color(0xFF168BDB)
+    val BrandWhite: Color = Color(0xFFFFFFFF)
 
     // ─── Accents ───
     val PrimaryCyan: Color = Color(0xFF00D7E8)
@@ -37,7 +40,7 @@ object DesignTokens {
     val AccentAgent: Color = AgentViolet
 
     // ─── Semantic Typography Colors ───
-    val PrimaryText: Color = Color(0xFFFFFFFF)
+    val PrimaryText: Color = Color(0xFFF0F3F8)
     val SecondaryText: Color = Color(0xFFCBD5E1)
     val TertiaryText: Color = Color(0xFF94A3B8)
     val MutedText: Color = Color(0xFF64748B)

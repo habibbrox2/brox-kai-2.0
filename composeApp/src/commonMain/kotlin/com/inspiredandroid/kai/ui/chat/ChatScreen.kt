@@ -370,7 +370,7 @@ private fun ChatModeScreen(
                         .fillMaxHeight()
                         .statusBarsPadding()
                         .navigationBarsPadding()
-                        .background(SurfaceRaised),
+                        .background(com.inspiredandroid.kai.ui.theme.LocalDesignTokens.current.SurfaceDark),
                 ) {
                     sidebar()
                 }
@@ -551,7 +551,8 @@ private fun ChatModeScreen(
                                 Box(
                                     modifier = Modifier
                                         .clip(KaiShapes.row)
-                                        .background(CardFill, KaiShapes.row),
+                                        .background(com.inspiredandroid.kai.ui.theme.DesignTokens.SurfaceElevated, KaiShapes.row)
+                                        .border(BorderStroke(1.dp, com.inspiredandroid.kai.ui.theme.DesignTokens.BorderSubtle), KaiShapes.row),
                                 ) {
                                     Row(
                                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),

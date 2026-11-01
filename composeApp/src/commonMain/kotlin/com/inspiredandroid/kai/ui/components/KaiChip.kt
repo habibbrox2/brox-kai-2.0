@@ -14,14 +14,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.inspiredandroid.kai.ui.BorderSoft
-import com.inspiredandroid.kai.ui.CardFill
 import com.inspiredandroid.kai.ui.KaiShapes
-import com.inspiredandroid.kai.ui.SurfaceRaised
-import com.inspiredandroid.kai.ui.TextPrimary
-import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
 import com.inspiredandroid.kai.ui.handCursor
+import com.inspiredandroid.kai.ui.theme.DesignTokens
 
 /**
  * Chip with full control over appearance — no hidden minimum-interactive-size
@@ -36,16 +32,20 @@ fun KaiChip(
     enabled: Boolean = true,
     content: @Composable () -> Unit,
 ) {
-    val containerColor = if (selected) SurfaceRaised else CardFill
+    val containerColor = when {
+        !enabled -> DesignTokens.SurfaceElevated.copy(alpha = 0.5f)
+        selected -> DesignTokens.PrimaryCyan.copy(alpha = 0.15f)
+        else -> DesignTokens.SurfaceElevated
+    }
     val contentColor = when {
-        !enabled -> TextSecondary.copy(alpha = 0.38f)
-        selected -> TextPrimary
-        else -> TextSecondary
+        !enabled -> DesignTokens.SecondaryText.copy(alpha = 0.38f)
+        selected -> DesignTokens.PrimaryCyan
+        else -> DesignTokens.SecondaryText
     }
     val borderColor = when {
-        !enabled -> BorderSoft.copy(alpha = 0.38f)
-        selected -> SurfaceRaised
-        else -> BorderSoft
+        !enabled -> DesignTokens.BorderSubtle.copy(alpha = 0.38f)
+        selected -> DesignTokens.PrimaryCyan.copy(alpha = 0.45f)
+        else -> DesignTokens.BorderSubtle
     }
     val shape = KaiShapes.xs
     val border = BorderStroke(1.dp, borderColor)

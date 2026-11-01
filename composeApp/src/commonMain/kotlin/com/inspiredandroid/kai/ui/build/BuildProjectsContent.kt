@@ -179,9 +179,9 @@ internal fun BuildProjectsContent(
 
         items(state.projects, key = { it }) { project ->
             val cardColors = CardDefaults.cardColors(
-                containerColor = CardFill,
+                containerColor = com.inspiredandroid.kai.ui.theme.DesignTokens.SurfaceElevated,
             )
-            val cardBorder = androidx.compose.foundation.BorderStroke(1.dp, BorderSoft)
+            val cardBorder = androidx.compose.foundation.BorderStroke(1.dp, com.inspiredandroid.kai.ui.theme.DesignTokens.BorderSubtle)
 
             Card(
                 modifier = Modifier.fillMaxWidth(),

@@ -8,36 +8,28 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.inspiredandroid.kai.ui.AccentPrimary
-import com.inspiredandroid.kai.ui.BorderSoft
-import com.inspiredandroid.kai.ui.CardFill
-import com.inspiredandroid.kai.ui.KaiShapes
 import com.inspiredandroid.kai.ui.KaiTypography
-import com.inspiredandroid.kai.ui.SurfaceRaised
-import com.inspiredandroid.kai.ui.TextPrimary
-import com.inspiredandroid.kai.ui.TextSecondary
+import com.inspiredandroid.kai.ui.theme.DesignTokens
 
 /**
- * Glassmorphism-styled dialog for confirmations, alerts, and forms.
+ * 2027 Premium Obsidian Dialog for confirmations, alerts, and forms.
  *
  * @param onDismissRequest Called when the user requests dismissal (backdrop click / escape)
  * @param title Optional dialog title
@@ -56,6 +48,7 @@ fun KaiDialog(
     modifier: Modifier = Modifier,
 ) {
     val dialogFocusRequester = remember { FocusRequester() }
+    val shape = RoundedCornerShape(16.dp)
 
     Box(
         modifier = modifier
@@ -75,15 +68,15 @@ fun KaiDialog(
                     dialogFocusRequester.requestFocus()
                 }
             }
-            .clip(KaiShapes.section)
-            .background(CardFill)
-            .border(BorderStroke(1.dp, BorderSoft)),
+            .clip(shape)
+            .background(DesignTokens.SurfaceElevated, shape)
+            .border(BorderStroke(1.dp, DesignTokens.BorderSubtle), shape)
+            .padding(20.dp),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(16.dp),
         ) {
-            // Request focus when dialog opens
             LaunchedEffect(Unit) {
                 dialogFocusRequester.requestFocus()
             }
@@ -92,7 +85,7 @@ fun KaiDialog(
                 Text(
                     text = titleText,
                     style = KaiTypography.headlineSmall,
-                    color = TextPrimary,
+                    color = DesignTokens.PrimaryText,
                 )
             }
 
@@ -100,7 +93,7 @@ fun KaiDialog(
                 Text(
                     text = bodyText,
                     style = KaiTypography.bodyMedium,
-                    color = TextSecondary,
+                    color = DesignTokens.SecondaryText,
                 )
             }
 
@@ -117,6 +110,9 @@ fun KaiDialog(
                             btn.onClick()
                             onDismissRequest()
                         },
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = DesignTokens.SecondaryText,
+                        ),
                         modifier = Modifier.padding(end = 8.dp),
                     ) {
                         Text(text = btn.label)
@@ -129,8 +125,11 @@ fun KaiDialog(
                             btn.onClick()
                             onDismissRequest()
                         },
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = DesignTokens.PrimaryCyan,
+                        ),
                     ) {
-                        Text(text = btn.label)
+                        Text(text = btn.label, fontWeight = FontWeight.SemiBold)
                     }
                 }
             }

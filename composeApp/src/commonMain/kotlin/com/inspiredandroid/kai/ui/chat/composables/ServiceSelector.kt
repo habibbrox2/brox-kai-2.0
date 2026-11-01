@@ -123,8 +123,8 @@ internal fun ServiceSelector(
     Box {
         if (showLabel) {
             // Pill variant used by the Plan 7 top bar: icon + name + chevron.
-            val pillBg = SurfaceRaised.copy(alpha = 0.9f)
-            val pillBorder = BorderSoft
+            val pillBg = com.inspiredandroid.kai.ui.theme.DesignTokens.SurfaceElevated
+            val pillBorder = com.inspiredandroid.kai.ui.theme.DesignTokens.BorderSubtle
 
             Row(
                 modifier = Modifier
@@ -236,8 +236,8 @@ internal fun ServiceSelector(
                             .heightIn(max = 540.dp)
                             .clickable(enabled = false) {}
                             .clip(RoundedCornerShape(16.dp))
-                            .background(Color(0xFF0F172A), RoundedCornerShape(16.dp))
-                            .border(BorderStroke(1.dp, Color(0xFF1E293B)), RoundedCornerShape(16.dp))
+                            .background(com.inspiredandroid.kai.ui.theme.DesignTokens.SurfaceElevated, RoundedCornerShape(16.dp))
+                            .border(BorderStroke(1.dp, com.inspiredandroid.kai.ui.theme.DesignTokens.BorderSubtle), RoundedCornerShape(16.dp))
                             .padding(16.dp),
                     ) {
                         Column(modifier = Modifier.fillMaxWidth()) {

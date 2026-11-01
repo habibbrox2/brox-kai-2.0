@@ -252,8 +252,8 @@ private fun SessionTab(
     val label = if (numbered) "$base ${session.number}" else base
     val contentColor = when {
         // A finished shell keeps its output readable but reads as inactive.
-        !session.busy -> com.inspiredandroid.kai.ui.TextTertiary.copy(alpha = 0.7f)
-        selected -> com.inspiredandroid.kai.ui.AccentPrimary
+        !session.busy -> if (selected) com.inspiredandroid.kai.ui.theme.DesignTokens.Background.copy(alpha = 0.75f) else com.inspiredandroid.kai.ui.TextTertiary.copy(alpha = 0.7f)
+        selected -> com.inspiredandroid.kai.ui.theme.DesignTokens.Background
         else -> com.inspiredandroid.kai.ui.TextSecondary
     }
     TabPill(
@@ -289,7 +289,7 @@ private fun TabPill(
     selected: Boolean,
     onSelect: () -> Unit,
     contentColor: Color = if (selected) {
-        com.inspiredandroid.kai.ui.AccentPrimary
+        com.inspiredandroid.kai.ui.theme.DesignTokens.Background
     } else {
         com.inspiredandroid.kai.ui.TextSecondary
     },

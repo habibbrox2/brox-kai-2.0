@@ -228,8 +228,8 @@ private fun PathBar(
             .fillMaxWidth()
             .padding(horizontal = com.inspiredandroid.kai.ui.build.BuildSpacing.sm)
             .clip(com.inspiredandroid.kai.ui.KaiShapes.input)
-            .background(com.inspiredandroid.kai.ui.CardFill)
-            .border(com.inspiredandroid.kai.ui.KaiBorders.soft),
+            .background(com.inspiredandroid.kai.ui.theme.DesignTokens.SurfaceElevated)
+            .border(androidx.compose.foundation.BorderStroke(1.dp, com.inspiredandroid.kai.ui.theme.DesignTokens.BorderSubtle), com.inspiredandroid.kai.ui.KaiShapes.input),
     ) {
         Row(
             modifier = Modifier
@@ -379,8 +379,8 @@ private fun FileRow(
         modifier = Modifier
             .fillMaxWidth()
             .clip(com.inspiredandroid.kai.ui.KaiShapes.card)
-            .background(com.inspiredandroid.kai.ui.CardFill)
-            .border(com.inspiredandroid.kai.ui.KaiBorders.soft),
+            .background(com.inspiredandroid.kai.ui.theme.DesignTokens.SurfaceElevated)
+            .border(androidx.compose.foundation.BorderStroke(1.dp, com.inspiredandroid.kai.ui.theme.DesignTokens.BorderSubtle), com.inspiredandroid.kai.ui.KaiShapes.input),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
