@@ -10,6 +10,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
 
 private val serverIdRegex = Regex("[^a-z0-9]")
 
@@ -24,6 +25,7 @@ class McpServerManager(private val appSettings: AppSettings) {
     private val mutex = Mutex()
     private val clients = mutableMapOf<String, McpClient>()
     private val discoveredTools = mutableMapOf<String, List<McpToolMetadata>>()
+    private val discoveredSkills = mutableMapOf<String, JsonArray>()
 
     // NOTE: the mutators below are read-modify-write without a lock. Making them safe means making
     // them suspend, which ripples through DataRepository and the settings UI — tracked separately.
@@ -86,6 +88,7 @@ class McpServerManager(private val appSettings: AppSettings) {
         clients[serverId]?.close()
         clients.remove(serverId)
         discoveredTools.remove(serverId)
+        discoveredSkills.remove(serverId)
     }
 
     fun setServerEnabled(serverId: String, enabled: Boolean) {
@@ -99,6 +102,7 @@ class McpServerManager(private val appSettings: AppSettings) {
             clients[serverId]?.close()
             clients.remove(serverId)
             discoveredTools.remove(serverId)
+            discoveredSkills.remove(serverId)
         }
     }
 
@@ -118,6 +122,13 @@ class McpServerManager(private val appSettings: AppSettings) {
         return try {
             client.initialize()
             val toolDefs = client.listTools()
+            // Skills-over-MCP is optional. A server without the extension must still connect
+            // normally and expose its tools.
+            val skills = try {
+                client.listSkills()
+            } catch (_: Exception) {
+                JsonArray(emptyList())
+            }
             val metadata = toolDefs.map { def ->
                 McpToolMetadata(
                     serverId = serverId,
@@ -129,6 +140,7 @@ class McpServerManager(private val appSettings: AppSettings) {
             mutex.withLock {
                 clients[serverId] = client
                 discoveredTools[serverId] = metadata
+                discoveredSkills[serverId] = skills
             }
             Result.success(metadata)
         } catch (e: Exception) {
@@ -136,6 +148,7 @@ class McpServerManager(private val appSettings: AppSettings) {
             mutex.withLock {
                 clients.remove(serverId)
                 discoveredTools.remove(serverId)
+                discoveredSkills.remove(serverId)
             }
             Result.failure(e)
         }
@@ -162,6 +175,20 @@ class McpServerManager(private val appSettings: AppSettings) {
                     }
                 }
             }
+        }
+    }
+
+    /** Skills advertised by a connected server via the optional Skills-over-MCP extension. */
+    fun getSkillsForServer(serverId: String): JsonArray = discoveredSkills[serverId] ?: JsonArray(emptyList())
+
+    /** Read a server-published skill resource. The client enforces the skill:// URI scheme. */
+    suspend fun readSkill(serverId: String, uri: String): Result<String> {
+        val client = mutex.withLock { clients[serverId] }
+            ?: return Result.failure(McpException("MCP server is not connected: $serverId"))
+        return try {
+            Result.success(client.readSkill(uri))
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 
