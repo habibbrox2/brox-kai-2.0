@@ -146,6 +146,14 @@ class McpServerManager(private val appSettings: AppSettings) {
                 discoveredSkills[serverId] = skills
             }
             Result.success(metadata)
+        } catch (e: CancellationException) {
+            client.close()
+            mutex.withLock {
+                clients.remove(serverId)
+                discoveredTools.remove(serverId)
+                discoveredSkills.remove(serverId)
+            }
+            throw e
         } catch (e: Exception) {
             client.close()
             mutex.withLock {
