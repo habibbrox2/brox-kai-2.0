@@ -375,7 +375,7 @@ class AppSettings(internal val settings: Settings) {
             return try {
                 ThemeMode.valueOf(raw)
             } catch (_: IllegalArgumentException) {
-                ThemeMode.System
+                return ThemeMode.System
             }
         }
         // Default to System theme when no theme mode is set
