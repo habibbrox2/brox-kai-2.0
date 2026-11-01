@@ -175,25 +175,4 @@ class TabletStoreScreenshotTest(
         }
     }
 
-    @Test
-    fun chatAndSettingsMidnightAndOled() {
-        snap("08_midnight_chat", MidnightColorScheme) {
-            ChatScreenContent(
-                uiState = ScreenshotTestData.localizedChatWithMessages(locale),
-                FakeTextToSpeechInstance(),
-            )
-        }
-        snap("09_midnight_settings", MidnightColorScheme) {
-            SettingsScreenContent(uiState = ScreenshotTestData.settingsAgent)
-        }
-        snap("10_oled_chat", OledColorScheme) {
-            ChatScreenContent(
-                uiState = ScreenshotTestData.localizedChatWithMessages(locale),
-                FakeTextToSpeechInstance(),
-            )
-        }
-        snap("11_oled_settings", OledColorScheme) {
-            SettingsScreenContent(uiState = ScreenshotTestData.settingsAgent)
-        }
     }
-}

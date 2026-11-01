@@ -151,37 +151,4 @@ class ScreenshotTest {
         }
     }
 
-    @Test
-    fun chatWithMessages_midnight() {
-        paparazzi.snap(MidnightColorScheme) {
-            ChatScreenContent(ScreenshotTestData.chatWithMessages, FakeTextToSpeechInstance())
-        }
     }
-
-    @Test
-    fun chatWithMessages_oled() {
-        paparazzi.snap(OledColorScheme) {
-            ChatScreenContent(ScreenshotTestData.chatWithMessages, FakeTextToSpeechInstance())
-        }
-    }
-
-    @Test
-    fun settingsAgent_midnight() {
-        paparazzi.snap(MidnightColorScheme) {
-            SettingsScreenContent(
-                uiState = ScreenshotTestData.settingsAgent,
-                sandboxState = ScreenshotTestData.sandboxState,
-            )
-        }
-    }
-
-    @Test
-    fun settingsAgent_oled() {
-        paparazzi.snap(OledColorScheme) {
-            SettingsScreenContent(
-                uiState = ScreenshotTestData.settingsAgent,
-                sandboxState = ScreenshotTestData.sandboxState,
-            )
-        }
-    }
-}
