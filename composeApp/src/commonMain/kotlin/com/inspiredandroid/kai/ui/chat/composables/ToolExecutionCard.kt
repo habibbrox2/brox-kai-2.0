@@ -38,7 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import com.inspiredandroid.kai.ui.theme.DesignTokens
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -47,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import com.inspiredandroid.kai.ui.KaiTypography
 import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.rememberCopyToClipboard
+import com.inspiredandroid.kai.ui.theme.DesignTokens
 import kotlinx.coroutines.delay
 
 /**

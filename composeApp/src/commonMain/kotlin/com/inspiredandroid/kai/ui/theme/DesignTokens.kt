@@ -22,7 +22,7 @@ object DesignTokens {
 
     // ─── Borders ───
     val BorderSubtle: Color = Color(0x14FFFFFF) // rgba(255, 255, 255, 0.08)
-    val BorderSoft: Color = Color(0x26FFFFFF)   // rgba(255, 255, 255, 0.15)
+    val BorderSoft: Color = Color(0x26FFFFFF) // rgba(255, 255, 255, 0.15)
     val BorderStrong: Color = Color(0x40FFFFFF) // rgba(255, 255, 255, 0.25)
 
     // ─── Brand Colors (Brox Kai v2.0 Official Logo Pack) ───

@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,8 +31,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.ui.AccentPrimary
-import com.inspiredandroid.kai.ui.theme.DesignTokens
-import androidx.compose.foundation.border
 import com.inspiredandroid.kai.ui.DangerAlert
 import com.inspiredandroid.kai.ui.KaiShapes
 import com.inspiredandroid.kai.ui.KaiTypography
@@ -42,6 +41,7 @@ import com.inspiredandroid.kai.ui.chat.activities.ActivityStatus
 import com.inspiredandroid.kai.ui.chat.activities.ActivityType
 import com.inspiredandroid.kai.ui.chat.activities.AgentActivity
 import com.inspiredandroid.kai.ui.handCursor
+import com.inspiredandroid.kai.ui.theme.DesignTokens
 
 @Composable
 fun AgentActivityTimeline(
@@ -210,7 +210,7 @@ private fun ActivityDetailsView(
                             .fillMaxWidth()
                             .clip(KaiShapes.xs)
                             .background(DesignTokens.SurfaceElevated, KaiShapes.row)
-            .border(1.dp, DesignTokens.BorderSubtle, KaiShapes.row)
+                            .border(1.dp, DesignTokens.BorderSubtle, KaiShapes.row)
                             .padding(8.dp),
                     )
                 }
@@ -229,7 +229,7 @@ private fun ActivityDetailsView(
                             .fillMaxWidth()
                             .clip(KaiShapes.xs)
                             .background(DesignTokens.SurfaceElevated, KaiShapes.row)
-            .border(1.dp, DesignTokens.BorderSubtle, KaiShapes.row)
+                            .border(1.dp, DesignTokens.BorderSubtle, KaiShapes.row)
                             .padding(8.dp),
                         maxLines = 10,
                         overflow = TextOverflow.Ellipsis,
@@ -256,7 +256,7 @@ private fun ActivityDetailsView(
                         .fillMaxWidth()
                         .clip(KaiShapes.xs)
                         .background(DesignTokens.SurfaceElevated, KaiShapes.row)
-            .border(1.dp, DesignTokens.BorderSubtle, KaiShapes.row)
+                        .border(1.dp, DesignTokens.BorderSubtle, KaiShapes.row)
                         .padding(8.dp),
                 )
                 details.workingDirectory?.let { cwd ->
@@ -277,7 +277,7 @@ private fun ActivityDetailsView(
                                 .fillMaxWidth()
                                 .clip(KaiShapes.xs)
                                 .background(DesignTokens.SurfaceElevated, KaiShapes.row)
-            .border(1.dp, DesignTokens.BorderSubtle, KaiShapes.row)
+                                .border(1.dp, DesignTokens.BorderSubtle, KaiShapes.row)
                                 .padding(8.dp),
                             maxLines = 15,
                             overflow = TextOverflow.Ellipsis,
@@ -295,7 +295,7 @@ private fun ActivityDetailsView(
                                 .fillMaxWidth()
                                 .clip(KaiShapes.xs)
                                 .background(DesignTokens.SurfaceElevated, KaiShapes.row)
-            .border(1.dp, DesignTokens.BorderSubtle, KaiShapes.row)
+                                .border(1.dp, DesignTokens.BorderSubtle, KaiShapes.row)
                                 .padding(8.dp),
                             maxLines = 10,
                             overflow = TextOverflow.Ellipsis,

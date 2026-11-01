@@ -42,4 +42,3 @@ class AgentHudStateTest {
         assertEquals(DesignTokens.PrimaryCyan, color)
     }
 }
-
