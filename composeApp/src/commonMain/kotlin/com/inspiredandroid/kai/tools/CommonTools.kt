@@ -1,10 +1,10 @@
 package com.inspiredandroid.kai.tools
 
 import com.inspiredandroid.kai.data.AppSettings
-import com.inspiredandroid.kai.getDeviceInfo
-import com.inspiredandroid.kai.getSimOperatorCode
 import com.inspiredandroid.kai.data.MemoryCategory
 import com.inspiredandroid.kai.data.MemoryStore
+import com.inspiredandroid.kai.getDeviceInfo
+import com.inspiredandroid.kai.getSimOperatorCode
 import com.inspiredandroid.kai.httpClient
 import com.inspiredandroid.kai.network.tools.ParameterSchema
 import com.inspiredandroid.kai.network.tools.Tool
@@ -479,12 +479,10 @@ object CommonTools {
             parameters = emptyMap(),
         )
 
-        override suspend fun execute(args: Map<String, Any>): Any {
-            return try {
-                getDeviceInfo()
-            } catch (e: Exception) {
-                mapOf("success" to false, "error" to (e.message ?: "Failed to get device info"))
-            }
+        override suspend fun execute(args: Map<String, Any>): Any = try {
+            getDeviceInfo()
+        } catch (e: Exception) {
+            mapOf("success" to false, "error" to (e.message ?: "Failed to get device info"))
         }
     }
 

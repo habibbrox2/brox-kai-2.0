@@ -1,6 +1,7 @@
 package com.inspiredandroid.kai.ui.settings
 
 import androidx.compose.runtime.Immutable
+import com.inspiredandroid.kai.data.AppLanguage
 import com.inspiredandroid.kai.data.EmailAccount
 import com.inspiredandroid.kai.data.EmailSyncState
 import com.inspiredandroid.kai.data.HeartbeatLogEntry
@@ -9,7 +10,6 @@ import com.inspiredandroid.kai.data.ScheduledTask
 import com.inspiredandroid.kai.data.Service
 import com.inspiredandroid.kai.data.ServiceEntry
 import com.inspiredandroid.kai.data.SmsSyncState
-import com.inspiredandroid.kai.data.AppLanguage
 import com.inspiredandroid.kai.data.ThemeMode
 import com.inspiredandroid.kai.inference.DownloadError
 import com.inspiredandroid.kai.inference.LocalModel

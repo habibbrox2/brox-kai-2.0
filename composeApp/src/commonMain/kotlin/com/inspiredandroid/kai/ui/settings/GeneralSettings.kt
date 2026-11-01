@@ -29,8 +29,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.inspiredandroid.kai.data.AppSettings
 import com.inspiredandroid.kai.data.AppLanguage
+import com.inspiredandroid.kai.data.AppSettings
 import com.inspiredandroid.kai.data.ThemeMode
 import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.BorderSoft
