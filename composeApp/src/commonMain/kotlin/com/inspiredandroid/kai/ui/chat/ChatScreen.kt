@@ -387,6 +387,7 @@ private fun ChatModeScreen(
                         isSandboxAvailable = isSandboxAvailable,
                         isSandboxOpen = isSandboxOpen,
                         isShellExecuting = isShellExecuting,
+                        isGenerating = uiState.isLoading,
                         onToggleSandbox = { isSandboxOpen = !isSandboxOpen },
                         onOpenDrawer = {
                             scope.launch {
