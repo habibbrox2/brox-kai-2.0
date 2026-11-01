@@ -276,14 +276,14 @@ private fun SessionChipRow(viewModel: SandboxSessionViewModel) {
 
             val buttonColors = ButtonDefaults.buttonColors(
                 containerColor = if (isSelected) {
-                    com.inspiredandroid.kai.ui.AccentPrimary
+                    com.inspiredandroid.kai.ui.theme.DesignTokens.PrimaryCyan
                 } else {
-                    com.inspiredandroid.kai.ui.CardFill
+                    com.inspiredandroid.kai.ui.theme.DesignTokens.SurfaceElevated
                 },
                 contentColor = if (isSelected) {
-                    com.inspiredandroid.kai.ui.AccentPrimary
+                    com.inspiredandroid.kai.ui.theme.DesignTokens.Background
                 } else {
-                    com.inspiredandroid.kai.ui.TextSecondary
+                    com.inspiredandroid.kai.ui.theme.DesignTokens.SecondaryText
                 },
             )
 
@@ -365,14 +365,14 @@ private fun SandboxSubTabSelector(
 
             val buttonColors = ButtonDefaults.buttonColors(
                 containerColor = when {
-                    isSelected -> com.inspiredandroid.kai.ui.AccentPrimary
-                    isFocused -> com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.5f)
-                    else -> com.inspiredandroid.kai.ui.CardFill
+                    isSelected -> com.inspiredandroid.kai.ui.theme.DesignTokens.PrimaryCyan
+                    isFocused -> com.inspiredandroid.kai.ui.theme.DesignTokens.PrimaryCyan.copy(alpha = 0.25f)
+                    else -> com.inspiredandroid.kai.ui.theme.DesignTokens.SurfaceElevated
                 },
                 contentColor = if (isSelected) {
-                    com.inspiredandroid.kai.ui.AccentPrimary
+                    com.inspiredandroid.kai.ui.theme.DesignTokens.Background
                 } else {
-                    com.inspiredandroid.kai.ui.TextSecondary
+                    com.inspiredandroid.kai.ui.theme.DesignTokens.SecondaryText
                 },
             )
 

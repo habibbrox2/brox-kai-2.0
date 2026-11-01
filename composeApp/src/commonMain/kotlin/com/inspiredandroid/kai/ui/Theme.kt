@@ -60,25 +60,24 @@ val broxNavy = Color(0xFF0B1026)
 val broxDeepNavy = Color(0xFF050810)
 val broxCharcoal = Color(0xFF151B2B)
 val BackgroundPrimary = Color(0xFF0E0F12)
-val AccentPrimary = Color(0xFF06B6D4)
+val AccentPrimary = com.inspiredandroid.kai.ui.theme.DesignTokens.PrimaryCyan
 val broxCyan = AccentPrimary
 val broxLightSurface = Color(0xFFFFFFFF)
 val broxMutedText = Color(0xFF64748B)
 
-// ─── 2027 Design Tokens ───
+// ─── 2027 Design Tokens (Aligned with DesignTokens.kt) ───
 
-/** Light theme surface */
-val SurfaceElevated = Color(0xFFFFFFFF)
-val SurfaceRaised = Color(0xFFE2E8F0)
+val SurfaceElevated = com.inspiredandroid.kai.ui.theme.DesignTokens.SurfaceElevated
+val SurfaceRaised = com.inspiredandroid.kai.ui.theme.DesignTokens.SurfaceRaised
 
-/** Card surfaces with subtle transparency */
-val CardFill = Color(0xFFFFFFFF)
-val CardSurface = Color(0xFFFAFAFA)
+/** Card surfaces */
+val CardFill = com.inspiredandroid.kai.ui.theme.DesignTokens.SurfaceElevated
+val CardSurface = com.inspiredandroid.kai.ui.theme.DesignTokens.SurfaceDark
 
 /** Borders */
-val BorderSubtle = Color(0x1A000000)
-val BorderSoft = Color(0x33000000)
-val BorderStrong = Color(0x4D000000)
+val BorderSubtle = com.inspiredandroid.kai.ui.theme.DesignTokens.BorderSubtle
+val BorderSoft = com.inspiredandroid.kai.ui.theme.DesignTokens.BorderSoft
+val BorderStrong = com.inspiredandroid.kai.ui.theme.DesignTokens.BorderStrong
 
 /** Primary accent - vibrant cyan/teal */
 val AccentPrimaryHover = Color(0xFF06B6D4)
@@ -465,22 +464,22 @@ val DarkColorScheme = darkColorScheme(
     onError = Color.White,
     errorContainer = DangerAlert.copy(alpha = 0.3f),
     onErrorContainer = TextPrimary,
-    background = Color(0xFF121212),
-    onBackground = TextPrimary,
-    surface = Color(0xFF1E1E1E),
-    onSurface = TextPrimary,
-    surfaceVariant = Color(0xFF2A2A2A),
-    onSurfaceVariant = TextSecondary,
-    outline = BorderSoft,
-    outlineVariant = BorderSoft.copy(alpha = 0.5f),
+    background = com.inspiredandroid.kai.ui.theme.DesignTokens.Background,
+    onBackground = com.inspiredandroid.kai.ui.theme.DesignTokens.PrimaryText,
+    surface = com.inspiredandroid.kai.ui.theme.DesignTokens.SurfaceDark,
+    onSurface = com.inspiredandroid.kai.ui.theme.DesignTokens.PrimaryText,
+    surfaceVariant = com.inspiredandroid.kai.ui.theme.DesignTokens.SurfaceElevated,
+    onSurfaceVariant = com.inspiredandroid.kai.ui.theme.DesignTokens.SecondaryText,
+    outline = com.inspiredandroid.kai.ui.theme.DesignTokens.BorderSoft,
+    outlineVariant = com.inspiredandroid.kai.ui.theme.DesignTokens.BorderSubtle,
     inverseSurface = Color(0xFFE0E0E0),
     inverseOnSurface = Color(0xFFFFFFFF),
     inversePrimary = broxNavy,
-    surfaceContainerHighest = Color(0xFF2A2A2A),
-    surfaceContainerHigh = Color(0xFF242424),
-    surfaceContainer = Color(0xFF1E1E1E),
-    surfaceContainerLow = Color(0xFF1A1A1A),
-    surfaceContainerLowest = Color(0xFF121212),
+    surfaceContainerHighest = com.inspiredandroid.kai.ui.theme.DesignTokens.SurfaceRaised,
+    surfaceContainerHigh = com.inspiredandroid.kai.ui.theme.DesignTokens.SurfaceElevated,
+    surfaceContainer = com.inspiredandroid.kai.ui.theme.DesignTokens.SurfaceDark,
+    surfaceContainerLow = com.inspiredandroid.kai.ui.theme.DesignTokens.Background,
+    surfaceContainerLowest = com.inspiredandroid.kai.ui.theme.DesignTokens.BackgroundOled,
 )
 
 /** Lilac theme */

@@ -229,7 +229,8 @@ internal fun BotMessage(
                         .padding(4.dp)
                         .size(28.dp)
                         .clip(CircleShape)
-                        .background(CardFill)
+                        .background(com.inspiredandroid.kai.ui.theme.DesignTokens.SurfaceRaised)
+                        .border(androidx.compose.foundation.BorderStroke(1.dp, com.inspiredandroid.kai.ui.theme.DesignTokens.BorderSubtle), CircleShape)
                         .handCursor()
                         .clickable { isEditing = !isEditing },
                     contentAlignment = Alignment.Center,
@@ -240,7 +241,7 @@ internal fun BotMessage(
                             if (isEditing) Res.string.chat_cancel_edit_content_description else Res.string.chat_edit_submission_content_description,
                         ),
                         modifier = Modifier.size(16.dp),
-                        tint = TextSecondary,
+                        tint = com.inspiredandroid.kai.ui.theme.DesignTokens.PrimaryCyan,
                     )
                 }
             }
@@ -333,11 +334,11 @@ private fun ReasoningBlockquote(
     }
 
     val blockShape = RoundedCornerShape(10.dp)
-    val accentCyan = Color(0xFF06B6D4)
-    val containerBg = Color(0xFF0B0F17)
-    val borderColor = Color(0xFF1E293B)
-    val textSlate = Color(0xFFCBD5E1)
-    val textMuted = Color(0xFF64748B)
+    val accentCyan = com.inspiredandroid.kai.ui.theme.DesignTokens.PrimaryCyan
+    val containerBg = com.inspiredandroid.kai.ui.theme.DesignTokens.SurfaceDark
+    val borderColor = com.inspiredandroid.kai.ui.theme.DesignTokens.BorderSubtle
+    val textSlate = com.inspiredandroid.kai.ui.theme.DesignTokens.SecondaryText
+    val textMuted = com.inspiredandroid.kai.ui.theme.DesignTokens.MutedText
 
     Column(
         modifier = modifier
@@ -435,7 +436,7 @@ private fun ReasoningBlockquote(
                     .fillMaxWidth()
                     .heightIn(max = 360.dp)
                     .verticalScroll(rememberScrollState())
-                    .background(Color(0xFF070A10))
+                    .background(com.inspiredandroid.kai.ui.theme.DesignTokens.TerminalBackground)
                     .border(
                         width = 1.dp,
                         color = borderColor.copy(alpha = 0.5f),

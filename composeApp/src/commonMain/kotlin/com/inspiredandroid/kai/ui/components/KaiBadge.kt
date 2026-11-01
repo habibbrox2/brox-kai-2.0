@@ -4,10 +4,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,17 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.inspiredandroid.kai.ui.AccentPrimary
-import com.inspiredandroid.kai.ui.BorderSoft
-import com.inspiredandroid.kai.ui.CardFill
-import com.inspiredandroid.kai.ui.DangerAlert
 import com.inspiredandroid.kai.ui.KaiShapes
 import com.inspiredandroid.kai.ui.KaiTypography
-import com.inspiredandroid.kai.ui.SuccessGreen
-import com.inspiredandroid.kai.ui.TextPrimary
-import com.inspiredandroid.kai.ui.TextSecondary
-import com.inspiredandroid.kai.ui.WarningAmber
+import com.inspiredandroid.kai.ui.theme.DesignTokens
 
 /**
  * Small status indicator pill used for tags, status labels, and counts.
@@ -44,16 +34,17 @@ fun KaiBadge(
 
     Box(
         modifier = modifier
-            .border(BorderStroke(0.5.dp, borderColor), KaiShapes.pill)
-            .defaultMinSize(minHeight = 24.dp)
+            .border(BorderStroke(1.dp, borderColor), KaiShapes.pill)
+            .defaultMinSize(minHeight = 22.dp)
             .clip(KaiShapes.pill)
             .background(bgColor),
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = label,
             style = KaiTypography.labelSmall,
-            modifier = Modifier
-                .padding(horizontal = 6.dp, vertical = 2.dp),
+            color = textColor,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
         )
     }
 }
@@ -61,11 +52,11 @@ fun KaiBadge(
 private fun badgeColors(
     variant: BadgeVariant,
 ): Triple<Color, Color, Color> = when (variant) {
-    BadgeVariant.Success -> Triple(SuccessGreen, TextPrimary, SuccessGreen.copy(alpha = 0.4f))
-    BadgeVariant.Warning -> Triple(WarningAmber, TextPrimary, WarningAmber.copy(alpha = 0.4f))
-    BadgeVariant.Error -> Triple(DangerAlert, TextPrimary, DangerAlert.copy(alpha = 0.4f))
-    BadgeVariant.Accent -> Triple(AccentPrimary, TextPrimary, AccentPrimary.copy(alpha = 0.4f))
-    BadgeVariant.Default -> Triple(CardFill, TextSecondary, BorderSoft)
+    BadgeVariant.Success -> Triple(DesignTokens.Success.copy(alpha = 0.15f), DesignTokens.Success, DesignTokens.Success.copy(alpha = 0.35f))
+    BadgeVariant.Warning -> Triple(DesignTokens.Warning.copy(alpha = 0.15f), DesignTokens.Warning, DesignTokens.Warning.copy(alpha = 0.35f))
+    BadgeVariant.Error -> Triple(DesignTokens.Error.copy(alpha = 0.15f), DesignTokens.Error, DesignTokens.Error.copy(alpha = 0.35f))
+    BadgeVariant.Accent -> Triple(DesignTokens.PrimaryCyan.copy(alpha = 0.15f), DesignTokens.PrimaryCyan, DesignTokens.PrimaryCyan.copy(alpha = 0.35f))
+    BadgeVariant.Default -> Triple(DesignTokens.SurfaceElevated, DesignTokens.SecondaryText, DesignTokens.BorderSubtle)
 }
 
 /** Color variants for KaiBadge. */

@@ -360,7 +360,7 @@ fun SettingsScreenContent(
 
 @Composable
 private fun TopBar(onNavigateBack: () -> Unit) {
-    val barBg = CardFill
+    val barBg = com.inspiredandroid.kai.ui.theme.DesignTokens.SurfaceElevated
 
     Box(
         modifier = Modifier
@@ -440,7 +440,7 @@ private fun SettingsTabSelector(
     }
 
     // Neural minimal tab bar container
-    val tabBarBg = CardFill
+    val tabBarBg = com.inspiredandroid.kai.ui.theme.DesignTokens.SurfaceElevated
 
     Box(
         modifier = Modifier
@@ -700,8 +700,8 @@ internal fun SettingsCard(
     onClick: (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
-    val cardBg = androidx.compose.ui.graphics.Color(0xFF0F172A).copy(alpha = 0.92f)
-    val cardBorder = BorderStroke(1.dp, BorderSoft.copy(alpha = 0.8f))
+    val cardBg = com.inspiredandroid.kai.ui.theme.DesignTokens.SurfaceElevated
+    val cardBorder = BorderStroke(1.dp, com.inspiredandroid.kai.ui.theme.DesignTokens.BorderSubtle)
     val cardShape = SettingsShapes.card
 
     Box(

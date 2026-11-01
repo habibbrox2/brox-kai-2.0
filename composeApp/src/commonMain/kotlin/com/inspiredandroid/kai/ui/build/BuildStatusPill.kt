@@ -93,8 +93,8 @@ fun BuildProgressBlock(
         modifier = modifier
             .fillMaxWidth()
             .clip(com.inspiredandroid.kai.ui.KaiShapes.card)
-            .background(com.inspiredandroid.kai.ui.CardFill, com.inspiredandroid.kai.ui.KaiShapes.card)
-            .border(com.inspiredandroid.kai.ui.KaiBorders.soft, com.inspiredandroid.kai.ui.KaiShapes.card),
+            .background(com.inspiredandroid.kai.ui.theme.DesignTokens.SurfaceElevated, com.inspiredandroid.kai.ui.KaiShapes.card)
+            .border(androidx.compose.foundation.BorderStroke(1.dp, com.inspiredandroid.kai.ui.theme.DesignTokens.BorderSubtle), com.inspiredandroid.kai.ui.KaiShapes.card),
     ) {
         Column(
             modifier = Modifier.padding(BuildSpacing.lg),
