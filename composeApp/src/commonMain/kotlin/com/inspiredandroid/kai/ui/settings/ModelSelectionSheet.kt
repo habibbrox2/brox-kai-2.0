@@ -20,10 +20,12 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
@@ -85,6 +87,9 @@ internal fun ModelSelection(
     currentSelectedModel: SettingsModel?,
     models: ImmutableList<SettingsModel>,
     onClick: (String) -> Unit,
+    isLoading: Boolean = false,
+    errorMessage: String? = null,
+    onRetry: () -> Unit = {},
 ) {
     var expanded by remember { mutableStateOf(false) }
     // Provider list only — synthetic manual entries stay out of the picker grid.
@@ -248,6 +253,32 @@ internal fun ModelSelection(
                             )
                         }
                     }
+                }
+            }
+        }
+    } else {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                text = stringResource(Res.string.settings_model_label),
+                style = KaiTypography.labelLarge,
+                color = TextPrimary,
+            )
+            if (isLoading) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    CircularProgressIndicator(modifier = Modifier.width(18.dp), strokeWidth = 2.dp)
+                    Text("Fetching models from provider…", style = KaiTypography.bodySmall, color = TextSecondary)
+                }
+            } else {
+                Text(
+                    text = errorMessage ?: "No models have been loaded yet. Retry model discovery.",
+                    style = KaiTypography.bodySmall,
+                    color = if (errorMessage != null) Color(0xFFCF6679) else TextSecondary,
+                )
+                OutlinedButton(onClick = onRetry) {
+                    Text("Retry model discovery")
                 }
             }
         }
