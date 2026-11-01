@@ -10,6 +10,7 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
+import io.ktor.http.isSuccess
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
@@ -18,7 +19,6 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.decodeFromJsonElement
-import io.ktor.http.isSuccess
 
 internal const val MCP_CURRENT_PROTOCOL_VERSION = "2026-07-28"
 
@@ -303,11 +303,12 @@ class McpClient(
             val pageSkills = result["skills"] as? JsonArray
                 ?: throw McpException("skills/list response does not contain a skills array")
             skills += pageSkills
-            cursor = (result["nextCursor"] as? JsonPrimitive)?.contentOrNull
+            val nextCursor = (result["nextCursor"] as? JsonPrimitive)?.contentOrNull
                 ?.takeIf { it.isNotBlank() }
-            if (cursor != null && !seenCursors.add(cursor!!)) {
+            if (nextCursor != null && !seenCursors.add(nextCursor)) {
                 throw McpException("skills/list returned a repeated pagination cursor")
             }
+            cursor = nextCursor
             pageCount++
             if (pageCount >= 100 && cursor != null) {
                 throw McpException("skills/list exceeded the 100-page safety limit")
