@@ -1,5 +1,5 @@
 <resources>
-    <string name="welcome_message">Kai 9000-তে স্বাগতম</string>
+    <string name="welcome_message">Brox Kai 2.0-তে স্বাগতম</string>
     <string name="prompt_ask_question">একটি প্রশ্ন করুন</string>
     <string name="error_invalid_api_key">অবৈধ API কী। অনুগ্রহ করে আপনার সেটিংস পরীক্ষা করুন।</string>
     <string name="error_rate_limit_exceeded">রেট সীমা অতিক্রম করা হয়েছে। অনুগ্রহ করে পরে আবার চেষ্টা করুন।</string>
