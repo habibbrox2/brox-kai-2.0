@@ -23,6 +23,7 @@ import com.inspiredandroid.kai.network.dtos.openaicompatible.OpenAICompatibleMod
 import com.inspiredandroid.kai.network.dtos.openairesponses.OpenAIResponsesRequestDto
 import com.inspiredandroid.kai.network.dtos.openairesponses.OpenAIResponsesResponseDto
 import com.inspiredandroid.kai.network.tools.Tool
+import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.UserAgent
@@ -132,9 +133,8 @@ private inline fun <T> openAICompatibleResult(block: () -> Result<T>): Result<T>
     Result.failure(OpenAICompatibleConnectionException())
 }
 
-class Requests {
-
-    private val defaultClient = httpClient {
+class Requests(
+    private val defaultClient: HttpClient = httpClient {
         install(ContentNegotiation) {
             json(
                 Json {
@@ -162,7 +162,8 @@ class Requests {
                 level = LogLevel.NONE
             }
         }
-    }
+    },
+)
 
     class DebugKtorLogger : Logger {
         override fun log(message: String) {
