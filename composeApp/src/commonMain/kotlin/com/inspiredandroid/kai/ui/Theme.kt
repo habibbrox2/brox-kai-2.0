@@ -48,6 +48,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import com.inspiredandroid.kai.ui.theme.DesignTokens
+import com.inspiredandroid.kai.ui.theme.LocalDesignTokens
 
 // ═══════════════════════════════════════════════════════════════
 // BROX KAI 2.0 — 2027 MINIMAL DESIGN SYSTEM
@@ -830,7 +832,10 @@ fun Theme(
     KaiThemeColors.borderSubtle = kaiColors.borderSubtle
     KaiThemeColors.borderSoft = kaiColors.borderSoft
     KaiThemeColors.borderStrong = kaiColors.borderStrong
-    CompositionLocalProvider(LocalKaiColors provides kaiColors) {
+    CompositionLocalProvider(
+        LocalKaiColors provides kaiColors,
+        LocalDesignTokens provides DesignTokens,
+    ) {
         MaterialTheme(
             colorScheme = colorScheme,
             typography = KaiTypography,
