@@ -90,6 +90,7 @@ internal fun ModelSelection(
     isLoading: Boolean = false,
     errorMessage: String? = null,
     onRetry: () -> Unit = {},
+    canRetry: Boolean = true,
 ) {
     var expanded by remember { mutableStateOf(false) }
     // Provider list only — synthetic manual entries stay out of the picker grid.
@@ -277,7 +278,7 @@ internal fun ModelSelection(
                     style = KaiTypography.bodySmall,
                     color = if (errorMessage != null) Color(0xFFCF6679) else TextSecondary,
                 )
-                OutlinedButton(onClick = onRetry) {
+                OutlinedButton(onClick = onRetry, enabled = canRetry) {
                     Text("Retry model discovery")
                 }
             }
