@@ -660,6 +660,7 @@ internal fun ServicesContent(uiState: SettingsUiState, actions: SettingsActions)
                 onChangeApiKey = { apiKey -> actions.onChangeApiKey(entry.instanceId, apiKey) },
                 onChangeBaseUrl = { baseUrl -> actions.onChangeBaseUrl(entry.instanceId, baseUrl) },
                 onSelectModel = { modelId -> actions.onSelectModel(entry.instanceId, modelId) },
+                onRetryFetchModels = { actions.onRetryFetchModels(entry.instanceId) },
                 onToggleUseCustomModel = { use -> actions.onToggleUseCustomModel(entry.instanceId, use) },
                 onChangeCustomModelId = { id -> actions.onChangeCustomModelId(entry.instanceId, id) },
                 onRemove = { actions.onRemoveService(entry.instanceId) },
@@ -916,6 +917,7 @@ private fun ConfiguredServiceCardContent(
     onChangeApiKey: (String) -> Unit,
     onChangeBaseUrl: (String) -> Unit,
     onSelectModel: (String) -> Unit,
+    onRetryFetchModels: () -> Unit = {},
     onToggleUseCustomModel: (Boolean) -> Unit = {},
     onChangeCustomModelId: (String) -> Unit = {},
     onRemove: () -> Unit,
@@ -1073,6 +1075,9 @@ private fun ConfiguredServiceCardContent(
                         selectedModel = entry.selectedModel,
                         models = entry.models,
                         onSelectModel = onSelectModel,
+                        isFetchingModels = entry.isFetchingModels,
+                        modelFetchError = entry.modelFetchError,
+                        onRetryFetchModels = onRetryFetchModels,
                         useCustomModel = entry.useCustomModel,
                         customModelId = entry.customModelId,
                         onToggleUseCustomModel = onToggleUseCustomModel,
@@ -1090,6 +1095,9 @@ private fun ConfiguredServiceCardContent(
                         models = entry.models,
                         onSelectModel = onSelectModel,
                         connectionStatus = entry.connectionStatus,
+                        isFetchingModels = entry.isFetchingModels,
+                        modelFetchError = entry.modelFetchError,
+                        onRetryFetchModels = onRetryFetchModels,
                         onOpenAppPermissionSettings = onOpenAppPermissionSettings,
                     )
                 }
@@ -1127,6 +1135,9 @@ private fun ServiceSettings(
     models: ImmutableList<SettingsModel>,
     onSelectModel: (String) -> Unit,
     connectionStatus: ConnectionStatus,
+    isFetchingModels: Boolean = false,
+    modelFetchError: String? = null,
+    onRetryFetchModels: () -> Unit = {},
     testTag: String? = null,
     onOpenAppPermissionSettings: () -> Unit = {},
 ) {
@@ -1166,8 +1177,8 @@ private fun ServiceSettings(
 
     Spacer(Modifier.height(16.dp))
 
-    if (connectionStatus == ConnectionStatus.Connected || models.isNotEmpty()) {
-        ModelSelection(selectedModel, models, onSelectModel)
+    if (connectionStatus == ConnectionStatus.Connected || models.isNotEmpty() || isFetchingModels || modelFetchError != null) {
+        ModelSelection(selectedModel, models, onSelectModel, isFetchingModels, modelFetchError, onRetryFetchModels)
     }
 }
 
@@ -1186,6 +1197,9 @@ private fun OpenAICompatibleSettings(
     onToggleUseCustomModel: (Boolean) -> Unit,
     onChangeCustomModelId: (String) -> Unit,
     connectionStatus: ConnectionStatus,
+    isFetchingModels: Boolean = false,
+    modelFetchError: String? = null,
+    onRetryFetchModels: () -> Unit = {},
     onOpenAppPermissionSettings: () -> Unit = {},
 ) {
     KaiClearableTextField(
@@ -1264,8 +1278,8 @@ private fun OpenAICompatibleSettings(
 
     Spacer(Modifier.height(16.dp))
 
-    if (connectionStatus == ConnectionStatus.Connected || models.isNotEmpty()) {
-        ModelSelection(selectedModel, models, onSelectModel)
+    if (connectionStatus == ConnectionStatus.Connected || models.isNotEmpty() || isFetchingModels || modelFetchError != null) {
+        ModelSelection(selectedModel, models, onSelectModel, isFetchingModels, modelFetchError, onRetryFetchModels)
         Spacer(Modifier.height(8.dp))
     }
 
