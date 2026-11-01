@@ -50,6 +50,12 @@ expect fun prefersReducedMotion(): Boolean
 expect fun getAppFilesDirectory(): String
 
 /**
+ * Applies the app display language (best-effort, platform-specific).
+ * On JVM this sets the default Locale; on other platforms it may be a no-op.
+ */
+expect fun applyAppLanguage(languageCode: String)
+
+/**
  * Returns the SIM operator as MCC+MNC (e.g. "47001") if available, or null.
  * Android: TelephonyManager.getSimOperator(); iOS: CoreTelephony.
  * Desktop/Web return null.

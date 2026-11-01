@@ -173,7 +173,7 @@ private fun AppContent(
 
     LaunchedEffect(appLanguage) {
         try {
-            java.util.Locale.setDefault(java.util.Locale.forLanguageTag(appLanguage.code))
+            applyAppLanguage(appLanguage.code)
         } catch (_: Exception) {
             // best-effort; ignore on platforms without Locale support
         }
