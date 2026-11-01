@@ -202,14 +202,16 @@ sealed class Service(
 
     data object Cloudflare : Service(
         id = "cloudflare",
-        displayName = "Cloudflare AI Gateway",
+        displayName = "Cloudflare Workers AI",
         icon = Res.drawable.ic_service_cloudflare,
         requiresApiKey = true,
         defaultModel = null,
         settingsKeyPrefix = "cloudflare",
         defaultModels = emptyList(),
+        // Workers AI exposes an OpenAI-compatible chat endpoint, but model discovery uses
+        // Cloudflare's account-scoped AI Models Search API (handled separately in Requests).
         chatUrl = "https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/v1/chat/completions",
-        modelsUrl = "https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/v1/models",
+        modelsUrl = "https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/models/search",
         apiKeyUrl = "https://dash.cloudflare.com/profile/api-tokens",
         apiKeyUrlDisplay = "dash.cloudflare.com/profile/api-tokens",
     )
