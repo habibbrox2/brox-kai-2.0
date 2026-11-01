@@ -660,6 +660,7 @@ internal fun ServicesContent(uiState: SettingsUiState, actions: SettingsActions)
                 onChangeApiKey = { apiKey -> actions.onChangeApiKey(entry.instanceId, apiKey) },
                 onChangeBaseUrl = { baseUrl -> actions.onChangeBaseUrl(entry.instanceId, baseUrl) },
                 onSelectModel = { modelId -> actions.onSelectModel(entry.instanceId, modelId) },
+                onRetryFetchModels = { actions.onRetryFetchModels(entry.instanceId) },
                 onToggleUseCustomModel = { use -> actions.onToggleUseCustomModel(entry.instanceId, use) },
                 onChangeCustomModelId = { id -> actions.onChangeCustomModelId(entry.instanceId, id) },
                 onRemove = { actions.onRemoveService(entry.instanceId) },
@@ -916,6 +917,7 @@ private fun ConfiguredServiceCardContent(
     onChangeApiKey: (String) -> Unit,
     onChangeBaseUrl: (String) -> Unit,
     onSelectModel: (String) -> Unit,
+    onRetryFetchModels: () -> Unit = {},
     onToggleUseCustomModel: (Boolean) -> Unit = {},
     onChangeCustomModelId: (String) -> Unit = {},
     onRemove: () -> Unit,
@@ -1065,6 +1067,7 @@ private fun ConfiguredServiceCardContent(
                     )
                 } else if (entry.service is Service.OpenAICompatible || entry.service is Service.Cloudflare || entry.service.modelsUrl != null || entry.service.chatUrl.isNotBlank()) {
                     OpenAICompatibleSettings(
+                        isCloudflare = entry.service is Service.Cloudflare,
                         baseUrl = entry.baseUrl,
                         onChangeBaseUrl = onChangeBaseUrl,
                         apiKey = entry.apiKey,
@@ -1072,6 +1075,9 @@ private fun ConfiguredServiceCardContent(
                         selectedModel = entry.selectedModel,
                         models = entry.models,
                         onSelectModel = onSelectModel,
+                        isFetchingModels = entry.isFetchingModels,
+                        modelFetchError = entry.modelFetchError,
+                        onRetryFetchModels = onRetryFetchModels,
                         useCustomModel = entry.useCustomModel,
                         customModelId = entry.customModelId,
                         onToggleUseCustomModel = onToggleUseCustomModel,
@@ -1089,6 +1095,9 @@ private fun ConfiguredServiceCardContent(
                         models = entry.models,
                         onSelectModel = onSelectModel,
                         connectionStatus = entry.connectionStatus,
+                        isFetchingModels = entry.isFetchingModels,
+                        modelFetchError = entry.modelFetchError,
+                        onRetryFetchModels = onRetryFetchModels,
                         onOpenAppPermissionSettings = onOpenAppPermissionSettings,
                     )
                 }
@@ -1126,6 +1135,9 @@ private fun ServiceSettings(
     models: ImmutableList<SettingsModel>,
     onSelectModel: (String) -> Unit,
     connectionStatus: ConnectionStatus,
+    isFetchingModels: Boolean = false,
+    modelFetchError: String? = null,
+    onRetryFetchModels: () -> Unit = {},
     testTag: String? = null,
     onOpenAppPermissionSettings: () -> Unit = {},
 ) {
@@ -1165,13 +1177,86 @@ private fun ServiceSettings(
 
     Spacer(Modifier.height(16.dp))
 
-    if (connectionStatus == ConnectionStatus.Connected || models.isNotEmpty()) {
-        ModelSelection(selectedModel, models, onSelectModel)
+    if (models.isNotEmpty()) {
+        ModelFetchFeedback(
+            isFetchingModels = isFetchingModels,
+            error = modelFetchError,
+            canRetry = apiKey.isNotBlank(),
+            onRetry = onRetryFetchModels,
+            showEmpty = false,
+        )
+    }
+    if (connectionStatus == ConnectionStatus.Connected || models.isNotEmpty() || isFetchingModels || modelFetchError != null) {
+        ModelSelection(
+            currentSelectedModel = selectedModel,
+            models = models,
+            onClick = onSelectModel,
+            isLoading = isFetchingModels,
+            errorMessage = modelFetchError,
+            onRetry = onRetryFetchModels,
+            canRetry = apiKey.isNotBlank(),
+        )
+    }
+}
+
+@Composable
+private fun ModelFetchFeedback(
+    isFetchingModels: Boolean,
+    error: String?,
+    canRetry: Boolean,
+    onRetry: () -> Unit,
+    showEmpty: Boolean,
+) {
+    when {
+        isFetchingModels -> {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(18.dp),
+                    strokeWidth = 2.dp,
+                )
+                Text(
+                    text = "Fetching available models…",
+                    style = KaiTypography.bodySmall,
+                    color = TextSecondary,
+                )
+            }
+        }
+
+        error != null -> {
+            Column(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+                Text(
+                    text = error,
+                    style = KaiTypography.bodySmall,
+                    color = DangerAlert,
+                )
+                TextButton(
+                    onClick = onRetry,
+                    enabled = canRetry,
+                    modifier = Modifier.align(Alignment.End).handCursor(),
+                ) {
+                    Text("Retry model discovery")
+                }
+            }
+        }
+
+        showEmpty -> {
+            Text(
+                text = "The provider is connected, but it returned no available models.",
+                style = KaiTypography.bodySmall,
+                color = TextSecondary,
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+            )
+        }
     }
 }
 
 @Composable
 private fun OpenAICompatibleSettings(
+    isCloudflare: Boolean = false,
     baseUrl: String,
     onChangeBaseUrl: (String) -> Unit,
     apiKey: String,
@@ -1184,6 +1269,9 @@ private fun OpenAICompatibleSettings(
     onToggleUseCustomModel: (Boolean) -> Unit,
     onChangeCustomModelId: (String) -> Unit,
     connectionStatus: ConnectionStatus,
+    isFetchingModels: Boolean = false,
+    modelFetchError: String? = null,
+    onRetryFetchModels: () -> Unit = {},
     onOpenAppPermissionSettings: () -> Unit = {},
 ) {
     KaiClearableTextField(
@@ -1191,7 +1279,7 @@ private fun OpenAICompatibleSettings(
         onValueChange = onChangeBaseUrl,
         label = {
             Text(
-                stringResource(Res.string.settings_base_url_label),
+                if (isCloudflare) "Cloudflare Account ID" else stringResource(Res.string.settings_base_url_label),
                 color = TextPrimary,
             )
         },
@@ -1202,8 +1290,13 @@ private fun OpenAICompatibleSettings(
         ),
     )
     if (baseUrl.isNotBlank()) {
+        val endpointPreview = if (isCloudflare) {
+            "https://api.cloudflare.com/client/v4/accounts/${baseUrl.trim()}/ai/v1/chat/completions"
+        } else {
+            "${Service.normalizeOpenAICompatibleBaseUrl(baseUrl)}${Service.OpenAICompatible.chatUrl}"
+        }
         Text(
-            text = "${Service.normalizeOpenAICompatibleBaseUrl(baseUrl)}${Service.OpenAICompatible.chatUrl}",
+            text = endpointPreview,
             style = KaiTypography.bodySmall,
             color = TextSecondary,
             modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 4.dp),
@@ -1257,8 +1350,25 @@ private fun OpenAICompatibleSettings(
 
     Spacer(Modifier.height(16.dp))
 
-    if (connectionStatus == ConnectionStatus.Connected || models.isNotEmpty()) {
-        ModelSelection(selectedModel, models, onSelectModel)
+    if (models.isNotEmpty()) {
+        ModelFetchFeedback(
+            isFetchingModels = isFetchingModels,
+            error = modelFetchError,
+            canRetry = apiKey.isNotBlank() || !isCloudflare,
+            onRetry = onRetryFetchModels,
+            showEmpty = false,
+        )
+    }
+    if (connectionStatus == ConnectionStatus.Connected || models.isNotEmpty() || isFetchingModels || modelFetchError != null) {
+        ModelSelection(
+            currentSelectedModel = selectedModel,
+            models = models,
+            onClick = onSelectModel,
+            isLoading = isFetchingModels,
+            errorMessage = modelFetchError,
+            onRetry = onRetryFetchModels,
+            canRetry = apiKey.isNotBlank() || !isCloudflare,
+        )
         Spacer(Modifier.height(8.dp))
     }
 

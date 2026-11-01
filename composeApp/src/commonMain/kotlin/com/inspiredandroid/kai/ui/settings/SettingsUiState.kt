@@ -35,6 +35,8 @@ data class ConfiguredServiceEntry(
     val baseUrl: String = "",
     val selectedModel: SettingsModel? = null,
     val models: ImmutableList<SettingsModel> = persistentListOf(),
+    val isFetchingModels: Boolean = false,
+    val modelFetchError: String? = null,
     /** OpenAI-Compatible only: when true, [customModelId] is used for chat instead of [selectedModel]. */
     val useCustomModel: Boolean = false,
     val customModelId: String = "",

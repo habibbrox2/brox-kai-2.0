@@ -16,6 +16,14 @@ class PopularMcpServersTest {
     }
 
     @Test
+    fun `Cloudflare official MCP preset requires an explicit token`() {
+        val cloudflare = popularMcpServers.single { it.name == "Cloudflare" }
+        assertEquals("https://mcp.cloudflare.com/mcp", cloudflare.url)
+        assertTrue(cloudflare.requiresAuth)
+        assertTrue(cloudflare.headers.isEmpty())
+    }
+
+    @Test
     fun `authorizationHeaderValue prefixes Bearer when missing`() {
         assertEquals("Bearer jina_abc", authorizationHeaderValue("jina_abc"))
         assertEquals("Bearer jina_abc", authorizationHeaderValue("  jina_abc  "))

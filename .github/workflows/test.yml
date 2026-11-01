@@ -165,13 +165,33 @@ jobs:
             composeApp/src/commonTest/kotlin/com/inspiredandroid/kai/updater/AndroidApkVersionValidationTest.kt \
             androidApp/build.gradle.kts \
             gradle/libs.versions.toml \
+            composeApp/build.gradle.kts \
+            composeApp/src/commonTest/kotlin/com/inspiredandroid/kai/network/CloudflareModelSearchIntegrationTest.kt \
             composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/updater/AndroidApkIdentityValidation.kt \
             composeApp/src/commonTest/kotlin/com/inspiredandroid/kai/updater/AndroidApkIdentityValidationTest.kt \
             composeApp/src/androidMain/kotlin/com/inspiredandroid/kai/Platform.android.kt \
             composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/data/AppSettings.kt \
             composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/data/RemoteDataRepository.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/data/Service.kt \
             composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/data/ToolPermissionManager.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/mcp/McpClient.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/mcp/McpServerManager.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/mcp/PopularMcpServers.kt \
+            composeApp/src/commonTest/kotlin/com/inspiredandroid/kai/mcp/McpProtocolCompatibilityTest.kt \
+            composeApp/src/commonTest/kotlin/com/inspiredandroid/kai/mcp/PopularMcpServersTest.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/network/Requests.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/skills/SkillMarketplaces.kt \
+            composeApp/src/commonTest/kotlin/com/inspiredandroid/kai/testutil/FakeDataRepository.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/network/CloudflareModelSearchParser.kt \
+            composeApp/src/commonTest/kotlin/com/inspiredandroid/kai/network/CloudflareModelSearchParserTest.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/settings/ModelSelectionSheet.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/settings/ServicesSettings.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/settings/SettingsActions.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/settings/SettingsUiState.kt \
+            composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/settings/SettingsViewModel.kt \
+            composeApp/src/commonTest/kotlin/com/inspiredandroid/kai/ui/settings/SettingsViewModelTest.kt \
             composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/Theme.kt \
+            iosApp/Configuration/Config.xcconfig \
             composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/chat/ChatTimelineData.kt \
             composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/chat/ChatUiState.kt \
             composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/chat/activities/ActivityMapper.kt \

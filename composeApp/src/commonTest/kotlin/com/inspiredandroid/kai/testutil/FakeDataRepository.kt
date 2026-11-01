@@ -184,8 +184,10 @@ class FakeDataRepository : DataRepository {
         instanceModels[instanceId]?.value = emptyList()
     }
 
+    var validateConnectionException: Exception? = null
+
     override suspend fun validateConnection(service: Service, instanceId: String) {
-        // No-op in tests
+        validateConnectionException?.let { throw it }
     }
 
     fun setConfiguredServices(vararg services: Service) {

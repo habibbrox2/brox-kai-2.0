@@ -406,6 +406,41 @@ class SettingsViewModelTest {
     }
 
     @Test
+    fun `model discovery failure is shown and retry clears the error`() = runTest {
+        fakeRepository.setConfiguredServices(Service.Cloudflare)
+        fakeRepository.setInstanceApiKey("cloudflare", "test-token")
+        fakeRepository.validateConnectionException = IllegalStateException("Cloudflare token permission denied")
+        val viewModel = SettingsViewModel(
+            fakeRepository,
+            fakeDaemonController,
+            fakeNotificationPermissionController,
+            noOpScheduler,
+            testDispatcher,
+        )
+
+        viewModel.state.test {
+            awaitItem()
+            viewModel.actions.onRetryFetchModels("cloudflare")
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            val failed = viewModel.state.value.configuredServices.first()
+            assertEquals(ConnectionStatus.Error, failed.connectionStatus)
+            assertFalse(failed.isFetchingModels)
+            assertEquals("Cloudflare token permission denied", failed.modelFetchError)
+
+            fakeRepository.validateConnectionException = null
+            viewModel.actions.onRetryFetchModels("cloudflare")
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            val retried = viewModel.state.value.configuredServices.first()
+            assertEquals(ConnectionStatus.Connected, retried.connectionStatus)
+            assertFalse(retried.isFetchingModels)
+            assertEquals(null, retried.modelFetchError)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `onSelectModel marks the chosen model as selected on the repository`() = runTest {
         fakeRepository.setConfiguredServices(Service.Gemini)
         fakeRepository.setInstanceModels(

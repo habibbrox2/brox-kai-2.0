@@ -152,6 +152,7 @@ class SettingsViewModel(
         onChangeApiKey = ::onChangeApiKey,
         onChangeBaseUrl = ::onChangeBaseUrl,
         onSelectModel = ::onSelectModel,
+        onRetryFetchModels = ::onRetryFetchModels,
         onToggleUseCustomModel = ::onToggleUseCustomModel,
         onChangeCustomModelId = ::onChangeCustomModelId,
         onToggleTool = ::onToggleTool,
@@ -355,10 +356,18 @@ class SettingsViewModel(
 
     private fun refreshServiceList() {
         _state.update { current ->
-            val existingStatuses = current.configuredServices.associate { it.instanceId to it.connectionStatus }
+            val existingEntries = current.configuredServices.associateBy { it.instanceId }
             val newEntries = buildConfiguredServiceEntries().map { entry ->
-                val preservedStatus = existingStatuses[entry.instanceId]
-                if (preservedStatus != null) entry.copy(connectionStatus = preservedStatus) else entry
+                val existing = existingEntries[entry.instanceId]
+                if (existing != null) {
+                    entry.copy(
+                        connectionStatus = existing.connectionStatus,
+                        isFetchingModels = existing.isFetchingModels,
+                        modelFetchError = existing.modelFetchError,
+                    )
+                } else {
+                    entry
+                }
             }
             current.copy(
                 configuredServices = newEntries.toImmutableList(),
@@ -431,7 +440,12 @@ class SettingsViewModel(
             state.copy(
                 configuredServices = state.configuredServices.map { e ->
                     if (e.instanceId == instanceId) {
-                        e.copy(apiKey = apiKey, connectionStatus = ConnectionStatus.Unknown)
+                        e.copy(
+                            apiKey = apiKey,
+                            connectionStatus = ConnectionStatus.Unknown,
+                            isFetchingModels = false,
+                            modelFetchError = null,
+                        )
                     } else {
                         e
                     }
@@ -449,7 +463,12 @@ class SettingsViewModel(
             state.copy(
                 configuredServices = state.configuredServices.map { e ->
                     if (e.instanceId == instanceId) {
-                        e.copy(baseUrl = baseUrl, connectionStatus = ConnectionStatus.Unknown)
+                        e.copy(
+                            baseUrl = baseUrl,
+                            connectionStatus = ConnectionStatus.Unknown,
+                            isFetchingModels = false,
+                            modelFetchError = null,
+                        )
                     } else {
                         e
                     }
@@ -463,6 +482,25 @@ class SettingsViewModel(
         val entry = _state.value.configuredServices.find { it.instanceId == instanceId } ?: return
         dataRepository.updateInstanceSelectedModel(instanceId, entry.service, modelId)
         refreshInstanceModels(instanceId)
+    }
+
+    private fun onRetryFetchModels(instanceId: String) {
+        val entry = _state.value.configuredServices.find { it.instanceId == instanceId } ?: return
+        checkConnection(instanceId, entry.service)
+    }
+
+    private fun updateModelFetchState(instanceId: String, isFetching: Boolean, error: String? = null) {
+        _state.update { state ->
+            state.copy(
+                configuredServices = state.configuredServices.map { entry ->
+                    if (entry.instanceId == instanceId) {
+                        entry.copy(isFetchingModels = isFetching, modelFetchError = error)
+                    } else {
+                        entry
+                    }
+                }.toImmutableList(),
+            )
+        }
     }
 
     private fun onToggleUseCustomModel(instanceId: String, useCustom: Boolean) {
@@ -1162,6 +1200,9 @@ class SettingsViewModel(
         }
         if (service.requiresApiKey && dataRepository.getInstanceApiKey(instanceId).isBlank()) {
             updateConnectionStatus(instanceId, ConnectionStatus.Unknown)
+            if (service.modelsUrl != null) {
+                updateModelFetchState(instanceId, isFetching = false, error = "Enter an API key to fetch this provider's models.")
+            }
             return
         }
         validateConnectionWithStatus(instanceId, service)
@@ -1183,6 +1224,9 @@ class SettingsViewModel(
 
     private fun validateConnectionWithStatus(instanceId: String, service: Service) {
         updateConnectionStatus(instanceId, ConnectionStatus.Checking)
+        if (service.modelsUrl != null) {
+            updateModelFetchState(instanceId, isFetching = true, error = null)
+        }
         // Permission prompts must run on the main thread; keep the network I/O
         // work below on the background dispatcher.
         viewModelScope.launch {
@@ -1198,6 +1242,9 @@ class SettingsViewModel(
                         updateConnectionStatus(instanceId, ConnectionStatus.Unknown)
                     } else {
                         updateConnectionStatus(instanceId, ConnectionStatus.Connected)
+                    }
+                    if (service.modelsUrl != null) {
+                        updateModelFetchState(instanceId, isFetching = false, error = null)
                     }
                     refreshInstanceModels(instanceId)
                 } catch (e: Exception) {
@@ -1220,6 +1267,13 @@ class SettingsViewModel(
                         else -> ConnectionStatus.Error
                     }
                     updateConnectionStatus(instanceId, status)
+                    if (service.modelsUrl != null) {
+                        updateModelFetchState(
+                            instanceId,
+                            isFetching = false,
+                            error = e.message?.takeIf { it.isNotBlank() } ?: "Unable to fetch provider models. Check the endpoint and credentials, then retry.",
+                        )
+                    }
                 }
             }
         }

@@ -65,6 +65,13 @@ val curatedSkillMarketplaces: List<SkillMarketplace> = listOf(
     // planning — and skip the Claude-Code-internal or coding-flow ones (git worktrees,
     // code review, subagent dispatch, debugging, verification).
     SkillMarketplace(
+        name = "Cloudflare",
+        owner = "cloudflare",
+        repo = "skills",
+        ref = "main",
+        root = "skills",
+    ),
+    SkillMarketplace(
         name = "Superpowers",
         owner = "obra",
         repo = "superpowers",

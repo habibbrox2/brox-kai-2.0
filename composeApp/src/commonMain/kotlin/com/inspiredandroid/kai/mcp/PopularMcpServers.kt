@@ -114,6 +114,12 @@ val popularMcpServers = listOf(
         requiresAuth = true,
     ),
     PopularMcpServer(
+        name = "Cloudflare",
+        url = "https://mcp.cloudflare.com/mcp",
+        description = "Cloudflare account, Workers, DNS, and platform tools (requires a Cloudflare API token)",
+        requiresAuth = true,
+    ),
+    PopularMcpServer(
         name = "Supabase",
         url = "https://mcp.supabase.com/mcp",
         description = "Supabase projects, database, and auth (requires a Supabase access token)",
