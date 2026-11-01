@@ -1177,15 +1177,25 @@ private fun ServiceSettings(
 
     Spacer(Modifier.height(16.dp))
 
-    ModelFetchFeedback(
-        isFetchingModels = isFetchingModels,
-        error = modelFetchError,
-        canRetry = apiKey.isNotBlank(),
-        onRetry = onRetryFetchModels,
-        showEmpty = connectionStatus == ConnectionStatus.Connected && models.isEmpty(),
-    )
-    if (connectionStatus == ConnectionStatus.Connected || models.isNotEmpty()) {
-        ModelSelection(selectedModel, models, onSelectModel)
+    if (models.isNotEmpty()) {
+        ModelFetchFeedback(
+            isFetchingModels = isFetchingModels,
+            error = modelFetchError,
+            canRetry = apiKey.isNotBlank(),
+            onRetry = onRetryFetchModels,
+            showEmpty = false,
+        )
+    }
+    if (connectionStatus == ConnectionStatus.Connected || models.isNotEmpty() || isFetchingModels || modelFetchError != null) {
+        ModelSelection(
+            currentSelectedModel = selectedModel,
+            models = models,
+            onClick = onSelectModel,
+            isLoading = isFetchingModels,
+            errorMessage = modelFetchError,
+            onRetry = onRetryFetchModels,
+            canRetry = apiKey.isNotBlank(),
+        )
     }
 }
 
@@ -1340,15 +1350,25 @@ private fun OpenAICompatibleSettings(
 
     Spacer(Modifier.height(16.dp))
 
-    ModelFetchFeedback(
-        isFetchingModels = isFetchingModels,
-        error = modelFetchError,
-        canRetry = apiKey.isNotBlank(),
-        onRetry = onRetryFetchModels,
-        showEmpty = connectionStatus == ConnectionStatus.Connected && models.isEmpty(),
-    )
-    if (connectionStatus == ConnectionStatus.Connected || models.isNotEmpty()) {
-        ModelSelection(selectedModel, models, onSelectModel)
+    if (models.isNotEmpty()) {
+        ModelFetchFeedback(
+            isFetchingModels = isFetchingModels,
+            error = modelFetchError,
+            canRetry = apiKey.isNotBlank(),
+            onRetry = onRetryFetchModels,
+            showEmpty = false,
+        )
+    }
+    if (connectionStatus == ConnectionStatus.Connected || models.isNotEmpty() || isFetchingModels || modelFetchError != null) {
+        ModelSelection(
+            currentSelectedModel = selectedModel,
+            models = models,
+            onClick = onSelectModel,
+            isLoading = isFetchingModels,
+            errorMessage = modelFetchError,
+            onRetry = onRetryFetchModels,
+            canRetry = apiKey.isNotBlank(),
+        )
         Spacer(Modifier.height(8.dp))
     }
 
