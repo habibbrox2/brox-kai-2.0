@@ -1177,8 +1177,70 @@ private fun ServiceSettings(
 
     Spacer(Modifier.height(16.dp))
 
-    if (connectionStatus == ConnectionStatus.Connected || models.isNotEmpty() || isFetchingModels || modelFetchError != null) {
-        ModelSelection(selectedModel, models, onSelectModel, isFetchingModels, modelFetchError, onRetryFetchModels)
+    ModelFetchFeedback(
+        isFetchingModels = isFetchingModels,
+        error = modelFetchError,
+        canRetry = apiKey.isNotBlank(),
+        onRetry = onRetryFetchModels,
+        showEmpty = connectionStatus == ConnectionStatus.Connected && models.isEmpty(),
+    )
+    if (connectionStatus == ConnectionStatus.Connected || models.isNotEmpty()) {
+        ModelSelection(selectedModel, models, onSelectModel)
+    }
+}
+
+@Composable
+private fun ModelFetchFeedback(
+    isFetchingModels: Boolean,
+    error: String?,
+    canRetry: Boolean,
+    onRetry: () -> Unit,
+    showEmpty: Boolean,
+) {
+    when {
+        isFetchingModels -> {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(18.dp),
+                    strokeWidth = 2.dp,
+                )
+                Text(
+                    text = "Fetching available models…",
+                    style = KaiTypography.bodySmall,
+                    color = TextSecondary,
+                )
+            }
+        }
+
+        error != null -> {
+            Column(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+                Text(
+                    text = error,
+                    style = KaiTypography.bodySmall,
+                    color = DangerAlert,
+                )
+                TextButton(
+                    onClick = onRetry,
+                    enabled = canRetry,
+                    modifier = Modifier.align(Alignment.End).handCursor(),
+                ) {
+                    Text("Retry model discovery")
+                }
+            }
+        }
+
+        showEmpty -> {
+            Text(
+                text = "The provider is connected, but it returned no available models.",
+                style = KaiTypography.bodySmall,
+                color = TextSecondary,
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+            )
+        }
     }
 }
 
@@ -1278,8 +1340,15 @@ private fun OpenAICompatibleSettings(
 
     Spacer(Modifier.height(16.dp))
 
-    if (connectionStatus == ConnectionStatus.Connected || models.isNotEmpty() || isFetchingModels || modelFetchError != null) {
-        ModelSelection(selectedModel, models, onSelectModel, isFetchingModels, modelFetchError, onRetryFetchModels)
+    ModelFetchFeedback(
+        isFetchingModels = isFetchingModels,
+        error = modelFetchError,
+        canRetry = apiKey.isNotBlank(),
+        onRetry = onRetryFetchModels,
+        showEmpty = connectionStatus == ConnectionStatus.Connected && models.isEmpty(),
+    )
+    if (connectionStatus == ConnectionStatus.Connected || models.isNotEmpty()) {
+        ModelSelection(selectedModel, models, onSelectModel)
         Spacer(Modifier.height(8.dp))
     }
 
