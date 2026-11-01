@@ -440,7 +440,12 @@ class SettingsViewModel(
             state.copy(
                 configuredServices = state.configuredServices.map { e ->
                     if (e.instanceId == instanceId) {
-                        e.copy(apiKey = apiKey, connectionStatus = ConnectionStatus.Unknown)
+                        e.copy(
+                            apiKey = apiKey,
+                            connectionStatus = ConnectionStatus.Unknown,
+                            isFetchingModels = false,
+                            modelFetchError = null,
+                        )
                     } else {
                         e
                     }
@@ -458,7 +463,12 @@ class SettingsViewModel(
             state.copy(
                 configuredServices = state.configuredServices.map { e ->
                     if (e.instanceId == instanceId) {
-                        e.copy(baseUrl = baseUrl, connectionStatus = ConnectionStatus.Unknown)
+                        e.copy(
+                            baseUrl = baseUrl,
+                            connectionStatus = ConnectionStatus.Unknown,
+                            isFetchingModels = false,
+                            modelFetchError = null,
+                        )
                     } else {
                         e
                     }
