@@ -1181,7 +1181,7 @@ private fun ServiceSettings(
         ModelFetchFeedback(
             isFetchingModels = isFetchingModels,
             error = modelFetchError,
-            canRetry = apiKey.isNotBlank(),
+            canRetry = apiKey.isNotBlank() || !isCloudflare,
             onRetry = onRetryFetchModels,
             showEmpty = false,
         )
@@ -1194,7 +1194,7 @@ private fun ServiceSettings(
             isLoading = isFetchingModels,
             errorMessage = modelFetchError,
             onRetry = onRetryFetchModels,
-            canRetry = apiKey.isNotBlank(),
+            canRetry = apiKey.isNotBlank() || !isCloudflare,
         )
     }
 }
