@@ -1,100 +1,220 @@
-# Dynamic UI (kai-ui)
+# Dynamic UI Architecture — kai-ui
 
-**Last verified:** 2026-10-02
+**Status:** Existing feature with proposed hardening and extension  
+**Rendering:** Kotlin Compose Multiplatform  
+**Transport format:** JSON component trees inside assistant-message code fences
 
-AI-generated interactive UI layouts rendered inline in chat messages. The AI produces JSON-based layout definitions wrapped in `kai-ui` code fences. Compose renders them natively with support for forms, buttons, and multi-step flows. Enabled by default; users can disable it in Settings, which removes the instructions from the system prompt. Because the system prompt is rebuilt per request, toggling the setting takes effect on the next message in any conversation. Parsing and rendering stay active regardless so existing messages with kai-ui blocks always render.
+## 1. Purpose
 
-## Concepts
+kai-ui lets an assistant response contain interactive, native UI rather than only prose. The model emits a declarative JSON description; Kai parses it into a typed component tree and renders supported components using Compose.
 
-### Layout Blocks
+The model output is untrusted input. kai-ui is a constrained presentation protocol, not an executable-code format.
 
-A `kai-ui` code fence inside an assistant message contains a JSON object describing a component tree. The unified markdown parser treats kai-ui fences as first-class AST blocks, alongside headings, paragraphs, and other markdown; the renderer dispatches each block to its composable. Supports both single-object JSON and multi-line NDJSON (one JSON object per line, automatically wrapped in a column).
+## 2. Existing implementation
 
-### Component Types
+The current feature supports:
 
-- **Layout**: column, row, card, box, divider (spacing between children is fixed by the renderer — the LLM does not control it)
-- **Content**: text (with headline/title/body/caption styles), image (optional aspect ratio to prevent distortion on wide screens), icon (curated material icon set or any emoji), code (syntax-highlighted block with a built-in copy-to-clipboard icon in the top-right corner)
-- **Interactive**: button (filled/outlined/text/tonal variants), text input, checkbox, switch, select dropdown, radio group, slider, chip group (single-select, multi-select, or display-only tags)
-- **Feedback**: progress (determinate/indeterminate), countdown (relative duration with optional expiry action; a callback action fires only while the message is still interactive, so older countdowns never send messages when the chat is reopened or scrolled), alert (info/success/warning/error)
-- **Navigation**: tabs (tabbed content), accordion (collapsible sections)
-- **Display**: quote (blockquote with accent border), badge (colored count/status pill), stat (large metric display), avatar (circular image or initials)
-- **Data**: list, table
+- JSON component trees in `kai-ui` code fences.
+- Single-object JSON and multi-line NDJSON.
+- A unified markdown AST where kai-ui blocks are first-class blocks.
+- Recursive Compose rendering.
+- Interactive forms and callback actions.
+- Frozen/read-only historical snapshots.
+- Interactive mode in the same conversation.
+- Local parsing repair and field-level fallback behavior.
+- Text extraction for speech output.
+
+The feature is enabled by default and can be disabled in Settings. Disabling generation instructions affects subsequent requests; parsing remains enabled so previously saved kai-ui messages continue to render.
+
+## 3. Current component vocabulary
+
+The current renderer supports the following families. The source model remains authoritative; update this list when the node registry changes.
+
+| Family | Current node examples |
+|---|---|
+| Layout | column, row, card, box, divider |
+| Content | text, image, icon, code |
+| Interactive | button, text input, checkbox, switch, select, radio group, slider, chip group |
+| Feedback | progress, countdown, alert |
+| Navigation | tabs, accordion |
+| Display | quote, badge, stat, avatar |
+| Data | list, table |
 
 ### Actions
 
-Buttons carry an action that fires on click (chip groups are form inputs, not action carriers):
+- `callback`: collect form values and submit a structured user event through the normal chat flow.
+- `toggle`: show/hide a local target element.
+- `open_url`: open a validated external URL through the platform handler.
+- `copy_to_clipboard`: copy an explicit literal value using the platform clipboard integration.
 
-- **callback** — collects form data from specified input IDs and sends a structured message back to the AI via the normal chat flow (e.g. "Pressed: event_name" or "Responded with: key: value"). The AI then responds with text or more UI. The prompt explicitly tells the AI to only offer callback buttons for actions it can fulfill — callbacks do not trigger system operations like printing, file export, or downloads. Clipboard access is available via the dedicated copy action below.
-- **toggle** — shows/hides a target element locally without AI roundtrip
-- **open_url** — opens a link in the browser
-- **copy_to_clipboard** — writes a literal string to the system clipboard locally, no AI roundtrip. A button carrying this action always renders as a compact clipboard icon button regardless of its variant; the button's label is ignored. Intended for surfacing copyable values (snippets, commands, tokens) alongside the content they belong to.
+Callbacks are conversational events. They must not be represented as privileged system operations. File export, printing, shell execution, payment, or other privileged operations require dedicated runtime APIs, permission checks, and explicit user confirmation.
 
-### Interaction Flow
+## 4. Message lifecycle and interactivity
 
-When a callback fires, the renderer collects input values and formats them as a user message of the form `Pressed: <event>` or `Responded with: <key: value>` (no special prefix). The AI receives the event name and form data in conversation history and can respond with new UI, text, or tool calls. While the callback is in flight, the clicked button keeps its label visible and pulses (a subtle scale and alpha animation); other buttons in the same assistant message become non-interactive until the response arrives.
+- Only the latest eligible assistant layout in the active conversation is interactive.
+- Older layouts render as read-only snapshots.
+- Form state belongs to its layout instance.
+- Cross-step state is carried through the conversation/event history, not hidden global mutable state.
+- A submitted layout remains visible as a frozen snapshot with the submitted values.
+- Reopening/editing a snapshot must be an explicit user action and must follow the existing conversation truncation/resubmit semantics.
+- Countdown callbacks must be cancelled or rendered inert when the originating message is no longer active.
+- Interactive mode changes how the next answer is generated; it does not create a separate chat or replace the timeline/composer.
 
-The originating assistant's kai-ui card stays in place across the exchange. While the submission is in flight the pressed button pulses; once the reply arrives the card settles into a frozen snapshot (prior values seeded, pressed button highlighted) with an edit pencil in the top-right corner. The user's submission does not produce a separate text bubble — the filled-in form on the assistant card already shows exactly what was sent. Clicking the pencil re-enables the form seeded with the previous picks; pressing any button then triggers a resubmit that truncates from that point and re-asks the AI. The text form ("Responded with: key: value") is still what the AI receives; only the visual representation differs. Snapshots persist with the conversation, so reloading preserves them.
+## 5. Parsing and rendering safety
 
-### Layout Lifecycle
+The parser should be tolerant of common model formatting mistakes, but tolerance must not become permission escalation.
 
-Only the latest assistant message's layouts are interactive. Older layouts become read-only with disabled buttons and inputs. Form state is local to each layout; cross-step state lives in conversation history.
+Required controls:
 
-### Error Handling
+1. Decode into typed serializable models; reject unsupported root shapes.
+2. Enforce maximum input bytes, nesting depth, node count, string length, and collection size.
+3. Use an allowlist of node types and action types.
+4. Drop unknown nodes safely and report bounded diagnostics in debug/test builds.
+5. Validate URLs and reject unsafe schemes such as `javascript:`, `data:`, and arbitrary local-file paths.
+6. Never evaluate JavaScript, Kotlin, HTML, shell, or dynamic class names from model output.
+7. Never let model-provided identifiers escape their component tree or address arbitrary application state.
+8. Bound image dimensions/URLs and avoid loading untrusted local paths.
+9. Keep action execution behind typed callbacks and runtime permission boundaries.
+10. Make malformed blocks fail locally; one invalid child must not crash the entire message renderer.
 
-Errors are absorbed as locally as possible so a single bad field never kills a whole block. The parser first repairs common JSON syntax mistakes (extra trailing braces/brackets via stack-based brace matching, truncated mid-stream responses, `"key="` typos, and missing closing braces between sibling objects in an array — e.g. when the LLM writes `,{` where a key was expected), then walks the resulting tree field-by-field. Each field reader tolerates the wrong value type (objects where a string was expected, bare strings where an object list was expected, string booleans, numeric strings) and falls back to the data-class default if nothing can be salvaged — the node still builds, the offending field is simply missing from the rendered UI. Unknown node types in `children` or `items` are silently dropped. Only JSON so malformed that the syntax repair can't produce a parseable tree falls back to rendering as a code block. Individual malformed lines in multi-line NDJSON are skipped while valid lines still render. TTS walks the kai-ui tree and reads out the human-readable labels it finds — text, button labels, alert messages, and similar — while skipping non-speakable elements like code blocks, icons, and dividers.
+Parser repair may fix harmless syntax defects such as trailing commas or truncated braces when safe. It must not invent actions, silently upgrade unknown action types, or reinterpret malformed data as privileged instructions.
 
-### Settings
+## 6. Proposed schema evolution
 
-The feature is controlled by the Dynamic UI toggle in Settings (General tab). When disabled, the system prompt omits kai-ui instructions so the AI stops generating them. Parsing and rendering remain active unconditionally.
+The existing kai-ui format must remain readable. New schema metadata should be optional so existing persisted conversations continue to work.
 
-## Interactive UI Mode
+Proposed envelope for future generation:
 
-A mode of the **same chat**, not a separate screen. When it is on, the AI answers with a complete screen layout built from kai-ui, and that screen renders inline in the conversation — the user keeps the chat timeline, the composer and the rest of the app, and navigates the screens by clicking the buttons inside them.
+```json
+{
+  "schema": "kai-ui",
+  "version": 1,
+  "layout": {
+    "type": "column",
+    "children": [
+      {
+        "type": "text",
+        "style": "title",
+        "text": "Example"
+      }
+    ]
+  }
+}
+```
 
-### Turning Interactive Mode On
+Compatibility rules:
 
-The chat header carries an interactive-UI toggle (a widgets icon, tinted while the mode is on), and the sidebar has an "Interactive UI" entry that shows the same state. Toggling it changes how the **next** answer is produced and rendered; the conversation itself is untouched — messages, history and the composer all stay where they were, and the mode can be switched off again at any time. The toggle is hidden when the primary service is on-device (LiteRT), because small local models cannot reliably produce kai-ui JSON; on-device services are also filtered out of the service picker while the mode is on.
+- Continue accepting the current unwrapped root node and current NDJSON format.
+- New writers may emit the versioned envelope.
+- Readers must validate the declared version and provide a clear unsupported-version fallback.
+- Unknown optional properties are ignored; unknown node/action types are not executed.
+- Schema changes require fixture updates and round-trip tests.
+- Do not make a model-generated schema version select arbitrary renderer code.
 
-### Screen Navigation
+## 7. Component registry architecture
 
-Each interactive answer is a self-contained screen inside the timeline. The kai-ui blocks of the latest assistant message stay interactive — buttons, forms and other callbacks work exactly as they do in the full-screen mode used before, and pressing one submits the collected values back to the AI.
+The renderer should use a closed registry mapping a known node discriminator to a Compose renderer.
 
-### Back Action
+Conceptual flow:
 
-While interactive mode is on, the chat header offers a back action next to the toggle. It removes the last exchange (user message + assistant response) from the conversation history, so the previous answer becomes the active screen again. When only one exchange remains, the history is cleared and the user is back at the composer — interactive mode stays on.
+```text
+Assistant message
+    ↓
+Markdown parser
+    ↓
+kai-ui block extraction
+    ↓
+JSON limits + schema validation
+    ↓
+Typed node tree
+    ↓
+Allowlisted component registry
+    ↓
+Compose UI
+    ↓
+Typed action callback
+    ↓
+ChatActions / approved platform capability
+```
 
-### Auto-Retry on Parse Failure
+The registry should provide:
 
-If the AI responds without valid kai-ui blocks, the system automatically retries up to 2 times, sending the parse error details back to the AI so it can fix its JSON.
+- Stable node discriminator and schema version.
+- Typed decoder and validator.
+- Compose renderer.
+- Accessibility semantics defaults.
+- Read-only behavior for historical messages.
+- Test fixtures for valid, invalid, and boundary inputs.
 
-### Conversation Persistence
+Do not introduce a generic plugin loader or runtime code generation system for this feature.
 
-Interactive sessions are saved with type `interactive`, and loading an interactive conversation from history turns the mode back on. Switching the mode in an open conversation updates that conversation's type, so the mode a chat was left in is the mode it reopens in.
+## 8. Generative micro-canvas patterns
 
-### System Prompt
+### Interactive game
 
-In interactive mode, the system prompt asks the AI for a single kai-ui code fence that renders as a screen inside the chat, and tells it that text outside the fence is shown as ordinary chat text — so the prose stays minimal and the screen carries the content.
+- Present HP, level, currency, and defensive stats as compact semantic metrics.
+- Use progress indicators for values with meaningful bounds.
+- Keep artwork responsive and avoid stretching.
+- Present the next available game action as a clear callback button.
+- Preserve the game state in the assistant's structured response or the application's existing game integration; UI-local state is not authoritative.
 
-## Key Files
+### Recipe or multi-step workflow
 
-| File | Purpose |
-|------|---------|
-| `composeApp/.../ui/dynamicui/KaiUiNode.kt` | Serializable component tree model — 28 node types, all @Immutable |
-| `composeApp/.../ui/dynamicui/UiAction.kt` | Action types (callback, toggle, open_url, copy_to_clipboard) |
-| `composeApp/.../ui/dynamicui/KaiUiParser.kt` | Sanitizes malformed JSON and decodes kai-ui fence bodies via `parseUiBlockBody` |
-| `composeApp/.../ui/dynamicui/KaiUiNodeBuilders.kt` | Tolerant field-by-field construction of KaiUiNode instances from JsonElement |
-| `composeApp/.../ui/dynamicui/KaiUiRenderer.kt` | Recursive Compose renderer for the component tree, wrapInCard option |
-| `composeApp/.../ui/dynamicui/KaiUiTts.kt` | Speakable-text extraction for TTS: walks kai-ui trees for human-readable labels |
-| `composeApp/.../ui/markdown/MarkdownParser.kt` | Unified markdown parser; emits `KaiUiBlock` AST nodes for kai-ui fences |
-| `composeApp/.../ui/markdown/MarkdownRenderer.kt` | Compose renderer that dispatches each block (including kai-ui) to its composable |
-| `composeApp/.../ui/chat/composables/BotMessage.kt` | Integration point — runs the parser, renders frozen/edit-enabled snapshots for paired user submissions, and renders past kai-ui read-only via `isInteractive = false` |
-| `composeApp/.../ui/chat/ChatScreen.kt` | Branches between chat mode and interactive mode |
-| `composeApp/.../ui/chat/composables/TopBar.kt` | Chat header: the interactive-UI toggle and the back action |
-| `composeApp/.../ui/chat/ChatActions.kt` | submitUiCallback, setInteractiveMode, goBackInteractiveMode |
-| `composeApp/.../ui/chat/ChatViewModel.kt` | Interactive mode lifecycle, auto-retry on parse failure |
-| `composeApp/.../ui/chat/ChatUiState.kt` | isInteractiveMode state flag |
-| `composeApp/.../ui/chat/composables/ChatTimeline.kt` | Renders the kai-ui blocks inline, with the callbacks wired |
-| `composeApp/.../data/DataRepository.kt` | popLastExchange, setInteractiveMode/isInteractiveModeActive |
-| `composeApp/.../data/RemoteDataRepository.kt` | Interactive mode system prompt, TYPE_INTERACTIVE conversation saving |
-| `composeApp/.../data/AppSettings.kt` | isDynamicUiEnabled / setDynamicUiEnabled |
-| `composeApp/.../data/Conversation.kt` | TYPE_INTERACTIVE conversation type constant |
+- Use a scrollable checklist with clear completed/current states.
+- Keep ingredient quantities and steps readable at large font scales.
+- Use local checkbox state only for presentation unless the workflow explicitly submits progress.
+
+### Charts and data panels
+
+- Require typed, bounded data points and explicit labels/units.
+- Provide a text/table alternative for accessibility.
+- Never fabricate missing data or infer metrics from decorative values.
+
+## 9. Performance and accessibility
+
+- Avoid deeply nested unbounded layouts.
+- Use lazy containers for long lists when supported by the component contract.
+- Keep image loading bounded and cancellable.
+- Minimize recomposition by keeping node models immutable.
+- Use stable keys for repeated items.
+- Provide semantics for controls, progress, selection, and error states.
+- Ensure touch targets meet the app's minimum interaction size.
+- Respect system font scaling, contrast themes, and reduced motion.
+- Keep a static fallback when animation or advanced rendering is unavailable.
+
+## 10. Testing strategy
+
+- Parser unit tests: valid JSON, NDJSON, malformed input, unknown nodes, unknown actions, version mismatch, size/depth limits.
+- Serialization tests: old saved messages and new versioned envelopes.
+- Renderer tests: every registered node in interactive and read-only modes.
+- Action tests: callback payload, toggle scope, URL validation, clipboard action, stale-message protection.
+- Security tests: malicious URL schemes, oversized trees, deeply nested nodes, unexpected field types, and attempted privileged action injection.
+- Screenshot tests: game widget, recipe checklist, data panel, dark/OLED/light themes, compact and expanded layouts.
+- Regression tests: interactive mode persistence, callback round-trip, edit/resubmit behavior, and TTS extraction.
+
+## 11. Key implementation locations
+
+| File | Responsibility |
+|---|---|
+| `composeApp/src/commonMain/.../ui/dynamicui/KaiUiNode.kt` | Serializable node model |
+| `composeApp/src/commonMain/.../ui/dynamicui/UiAction.kt` | Typed action model |
+| `composeApp/src/commonMain/.../ui/dynamicui/KaiUiParser.kt` | Parse and sanitize kai-ui blocks |
+| `composeApp/src/commonMain/.../ui/dynamicui/KaiUiNodeBuilders.kt` | Tolerant typed node construction |
+| `composeApp/src/commonMain/.../ui/dynamicui/KaiUiRenderer.kt` | Compose renderer |
+| `composeApp/src/commonMain/.../ui/dynamicui/KaiUiTts.kt` | Speakable text extraction |
+| `composeApp/src/commonMain/.../ui/markdown/MarkdownParser.kt` | Markdown/kai-ui AST parsing |
+| `composeApp/src/commonMain/.../ui/markdown/MarkdownRenderer.kt` | Block dispatch |
+| `composeApp/src/commonMain/.../ui/chat/composables/BotMessage.kt` | Message integration |
+| `composeApp/src/commonMain/.../ui/chat/ChatScreen.kt` | Chat/interactive mode integration |
+| `composeApp/src/commonMain/.../ui/chat/ChatActions.kt` | UI callbacks and interactive-mode actions |
+| `composeApp/src/commonMain/.../data/AppSettings.kt` | Dynamic UI preference |
+
+## 12. Rollout plan
+
+1. Audit the current node model, parser, renderer, and persisted message fixtures.
+2. Add parser limits and security tests before expanding the node vocabulary.
+3. Add optional schema envelope/version support without breaking old messages.
+4. Introduce registry abstractions only where they simplify the existing renderer.
+5. Add game/recipe/data micro-canvas layouts using existing safe node types first.
+6. Add new node types only with typed model, renderer, semantics, and tests.
+7. Validate Android, Desktop, and Web builds before enabling new generation instructions by default.

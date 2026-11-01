@@ -1,183 +1,266 @@
-# UI Upgrade Plan 7 — Premium Chat UI + Code Editor (ChatGPT / Gemini / Grok class, 2026)
+# Brox Kai 2.0 — Premium AI Agent Workspace UI (2027 Direction)
 
-## Goal
+**Document type:** Product/UI migration plan  
+**Status:** Proposed; implementation not implied by this document  
+**Platforms:** Android, Desktop, Web via Kotlin Multiplatform + Compose
 
-Migrate and redesign the existing chat application into an international-standard,
-premium, professional AI assistant interface — a 2026-era uncommon design — while
-keeping every behavior (providers, tools, sandbox, heartbeat, settings) intact.
+## 1. Product vision
 
-Brand rules:
+Brox Kai 2.0 should feel like a premium AI Agent Workspace: chat-first, calm, responsive, and capable of presenting interactive work products inline. The interface combines a compact Agent HUD, multimodal composer, safe generative micro-canvases, visible execution activity, and a dockable coding/terminal workspace.
 
-- **"Brox Kai 2.0" is the fixed brand name**; only the version (2.0.x) changes.
-- Android always opens directly into the **Chat UI** (chat-first, like ChatGPT/Gemini/Grok).
-- The Dashboard survives but lives **inside the sidebar** (brand/logo link), not as a tab.
+The design borrows interaction patterns from modern AI products without copying their implementation. The app remains Compose Multiplatform and preserves its existing runtime and platform boundaries.
 
-## Decisions (confirmed with owner)
+## 2. Non-negotiable product decisions
 
-| Question | Decision |
-| --- | --- |
-| Settings tabs | Restructure to the new **4 tabs** (General, Model & API Key, Data Control, Account & Plan); existing Agent/Tools/Sandbox/Integrations features fold in as sub-sections — nothing is lost |
-| Dashboard | Survives as a **sidebar link** (brand click); Chat is the only home |
-| "Start Interactive UI" / "Open Kai Build" buttons | Removed **completely** from the empty state; Interactive UI entry stays in the **sidebar** |
-| Code editor | **Unified chat-first editor**: full-screen workspace opened from chat responses on mobile, split-pane beside chat on desktop; file tree + syntax-highlighted editing + terminal tab (extends the AI coding agent identity of the app) |
+- **Brand:** “Brox Kai 2.0” remains the product name.
+- **Primary destination:** Chat remains the home experience.
+- **Navigation:** history/sidebar and Settings remain accessible without a crowded tab strip in the header.
+- **Dashboard:** preserve its existing route/entry point; do not remove features as part of the visual refresh.
+- **Interactive UI:** remains part of the same chat and uses the existing kai-ui renderer.
+- **Code editor:** keep the unified editor/workspace flow; mobile may use a full-screen route, expanded desktop may use a split panel.
+- **Runtime integrity:** provider calls, persistence, MCP, sandbox execution, and tool permissions remain outside composables.
+- **Capability honesty:** no fake mic, camera, attachment, terminal, latency, or token-usage controls.
+- **Privacy:** show observable agent activity, not hidden chain-of-thought.
 
-## Current-state audit (what exists today)
+## 3. Current-state baseline
 
-- `App.kt`: `NavHost(startDestination = Dashboard)` with a 3-tab segmented bar
-  (Dashboard/Chat/Settings) centered in the chat `TopBar` on non-mobile platforms.
-- `ChatShell.kt`: adaptive shell — expanded windows get a 260dp conversation rail
-  + main content + 320dp side panel; compact windows are full-width with history
-  as a `ModalBottomSheet`.
-- `TopBar.kt`: leading icon buttons (history, new chat, sandbox), center tab bar,
-  right speech toggle + Home + Settings — described by the brief as "cluttered
-  legacy icons".
-- `EmptyState.kt`: large animated logo, welcome text, quick-start cards
-  (Write/Code/Research/Build as icon+label chips), **Start Interactive UI** and
-  **Open Kai Build** buttons, privacy note.
-- `ChatHistorySheet.kt`: flat list, date per item, delete-only action, no search,
-  no grouping, no rename, no pin.
-- `ConversationRail.kt`: desktop flat list ("Conversations" + add), no grouping,
-  no actions.
-- `QuestionInput.kt`: fixed composer with attach (+), skill autocomplete,
-  service selector, send (↑)/stop — no voice input, send already highlights.
-- Errors: centered `ErrorMessage` blocks in the conversation / interactive view.
-- `MessageActionRow.kt`: Copy / Retry / Share / Speak already exist under
-  assistant messages — extend with thumbs up/down.
-- `CodeFenceBlock.kt`: syntax highlighting + language label + copy button exist —
-  polish to "Copy Code" style and add "Open in editor".
-- Settings: 6 tabs (`General, Agent, Services, Tools, Sandbox, Integrations`)
-  with rail (expanded) / strip (compact) navigation and `SettingsDetailPane`.
-- Data: `Conversation(id, title, updatedAt, …)` — **no pin field, no rename
-  action** yet; `ConversationStorage` + `RemoteDataRepository` own persistence.
+Previously inspected repository documentation describes:
 
-## Phase plan
+- An adaptive `ChatShell` with a conversation rail and optional side panel on expanded windows.
+- A compact header with history/new-chat/workspace/speech/settings controls.
+- A fixed bottom `QuestionInput` with attachment handling, skill autocomplete, service selection, and send/stop behavior.
+- Assistant response actions such as copy, retry, share, and speech.
+- A JSON-based `kai-ui` renderer for interactive layouts in chat.
+- A unified editor workspace with file tree, editable code view, and terminal tab.
+- Settings categories covering General, Agent, Services, Tools, Integrations, Sandbox, Data, and Account.
 
-### Phase 1 — Chat-first shell: default route + sidebar navigation
+This is a baseline from existing docs, not a guarantee that every item remains unchanged in the current branch. Re-audit source and tests before implementation.
 
-- [x] `App.kt`: `startDestination = Home` (Chat) on every platform; Dashboard
-      becomes an ordinary pushed destination.
-- [x] Remove the 3-tab segmented navigation bar (dashboard/chat/settings) from
-      `App.kt`/`TopBar` — the sidebar replaces it; `navigationTabBar` params pass
-      `null`.
-- [x] New `ui/sidebar/AppSidebar.kt` (presentation-only, reused by drawer + rail):
-      - **Top**: New Chat button (prominent, ➕) + search field (`KaiSearchField`).
-      - **Middle**: conversation list (Phase 4 adds grouping/search/rename/pin).
-      - **Bottom**: brand/profile row (owner identity, local avatar), Dashboard
-        link, Interactive UI entry (Android), Settings gear.
-- [x] `ChatModeScreen`/`ChatShell`: on expanded windows the sidebar is the
-      permanent left rail (replacing `ConversationRail`); on compact windows it
-      is a `ModalNavigationDrawer` opened by a hamburger toggle in the `TopBar`.
-- [x] `TopBar` redesign: **left** = drawer toggle (compact) / brand (expanded),
-      **center** = model selector pill (service icon + name + chevron, opens the
-      existing selector popup), **right** = quick actions (speech toggle,
-      Settings gear); legacy icon clutter removed.
-- [x] Sidebar navigation callbacks wired in `App.kt` (Dashboard, Settings,
-      Interactive mode, Kai Build on Android).
-- [x] Compile: desktop + wasm green.
+## 4. Visual direction
 
-### Phase 2 — Empty state redesign (welcome screen)
+### 4.1 Design language
 
-- [x] Remove `Start Interactive UI` and `Open Kai Build` buttons from
-      `EmptyState` entirely.
-- [x] Minimal small logo (reduced `LogoAnimation`) + light heading
-      "How can I help you today?".
-- [x] Quick cards Write / Code / Research / Build as a **2×2 grid**, each with
-      title + subtext ("Code — Write & debug code"), subtle border and
-      hover/touch glow accent (`animatedGradientBorder`).
-- [x] Privacy note kept, compact.
-- [x] Compile: desktop + wasm green.
+- Deep Obsidian/OLED foundation with layered charcoal surfaces.
+- Restrained cyan for primary actions and active controls.
+- Electric violet for agent/tool activity, used sparingly.
+- Fine borders and subtle depth; avoid excessive blur and neon.
+- Typography optimized for readability and platform availability.
+- JetBrains Mono or another bundled monospace font for terminal/editor content after licensing and packaging checks.
+- Motion should be responsive, short, and optional under reduced-motion settings.
 
-### Phase 3 — Conversation view: bubbles + response action bar
+### 4.2 Initial tokens
 
-- [x] User message: right-aligned bubble with light background.
-- [x] Assistant response: full-width container, custom typography, scroll.
-- [x] Response action bar under every assistant message: **Copy, Thumbs
-      Up/Down, Regenerate, Read Aloud** (extends `MessageActionRow`; feedback is
-      local-only UI state — no backend).
-- [x] Code blocks: keep syntax highlighting; header shows language tag +
-      "Copy Code" button + **Open in editor** (Phase 7 hook).
-- [x] Compile: desktop + wasm green.
+| Token | Initial value |
+|---|---|
+| `color.background` | `#090A0F` |
+| `color.surface` | `rgba(255,255,255,0.04)` |
+| `color.surfaceElevated` | `#171A23` |
+| `color.borderSubtle` | `rgba(255,255,255,0.08)` |
+| `color.accentPrimary` | `#00D7E8` |
+| `color.accentAgent` | `#8A63F6` |
+| `color.terminalBackground` | `#0B0D11` |
+| `shape.control` | 12–16dp |
+| `shape.card` | 18–24dp |
 
-### Phase 4 — Chat history management
+These are starting tokens. Validate contrast and theme semantics before locking them. Do not use raw values directly in feature composables.
 
-- [x] Time-based grouping: **Today / Yesterday / Previous 7 Days / Previous
-      30 Days** (shared by sidebar list and history sheet).
-- [x] Item actions on hover (desktop) / long-press (mobile): **Rename** (title
-      edit dialog → new `renameConversation` action), **Pin** (new
-      `isPinned`/`pinnedAt` fields on `Conversation`, pinned group on top),
-      **Delete** (existing undo flow).
-- [x] Inline **search bar** above the history list filtering titles live.
-- [x] Data layer: `Conversation` serialization fields (defaulted → backward
-      compatible), `ConversationStorage`, repository + viewmodel actions.
-- [x] Compile: desktop + wasm green.
+## 5. Screen and component specifications
 
-### Phase 5 — Settings restructure to 4 tabs
+### Screen 1 — Home / empty chat
 
-- [x] `SettingsTab` → `General, Model, Data, Account` (serializable; dashboard
-      deep links remapped).
-- [x] **General**: theme, language, auto-scroll + folded sub-sections for the
-      existing Agent / Tools / Sandbox / Integrations content (section headers,
-      nothing removed).
-- [x] **Model & API Key**: existing Services content (keys, models, temperature,
-      token limits, custom endpoints).
-- [x] **Data Control**: chat history save on/off, Export Chat Data, Clear All
-      Conversations.
-- [x] **Account & Plan**: owner profile card (reuse `SupportProfile`),
-      system status / app version / plan status.
-- [x] Rail + strip labels, detail pane routing, dashboard deep links updated.
-- [x] Compile: desktop + wasm green.
+- Centered Brox Kai identity/orb with a subtle ambient animation.
+- Clear welcome headline and concise helper text.
+- Horizontal quick-action chips instead of oversized fixed cards.
+- Chips are contextual and state-aware: Resume RPG, Ask a question, Run sandbox check, Daily reminders.
+- The composer remains visible and reachable.
+- Animation supports static/reduced-motion rendering.
 
-### Phase 6 — Input bar + error toasts
+### Screen 2 — Conversation
 
-- [x] Composer: fixed bottom, attach (+) left, send (↑) right with active
-      highlight while typing (verify + polish), stop state preserved.
-- [x] Voice **input** (speech-to-text): only if a cross-platform STT path
-      already exists; otherwise the mic slot is omitted (no fake buttons) and
-      the existing speech-output toggle stays in the header.
-- [x] Errors: replace centered `ErrorMessage` blocks with a **top-right toast /
-      alert badge** overlay (auto-dismiss, retry action) above the input bar;
-      snackbar host kept for transient messages.
-- [x] Compile: desktop + wasm green.
+- Compact user bubbles and aligned assistant response column.
+- Avoid large nested message containers and card-within-card styling.
+- Preserve markdown, code, image, table, and attachment rendering.
+- Add a compact response action bar: Copy, Retry/Regenerate, Share, Speak, and feedback where implemented.
+- Keep streaming/cancel status separate from final answer content.
+- Scrolling must not jump while the user is reading earlier messages.
 
-### Phase 7 — Code editor workspace (unified, chat-first)
+### Screen 3 — Generative micro-canvas
 
-- [x] New `editor` package: `CodeEditorScreen` + workspace state (in-memory
-      file store seeded from AI code blocks via "Open in editor", plus sandbox
-      project files where available).
-- [x] Layout: file tree (left), tabbed editor (center, monospace editable with
-      highlight preview), terminal tab (bottom/right — Android sandbox shell /
-      desktop shell where available).
-- [x] Opening behavior: mobile = full-screen route with back-to-chat; desktop
-      expanded = split pane beside the chat (editor as the `ChatShell`
-      side-panel slot), compact desktop = full-screen like mobile.
-- [x] Save/reload, dirty indicators, copy-all; behavior stays local (no
-      filesystem writes outside the sandbox/workspace).
-- [x] Compile: desktop + wasm green.
+Use kai-ui to render context-specific interactive work products.
 
-### Phase 8 — Docs, changelog, verification
+**RPG/game widget**
+- Compact stats and animated HP/progress indicators.
+- Responsive artwork and readable narrative.
+- Action buttons use typed callbacks.
+- State remains owned by the conversation or game feature, not transient composable state.
 
-- [x] Progress status section below all checked.
-- [x] CHANGELOG entry for Plan 7.
-- [x] Final desktop + wasm compile; commit per phase; push.
+**Recipe/workflow widget**
+- Scrollable checklist with explicit completion state.
+- Clear step hierarchy and ingredient quantities.
+- Accessible alternative to visual progress.
 
-### Phase 9 — Settings split into category tabs
+**Data widget**
+- Schema-validated tables/charts and filter controls.
+- Explicit units and labels.
+- Text/table fallback and bounded data sizes.
 
-- [x] `SettingsTab` → `General, Agent, Services, Tools, Integrations, Sandbox, Data, Account`
-- [x] **General**: overview, theme, UI scale, dynamic UI, daemon mode, export/import
-- [x] **Agent**: soul, memories, scheduled tasks, heartbeat, email, SMS, notifications
-- [x] **Tools**: native tools, MCP servers, skills
-- [x] **Integrations**: Splinterlands, integration requests
-- [x] **Sandbox**: the Linux sandbox card (tab hidden where the sandbox does not exist)
-- [x] Rail + strip labels, detail pane routing, dashboard deep links updated
+### Screen 4 — Agent activity
 
-## Progress status
+- Collapsed activity summary above/near the assistant response.
+- Expanded chronological list of actual MCP/native/sandbox operations.
+- Show tool name, concise sanitized summary, status, duration if measured, and bounded result preview.
+- Support waiting-for-approval, running, success, failure, and cancellation.
+- Never show private chain-of-thought or raw hidden reasoning.
+- Never expose secrets, credentials, or unrestricted command output.
 
-### Phase 1 — Chat-first shell ✅
-### Phase 2 — Empty state ✅
-### Phase 3 — Conversation view ✅
-### Phase 4 — History management ✅
-### Phase 5 — Settings 4 tabs ✅
-### Phase 6 — Input & toasts ✅
-### Phase 7 — Code editor ✅
-### Phase 8 — Docs ✅ (this file + CHANGELOG.md)
-### Phase 9 — Settings category tabs ✅
+### Screen 5 — Universal Action Bar
+
+- Plus menu for supported camera/gallery/file actions.
+- Multiline text field with draft preservation.
+- Slash command picker for registered skills/MCP tools.
+- Voice input only where a working speech-to-text path exists.
+- Clear Send and Stop states.
+- Attachment tray with preview and remove controls.
+- Respect IME/keyboard insets, focus order, and desktop shortcuts.
+
+### Screen 6 — Terminal and code workspace
+
+- Compact devices: docked bottom sheet or full-screen workspace.
+- Expanded desktop: resizable split pane beside chat.
+- Terminal surface: `#0B0D11`, readable monospace, selection/copy, syntax highlighting where available.
+- Tool-to-terminal handoff must be explicit and limited to approved/safe commands.
+- Existing sandbox process, filesystem, and permission boundaries remain authoritative.
+- Do not imply identical shell support on Android, Desktop, and Web.
+
+### Screen 7 — Settings and services
+
+- Compact horizontal category strip with scroll-to-selected behavior.
+- Expanded rail/sidebar navigation.
+- Slim service cards with provider/model, status, and diagnostics.
+- Latency and token counts only when the runtime provides real measurements.
+- Consistent toggles, labels, helper text, and error states.
+- Avoid duplicate or overflowing navigation pills.
+
+## 6. Architecture mapping
+
+The app is Compose Multiplatform. Use these as logical boundaries and adapt to the existing source tree:
+
+| UI responsibility | Suggested Compose boundary |
+|---|---|
+| Dynamic header | `AgentHud`, `AgentStatusIndicator` |
+| Agent execution trace | `AgentActivityDisclosure` |
+| Interactive response blocks | Existing `KaiUiRenderer` and typed node model |
+| Composer | Existing `QuestionInput` evolved into `UniversalComposer` |
+| Attachments/slash actions | Composer subcomponents/sheets |
+| Terminal/editor | Existing workspace/editor and sandbox UI |
+| Glass surfaces | Shared theme/component primitives |
+| Runtime state | Existing ViewModel, state, actions, and runtime event contracts |
+
+Avoid creating parallel React-style `src/components` or a second AgentRuntime provider. Extend the existing Kotlin architecture.
+
+## 7. Phase roadmap
+
+### Phase 1 — Foundation and theming
+
+**Deliverables**
+- Semantic color, surface, border, radius, spacing, and typography tokens.
+- OLED, dark, and light theme validation.
+- Shared glass surface, status pill, icon button, and quick chip components.
+- Reduced-motion and blur fallback behavior.
+- Screenshot fixtures and contrast checks.
+
+**Exit criteria**
+- No hard-coded palette drift in migrated components.
+- Theme tests and baseline screenshots pass.
+- Large text and accessibility contrast are acceptable.
+
+### Phase 2 — Core shell and action bar
+
+**Deliverables**
+- Compact Agent HUD replacing the vertical AI Agent badge.
+- Adaptive header actions and overflow behavior.
+- Empty-state quick chips and ambient orb.
+- Capability-aware universal composer.
+- Draft/attachment persistence through sheet and layout transitions.
+
+**Exit criteria**
+- No header or tab overflow on compact screens.
+- Keyboard does not cover composer or latest message.
+- Every visible action is connected to a real capability.
+
+### Phase 3 — Generative UI and activity trace
+
+**Deliverables**
+- Versioned/validated kai-ui schema evolution with backward compatibility.
+- Component registry improvements where justified by current renderer.
+- RPG, recipe, and data micro-canvas patterns.
+- Runtime-backed activity trace with safe summaries.
+- Consistent response action bar.
+
+**Exit criteria**
+- Old saved kai-ui messages still render.
+- Invalid/untrusted model output cannot execute arbitrary code or privileged actions.
+- Activity events reflect real runtime operations and redact secrets.
+
+### Phase 4 — Terminal and settings polish
+
+**Deliverables**
+- Dockable terminal/workspace presentation.
+- Explicit safe tool-to-terminal handoff.
+- Compact settings category strip and expanded rail.
+- Service status cards using real runtime diagnostics.
+- Motion and interaction polish.
+
+**Exit criteria**
+- Terminal process ownership and sandbox permissions are unchanged.
+- Settings navigation works at compact and expanded widths.
+- Unsupported platform capabilities are clearly hidden or disabled with explanation.
+
+### Phase 5 — Regression and release readiness
+
+**Deliverables**
+- Unit, serialization, screenshot, and UI regression tests.
+- Android/Desktop/Web builds for supported targets.
+- Accessibility and performance checks.
+- Documentation updates and reviewable pull request.
+
+**Exit criteria**
+- Existing provider, chat, MCP, sandbox, interactive UI, and editor workflows remain functional.
+- No critical crash, layout overflow, or secret exposure.
+- All required CI checks pass.
+
+## 8. Testing matrix
+
+| Area | Required scenarios |
+|---|---|
+| Header | Idle, streaming, tool-running, waiting, error; compact and expanded |
+| Composer | Empty, draft, multiline, attachments, slash menu, send, stop, keyboard |
+| Timeline | Long response, code, table, image, streaming, manual scroll, retry |
+| Activity | Concurrent tools, approval, success, failure, cancellation, redaction |
+| kai-ui | Old schema, new schema, invalid JSON, oversized tree, historical read-only |
+| Workspace | Open/close dock, resize split, terminal unavailable, process cancellation |
+| Settings | All categories, selected-tab visibility, large font, narrow width |
+| Themes | Light, dark, OLED, contrast, reduced motion |
+| Platforms | Android, Desktop, Web targets currently supported by the repository |
+
+## 9. Risks and mitigations
+
+- **Large chat screen refactor:** extract one boundary at a time and preserve behavior with screenshot tests.
+- **Compose platform differences:** keep platform APIs behind existing source-set abstractions.
+- **Blur/rendering cost:** use blur sparingly and retain opaque/translucent fallbacks.
+- **Agent activity privacy:** sanitize at the runtime boundary, not only in UI.
+- **Generative UI attack surface:** strict schema allowlist, size limits, typed actions, and no dynamic code execution.
+- **Runtime regressions:** no provider, persistence, MCP, or sandbox business logic migration during visual-only changes.
+- **False capability claims:** hide controls when the platform/runtime does not provide the feature.
+
+## 10. Rollback strategy
+
+- Keep each phase independently reviewable.
+- Avoid changing persisted data formats unless backward-compatible defaults and migration tests exist.
+- Gate new UI affordances behind existing settings or a feature flag where appropriate.
+- Retain the previous component path until screenshot and interaction parity is demonstrated.
+- Revert presentation changes without reverting provider/runtime fixes.
+
+## 11. Definition of done
+
+A phase is complete only when its implementation, tests, screenshots, and documentation are reviewed. A visual mockup or successful compile alone is not sufficient. No phase is considered released until its required CI checks pass and the owner explicitly approves the release path.
