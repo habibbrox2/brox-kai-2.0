@@ -1,6 +1,10 @@
 package com.inspiredandroid.kai.ui.chat.composables
 
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -20,17 +24,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Terminal
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -38,6 +42,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.LinkAnnotation
@@ -49,27 +54,23 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.inspiredandroid.kai.ui.AccentPrimary
-import com.inspiredandroid.kai.ui.BorderSoft
 import com.inspiredandroid.kai.ui.KaiTypography
-import com.inspiredandroid.kai.ui.SuccessGreen
-import com.inspiredandroid.kai.ui.SurfaceRaised
-import com.inspiredandroid.kai.ui.TextPrimary
-import com.inspiredandroid.kai.ui.TextSecondary
-import com.inspiredandroid.kai.ui.chat.ChatShapes
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
-import com.inspiredandroid.kai.ui.components.LogoAnimation
-import com.inspiredandroid.kai.ui.components.animatedGradientBorder
 import com.inspiredandroid.kai.ui.handCursor
+import com.inspiredandroid.kai.ui.theme.DesignTokens
 import kai.composeapp.generated.resources.Res
+import kai.composeapp.generated.resources.logo
 import kai.composeapp.generated.resources.privacy_agree_prefix
 import kai.composeapp.generated.resources.privacy_policy
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 /**
- * Empty state for Brox Kai 2.0 workspace.
- * Features prominent Quick Options with Bengali + English mix,
- * green Search Web option, and larger Ask a Question / Set Reminder cards.
+ * 2027 Premium AI Agent Workspace Home / Welcome State.
+ *
+ * Implements Screen 1 from docs/ui-upgrade-plan-7-premium-chat.md.
+ * Features central BK Monogram branding with ambient violet/cyan radial aura,
+ * title, and responsive quick-start action chips.
  */
 @Composable
 internal fun EmptyState(
@@ -82,32 +83,39 @@ internal fun EmptyState(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        LogoAnimation(size = 110.dp)
-        Spacer(Modifier.height(ChatSpacing.md))
+        // ─── Ambient Glow Brand Presentation ───
+        BroxKaiHeroBrand()
+
+        Spacer(Modifier.height(ChatSpacing.lg))
+
         Text(
-            text = "Brox Kai",
+            text = "Brox Kai 2.0",
             modifier = Modifier.padding(horizontal = 16.dp),
             style = KaiTypography.displaySmall,
             textAlign = TextAlign.Center,
-            color = TextPrimary,
+            color = DesignTokens.PrimaryText,
             fontWeight = FontWeight.Bold,
             letterSpacing = 0.5.sp,
         )
+
         Spacer(Modifier.height(ChatSpacing.xs))
+
         Text(
-            text = "How can I help you today?",
+            text = "Premium AI Agent Workspace • প্রস্তুত আপনার সহায়তায়",
             modifier = Modifier.padding(horizontal = 16.dp),
             style = KaiTypography.titleMedium,
             textAlign = TextAlign.Center,
-            color = TextSecondary,
+            color = DesignTokens.SecondaryText,
         )
+
         if (onQuickStart != null) {
             Spacer(Modifier.height(ChatSpacing.xl))
             QuickStartCards(onQuickStart = onQuickStart)
         }
+
         if (isUsingSharedKey) {
             Spacer(Modifier.height(ChatSpacing.xl))
-            val linkColor = AccentPrimary
+            val linkColor = DesignTokens.PrimaryCyan
             val prefixText = stringResource(Res.string.privacy_agree_prefix)
             val policyText = stringResource(Res.string.privacy_policy)
             val annotatedString = remember(prefixText, policyText, linkColor) {
@@ -129,7 +137,61 @@ internal fun EmptyState(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 style = KaiTypography.bodySmall,
                 textAlign = TextAlign.Center,
-                color = TextSecondary,
+                color = DesignTokens.TertiaryText,
+            )
+        }
+    }
+}
+
+/**
+ * BK Monogram with smooth ambient radial aura glow.
+ */
+@Composable
+private fun BroxKaiHeroBrand() {
+    val infiniteTransition = rememberInfiniteTransition()
+    val glowScale by infiniteTransition.animateFloat(
+        initialValue = 0.92f,
+        targetValue = 1.08f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 2400, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse,
+        ),
+    )
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.size(120.dp),
+    ) {
+        // Radial ambient glow
+        Box(
+            modifier = Modifier
+                .size(108.dp * glowScale)
+                .clip(CircleShape)
+                .background(
+                    Brush.radialGradient(
+                        colors = listOf(
+                            DesignTokens.BrandCyan.copy(alpha = 0.25f),
+                            DesignTokens.AgentViolet.copy(alpha = 0.12f),
+                            Color.Transparent,
+                        ),
+                    ),
+                ),
+        )
+
+        // Monogram Icon Box
+        Box(
+            modifier = Modifier
+                .size(76.dp)
+                .clip(RoundedCornerShape(DesignTokens.RadiusCard))
+                .background(DesignTokens.SurfaceElevated)
+                .border(BorderStroke(1.dp, DesignTokens.BorderSubtle), RoundedCornerShape(DesignTokens.RadiusCard)),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                painter = painterResource(Res.drawable.logo),
+                contentDescription = "Brox Kai Logo",
+                tint = Color.Unspecified,
+                modifier = Modifier.size(54.dp),
             )
         }
     }
@@ -153,31 +215,31 @@ private fun QuickStartCards(onQuickStart: (String) -> Unit) {
             prompt = "তুমি কে এবং তোমার মডেলের নাম কি?",
             icon = Icons.Default.Edit,
             isProminent = true,
-            accentColor = AccentPrimary,
+            accentColor = DesignTokens.PrimaryCyan,
         ),
         QuickStartItem(
-            label = "Set Reminder",
-            subtext = "রিমাইন্ডার সেট করো",
-            prompt = "Set a reminder for me in 10 minutes",
-            icon = Icons.Default.Build,
-            isProminent = true,
-            accentColor = AccentPrimary,
-        ),
-        QuickStartItem(
-            label = "Search Web",
-            subtext = "ওয়েব সার্চ করো",
-            prompt = "Search the web for latest AI news",
-            icon = Icons.Default.Search,
-            isProminent = false,
-            accentColor = SuccessGreen,
-        ),
-        QuickStartItem(
-            label = "Code",
-            subtext = "একটা কোড লেখো",
-            prompt = "একটা কোড লেখো",
+            label = "Resume Project / RPG",
+            subtext = "প্রজেক্ট চালনা করো",
+            prompt = "Continue with my current project and summarize progress",
             icon = Icons.Default.Code,
+            isProminent = true,
+            accentColor = DesignTokens.AgentViolet,
+        ),
+        QuickStartItem(
+            label = "Sandbox Check",
+            subtext = "স্যান্ডবক্স কমান্ড রান করো",
+            prompt = "Check sandbox environment and available tools",
+            icon = Icons.Default.Terminal,
             isProminent = false,
-            accentColor = AccentPrimary,
+            accentColor = DesignTokens.BrandCyan,
+        ),
+        QuickStartItem(
+            label = "Daily Reminders",
+            subtext = "রিমাইন্ডার ও কাজ",
+            prompt = "Set a reminder for me in 15 minutes",
+            icon = Icons.Default.Build,
+            isProminent = false,
+            accentColor = DesignTokens.Success,
         ),
     )
     Row(
@@ -205,13 +267,14 @@ private fun QuickStartCard(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
-    val cardColor = item.accentColor ?: AccentPrimary
+    val cardAccent = item.accentColor ?: DesignTokens.PrimaryCyan
+    val cardBg = DesignTokens.SurfaceElevated
+    val cardShape = RoundedCornerShape(DesignTokens.RadiusCard)
 
-    val cardBg = MaterialTheme.colorScheme.surface
     val cardBorder = if (isHovered) {
-        BorderStroke(1.dp, cardColor)
+        BorderStroke(1.dp, cardAccent)
     } else {
-        BorderStroke(1.dp, cardColor.copy(alpha = if (item.isProminent) 0.6f else 0.4f))
+        BorderStroke(1.dp, DesignTokens.BorderSubtle)
     }
 
     val cardPadding = if (item.isProminent) 16.dp else ChatSpacing.md
@@ -223,9 +286,9 @@ private fun QuickStartCard(
             .handCursor()
             .hoverable(interactionSource)
             .clickable(onClick = onClick)
-            .clip(ChatShapes.quickStartCard)
-            .background(cardBg, ChatShapes.quickStartCard)
-            .border(cardBorder, ChatShapes.quickStartCard),
+            .clip(cardShape)
+            .background(cardBg, cardShape)
+            .border(cardBorder, cardShape),
     ) {
         Row(
             modifier = Modifier.padding(cardPadding),
@@ -235,19 +298,19 @@ private fun QuickStartCard(
             Icon(
                 imageVector = item.icon,
                 contentDescription = item.label,
-                tint = if (isHovered) cardColor else cardColor.copy(alpha = 0.9f),
+                tint = if (isHovered) cardAccent else cardAccent.copy(alpha = 0.85f),
                 modifier = Modifier.size(if (item.isProminent) 24.dp else 20.dp),
             )
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(
                     text = item.label,
                     style = if (item.isProminent) KaiTypography.labelLarge.copy(fontWeight = FontWeight.Bold) else KaiTypography.labelLarge,
-                    color = if (item.accentColor == SuccessGreen) SuccessGreen else TextPrimary,
+                    color = DesignTokens.PrimaryText,
                 )
                 Text(
                     text = item.subtext,
                     style = KaiTypography.bodySmall,
-                    color = TextSecondary,
+                    color = DesignTokens.SecondaryText,
                 )
             }
         }

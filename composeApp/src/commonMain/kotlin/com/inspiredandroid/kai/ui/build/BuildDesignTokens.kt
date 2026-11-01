@@ -15,6 +15,7 @@ import com.inspiredandroid.kai.ui.SuccessGreen
 import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.WarningAmber
 import androidx.compose.runtime.remember
+import com.inspiredandroid.kai.ui.theme.DesignTokens
 
 /**
  * Build-specific design tokens for the Kai Build workspace (Plan 3, Phase 1).
@@ -76,10 +77,10 @@ fun rememberBuildStatusColors(): BuildStatusColors {
     return remember {
         BuildStatusColors(
             idle = TextSecondary,
-            running = AccentPrimary,
-            success = SuccessGreen,
-            warning = WarningAmber,
-            failed = DangerAlert,
+            running = DesignTokens.AgentViolet,
+            success = DesignTokens.Success,
+            warning = DesignTokens.Warning,
+            failed = DesignTokens.Error,
         )
     }
 }
@@ -104,12 +105,12 @@ data class BuildStatusColors(
 /** Fixed surfaces used by the workspace, kept here so the palette stays in one place. */
 object BuildSurfaces {
     /** The terminal canvas — always dark for readable ANSI colors. */
-    val terminal: Color = Color(0xFF0C0C0C)
-    val terminalRaised: Color = Color(0xFF1A1A1A)
-    val terminalBorder: Color = Color(0xFF262626)
+    val terminal: Color = DesignTokens.TerminalBackground
+    val terminalRaised: Color = DesignTokens.SurfaceElevated
+    val terminalBorder: Color = DesignTokens.BorderSubtle
 
     /** Progress bar fill for the current install step. */
-    val progressTrack: Color = Color(0xFF1F3355)
+    val progressTrack: Color = DesignTokens.BrandNavy
 }
 
 /**

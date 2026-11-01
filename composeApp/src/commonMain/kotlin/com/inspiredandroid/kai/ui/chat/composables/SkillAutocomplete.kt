@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,13 +19,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.skills.SkillManifest
-import com.inspiredandroid.kai.ui.BorderSoft
-import com.inspiredandroid.kai.ui.KaiShapes
 import com.inspiredandroid.kai.ui.KaiTypography
-import com.inspiredandroid.kai.ui.SurfaceElevated
-import com.inspiredandroid.kai.ui.TextPrimary
-import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.handCursor
+import com.inspiredandroid.kai.ui.theme.DesignTokens
 import kotlinx.collections.immutable.ImmutableList
 
 /**
@@ -50,18 +47,20 @@ internal fun SkillAutocomplete(
     if (filtered.isEmpty()) return
 
     val scrollState = rememberScrollState()
+    val shape = RoundedCornerShape(DesignTokens.RadiusCard)
+
     Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .clip(KaiShapes.card)
-            .background(SurfaceElevated)
+            .clip(shape)
+            .background(DesignTokens.SurfaceElevated, shape)
             .border(
                 width = 1.dp,
-                color = BorderSoft,
-                shape = KaiShapes.card,
+                color = DesignTokens.BorderSubtle,
+                shape = shape,
             )
-            .heightIn(max = 200.dp)
+            .heightIn(max = 220.dp)
             .verticalScroll(scrollState),
     ) {
         for (skill in filtered) {
@@ -80,19 +79,19 @@ private fun SkillRow(skill: SkillManifest, onClick: () -> Unit) {
             .fillMaxWidth()
             .clickable { onClick() }
             .handCursor()
-            .padding(horizontal = 12.dp, vertical = 8.dp),
+            .padding(horizontal = 14.dp, vertical = 10.dp),
     ) {
         Text(
             text = "/${skill.id}",
             style = KaiTypography.bodyMedium,
-            color = TextPrimary,
-            fontWeight = FontWeight.Medium,
+            color = DesignTokens.PrimaryCyan,
+            fontWeight = FontWeight.SemiBold,
         )
         if (skill.description.isNotEmpty()) {
             Text(
                 text = skill.description,
                 style = KaiTypography.bodySmall,
-                color = TextSecondary,
+                color = DesignTokens.SecondaryText,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )

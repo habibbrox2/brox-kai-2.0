@@ -25,24 +25,22 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.DisableSelection
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
+import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,8 +57,6 @@ import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
@@ -71,19 +67,12 @@ import com.inspiredandroid.kai.data.ServiceEntry
 import com.inspiredandroid.kai.data.imageExtensions
 import com.inspiredandroid.kai.prefersReducedMotion
 import com.inspiredandroid.kai.skills.SkillManifest
-import com.inspiredandroid.kai.ui.AccentGradientEnd
-import com.inspiredandroid.kai.ui.AccentGradientStart
-import com.inspiredandroid.kai.ui.AccentPrimary
-import com.inspiredandroid.kai.ui.BorderSoft
-import com.inspiredandroid.kai.ui.CardFill
 import com.inspiredandroid.kai.ui.KaiShapes
-import com.inspiredandroid.kai.ui.SurfaceRaised
-import com.inspiredandroid.kai.ui.TextPrimary
-import com.inspiredandroid.kai.ui.TextSecondary
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
 import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.outlineTextFieldColors
 import com.inspiredandroid.kai.ui.settings.SettingsModel
+import com.inspiredandroid.kai.ui.theme.DesignTokens
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
@@ -137,6 +126,7 @@ internal fun TrailingIcon(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isPulsing: Boolean = false,
+    isStopAction: Boolean = false,
     contentDescription: String,
 ) {
     val prefersReducedMotion = prefersReducedMotion()
@@ -151,52 +141,56 @@ internal fun TrailingIcon(
         val infiniteTransition = rememberInfiniteTransition()
         val pulseScale by infiniteTransition.animateFloat(
             initialValue = 0.92f,
-            targetValue = 1.0f,
+            targetValue = 1.05f,
             animationSpec = infiniteRepeatable(
-                animation = tween(durationMillis = 800, easing = FastOutSlowInEasing),
-                repeatMode = RepeatMode.Reverse,
-            ),
-        )
-        val pulseAlpha by infiniteTransition.animateFloat(
-            initialValue = 0.7f,
-            targetValue = 1.0f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(durationMillis = 800, easing = FastOutSlowInEasing),
+                animation = tween(durationMillis = 650, easing = FastOutSlowInEasing),
                 repeatMode = RepeatMode.Reverse,
             ),
         )
         Modifier.graphicsLayer {
             scaleX = pulseScale
             scaleY = pulseScale
-            alpha = pulseAlpha
         }
     } else {
         Modifier
     }
+
+    val gradientBrush = if (isStopAction) {
+        Brush.linearGradient(
+            colors = listOf(
+                DesignTokens.Error,
+                DesignTokens.Error.copy(alpha = 0.8f),
+            ),
+        )
+    } else {
+        Brush.linearGradient(
+            colors = listOf(
+                DesignTokens.BrandCyan,
+                DesignTokens.BrandBlue,
+            ),
+        )
+    }
+
     Box(
         modifier = modifier
-            .size(44.dp)
+            .size(42.dp)
             .graphicsLayer {
                 scaleX = pressScale
                 scaleY = pressScale
             }
             .shadow(
-                elevation = 10.dp,
+                elevation = 8.dp,
                 shape = CircleShape,
-                ambientColor = AccentGradientEnd.copy(alpha = 0.25f),
-                spotColor = AccentGradientStart.copy(alpha = 0.35f),
+                ambientColor = if (isStopAction) DesignTokens.Error.copy(alpha = 0.3f) else DesignTokens.BrandCyan.copy(alpha = 0.3f),
+                spotColor = if (isStopAction) DesignTokens.Error.copy(alpha = 0.4f) else DesignTokens.BrandBlue.copy(alpha = 0.4f),
             )
             .clip(CircleShape)
-            .background(
-                brush = androidx.compose.ui.graphics.Brush.linearGradient(
-                    colors = listOf(
-                        com.inspiredandroid.kai.ui.AccentGradientStart,
-                        com.inspiredandroid.kai.ui.AccentGradientEnd,
-                    ),
-                ),
-                shape = CircleShape,
+            .background(brush = gradientBrush, shape = CircleShape)
+            .border(
+                1.dp,
+                if (isStopAction) DesignTokens.Error.copy(alpha = 0.6f) else DesignTokens.BrandCyan.copy(alpha = 0.6f),
+                CircleShape,
             )
-            .border(1.dp, com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.7f), CircleShape)
             .handCursor()
             .clickable(
                 interactionSource = interactionSource,
@@ -206,9 +200,9 @@ internal fun TrailingIcon(
     ) {
         Icon(
             vectorResource(icon),
-            modifier = Modifier.size(28.dp).then(pulseModifier),
+            modifier = Modifier.size(24.dp).then(pulseModifier),
             contentDescription = contentDescription,
-            tint = TextPrimary,
+            tint = DesignTokens.PrimaryText,
         )
     }
 }
@@ -218,12 +212,12 @@ internal fun CircleIconButton(
     icon: ImageVector,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    tint: Color = TextSecondary,
+    tint: Color = DesignTokens.SecondaryText,
     contentDescription: String,
 ) {
     Box(
         modifier = modifier
-            .size(48.dp)
+            .size(44.dp)
             .clip(CircleShape)
             .clickable { onClick() }
             .handCursor(),
@@ -231,13 +225,20 @@ internal fun CircleIconButton(
     ) {
         Icon(
             imageVector = icon,
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier.size(22.dp),
             contentDescription = contentDescription,
             tint = tint,
         )
     }
 }
 
+/**
+ * 2027 Universal Multimodal Composer.
+ *
+ * Implements Phase 3 specifications from docs/ui-upgrade-plan-7-premium-chat.md.
+ * Features auto-growing pill, rich attachment preview chips, slash commands integration,
+ * fluid send/stop morph, and desktop Enter/Shift+Enter key handling.
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun QuestionInput(
@@ -260,9 +261,7 @@ fun QuestionInput(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
-        // Slash autocomplete: shown when the user is typing the first token and it starts
-        // with `/`. Selecting an entry rewrites the first token to the canonical skill id
-        // so the ViewModel can match it at send time.
+        // Slash autocomplete popup
         if (installedSkills.isNotEmpty()) {
             val slashQuery = remember(textState.text, textState.selection) {
                 detectSlashQuery(textState.text, textState.selection.start)
@@ -289,10 +288,11 @@ fun QuestionInput(
             }
         }
 
+        // Multimodal Attachment Preview Strip
         if (files.isNotEmpty()) {
             FlowRow(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 16.dp, vertical = 4.dp)
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -312,17 +312,36 @@ fun QuestionInput(
                                     modifier = Modifier.size(16.dp),
                                     painter = painterResource(icon),
                                     contentDescription = null,
-                                    tint = TextPrimary,
+                                    tint = DesignTokens.PrimaryCyan,
                                 )
                             },
                             label = {
                                 DisableSelection {
-                                    Text(
-                                        modifier = Modifier.handCursor(),
-                                        text = truncateFileName(file.name),
-                                    )
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                    ) {
+                                        Text(
+                                            modifier = Modifier.handCursor(),
+                                            text = truncateFileName(file.name),
+                                            color = DesignTokens.PrimaryText,
+                                        )
+                                        Icon(
+                                            imageVector = Icons.Default.Close,
+                                            contentDescription = "Remove attachment",
+                                            tint = DesignTokens.TertiaryText,
+                                            modifier = Modifier.size(14.dp),
+                                        )
+                                    }
                                 }
                             },
+                            colors = SuggestionChipDefaults.suggestionChipColors(
+                                containerColor = DesignTokens.SurfaceRaised,
+                            ),
+                            border = SuggestionChipDefaults.suggestionChipBorder(
+                                enabled = true,
+                                borderColor = DesignTokens.BorderSubtle,
+                            ),
                         )
                     }
                 }
@@ -349,38 +368,22 @@ fun QuestionInput(
         }
 
         val focusRequester = remember { FocusRequester() }
-        // Upper bound for the composer field; the pill surface already caps total height.
         val maxComposerHeight = 240.dp
-
-        // Floating neural minimal input pill
-        val inputPillBg = SurfaceRaised.copy(alpha = 0.9f)
-        val inputBorder = BorderSoft.copy(alpha = 0.6f)
+        val composerShape = RoundedCornerShape(DesignTokens.RadiusCard)
 
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = com.inspiredandroid.kai.ui.chat.ChatSpacing.lg, vertical = com.inspiredandroid.kai.ui.chat.ChatSpacing.md),
+                .padding(horizontal = ChatSpacing.md, vertical = ChatSpacing.sm),
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .defaultMinSize(minHeight = 56.dp)
                     .heightIn(min = 56.dp, max = maxComposerHeight)
-                    .shadow(
-                        elevation = 6.dp,
-                        shape = com.inspiredandroid.kai.ui.KaiShapes.composer,
-                        ambientColor = AccentPrimary.copy(alpha = 0.06f),
-                        spotColor = AccentPrimary.copy(alpha = 0.1f),
-                    )
-                    .clip(com.inspiredandroid.kai.ui.KaiShapes.composer)
-                    .background(inputPillBg, com.inspiredandroid.kai.ui.KaiShapes.composer)
-                    .border(
-                        BorderStroke(
-                            width = 1.dp,
-                            color = inputBorder,
-                        ),
-                        com.inspiredandroid.kai.ui.KaiShapes.composer,
-                    ),
+                    .clip(composerShape)
+                    .background(DesignTokens.SurfaceElevated, composerShape)
+                    .border(BorderStroke(1.dp, DesignTokens.BorderSubtle), composerShape),
             ) {
                 TextField(
                     value = textState,
@@ -389,7 +392,19 @@ fun QuestionInput(
                         .focusRequester(focusRequester)
                         .defaultMinSize(minHeight = 56.dp)
                         .heightIn(min = 56.dp, max = maxComposerHeight)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .onPreviewKeyEvent { keyEvent ->
+                            if (currentPlatform !is Platform.Mobile &&
+                                keyEvent.type == KeyEventType.KeyDown &&
+                                keyEvent.key == Key.Enter &&
+                                !keyEvent.isShiftPressed
+                            ) {
+                                submitQuestion()
+                                true
+                            } else {
+                                false
+                            }
+                        },
                     colors = outlineTextFieldColors().copy(
                         focusedContainerColor = Color.Transparent,
                         unfocusedContainerColor = Color.Transparent,
@@ -401,14 +416,14 @@ fun QuestionInput(
                     placeholder = {
                         Text(
                             stringResource(Res.string.prompt_ask_question),
-                            color = TextPrimary,
+                            color = DesignTokens.TertiaryText,
                         )
                     },
                     trailingIcon = {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(end = 7.dp),
-                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            modifier = Modifier.padding(end = 8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
                         ) {
                             if (availableServices.size > 1) {
                                 ServiceSelector(
@@ -425,12 +440,14 @@ fun QuestionInput(
                                     icon = Res.drawable.ic_stop,
                                     onClick = cancel,
                                     isPulsing = true,
+                                    isStopAction = true,
                                     contentDescription = "Cancel generation",
                                 )
                             } else if (textState.text.isNotBlank()) {
                                 TrailingIcon(
                                     icon = Res.drawable.ic_up,
                                     onClick = { submitQuestion() },
+                                    isStopAction = false,
                                     contentDescription = "Send question",
                                 )
                             }
@@ -439,15 +456,15 @@ fun QuestionInput(
                     keyboardActions = if (currentPlatform !is Platform.Mobile) {
                         KeyboardActions(onSend = { submitQuestion() })
                     } else {
-                        KeyboardActions() // No keyboard send action on mobile
+                        KeyboardActions()
                     },
                     leadingIcon = if (filePickerLauncher != null) {
                         {
                             CircleIconButton(
                                 icon = vectorResource(Res.drawable.ic_attach),
                                 onClick = { filePickerLauncher.launch() },
-                                modifier = Modifier.padding(start = 7.dp),
-                                tint = TextPrimary,
+                                modifier = Modifier.padding(start = 6.dp),
+                                tint = DesignTokens.SecondaryText,
                                 contentDescription = "Attach file",
                             )
                         }
