@@ -165,6 +165,8 @@ jobs:
             composeApp/src/commonTest/kotlin/com/inspiredandroid/kai/updater/AndroidApkVersionValidationTest.kt \
             androidApp/build.gradle.kts \
             gradle/libs.versions.toml \
+            composeApp/build.gradle.kts \
+            composeApp/src/commonTest/kotlin/com/inspiredandroid/kai/network/CloudflareModelSearchIntegrationTest.kt \
             composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/updater/AndroidApkIdentityValidation.kt \
             composeApp/src/commonTest/kotlin/com/inspiredandroid/kai/updater/AndroidApkIdentityValidationTest.kt \
             composeApp/src/androidMain/kotlin/com/inspiredandroid/kai/Platform.android.kt \
