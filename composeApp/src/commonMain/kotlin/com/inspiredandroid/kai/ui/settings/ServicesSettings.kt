@@ -1065,6 +1065,7 @@ private fun ConfiguredServiceCardContent(
                     )
                 } else if (entry.service is Service.OpenAICompatible || entry.service is Service.Cloudflare || entry.service.modelsUrl != null || entry.service.chatUrl.isNotBlank()) {
                     OpenAICompatibleSettings(
+                        isCloudflare = entry.service is Service.Cloudflare,
                         baseUrl = entry.baseUrl,
                         onChangeBaseUrl = onChangeBaseUrl,
                         apiKey = entry.apiKey,
@@ -1172,6 +1173,7 @@ private fun ServiceSettings(
 
 @Composable
 private fun OpenAICompatibleSettings(
+    isCloudflare: Boolean = false,
     baseUrl: String,
     onChangeBaseUrl: (String) -> Unit,
     apiKey: String,
@@ -1191,7 +1193,7 @@ private fun OpenAICompatibleSettings(
         onValueChange = onChangeBaseUrl,
         label = {
             Text(
-                stringResource(Res.string.settings_base_url_label),
+                if (isCloudflare) "Cloudflare Account ID" else stringResource(Res.string.settings_base_url_label),
                 color = TextPrimary,
             )
         },
