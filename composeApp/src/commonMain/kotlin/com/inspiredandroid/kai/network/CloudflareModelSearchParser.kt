@@ -15,6 +15,20 @@ internal data class CloudflareModelSearchPage(
 
 internal fun isValidCloudflareAccountId(value: String): Boolean = value.trim().matches(Regex("[a-fA-F0-9]{32}"))
 
+/** Reads Cloudflare's standard v4 errors array, including non-2xx responses. */
+internal fun parseCloudflareModelSearchError(body: String): String? = try {
+    val envelope = Json { ignoreUnknownKeys = true }.parseToJsonElement(body).jsonObject
+    (envelope["errors"] as? JsonArray)
+        ?.firstNotNullOfOrNull { item ->
+            val error = item as? JsonObject ?: return@firstNotNullOfOrNull null
+            sequenceOf("message", "code")
+                .mapNotNull { key -> (error[key] as? JsonPrimitive)?.contentOrNull }
+                .firstOrNull { it.isNotBlank() }
+        }
+} catch (_: Exception) {
+    null
+}
+
 /** Parses Cloudflare's v4 envelope without assuming the OpenAI { data: [...] } schema. */
 internal fun parseCloudflareModelSearchPage(body: String): CloudflareModelSearchPage {
     val envelope = Json { ignoreUnknownKeys = true }.parseToJsonElement(body).jsonObject
