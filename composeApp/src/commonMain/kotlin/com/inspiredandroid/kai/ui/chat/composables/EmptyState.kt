@@ -56,7 +56,6 @@ import com.inspiredandroid.kai.ui.SuccessGreen
 import com.inspiredandroid.kai.ui.SurfaceRaised
 import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.TextSecondary
-import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.chat.ChatShapes
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
 import com.inspiredandroid.kai.ui.components.LogoAnimation
