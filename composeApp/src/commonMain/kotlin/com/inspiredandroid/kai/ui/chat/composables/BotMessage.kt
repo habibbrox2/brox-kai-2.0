@@ -52,11 +52,9 @@ import androidx.compose.ui.unit.sp
 import com.inspiredandroid.kai.data.AppSettings
 import com.inspiredandroid.kai.getBackgroundDispatcher
 import com.inspiredandroid.kai.ui.CardFill
-import com.inspiredandroid.kai.ui.DarkText
 import com.inspiredandroid.kai.ui.KaiTypography
 import com.inspiredandroid.kai.ui.SuccessGreen
 import com.inspiredandroid.kai.ui.TextSecondary
-import com.inspiredandroid.kai.ui.WarmPaperBubble
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
 import com.inspiredandroid.kai.ui.dynamicui.FrozenSubmission
 import com.inspiredandroid.kai.ui.dynamicui.toSpeakableText

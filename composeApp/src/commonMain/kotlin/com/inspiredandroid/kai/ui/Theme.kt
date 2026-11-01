@@ -388,7 +388,7 @@ fun Modifier.modernCard(
     )
     .then(
         if (isInteractive && (isFocused || isHovered)) {
-            Modifier.border(BorderStroke(1.dp, AccentGlow), shape)
+            Modifier.border(BorderStroke(1.dp, AccentPrimary), shape)
         } else {
             Modifier
         },
@@ -410,7 +410,7 @@ fun Modifier.glassmorphicCard(
 fun Modifier.cyanGlow(enabled: Boolean = true): Modifier = if (enabled) {
     this
         .border(KaiBorders.accent)
-        .background(AccentGlow, shape = KaiShapes.pill)
+        .background(AccentPrimary, shape = KaiShapes.pill)
 } else {
     this
 }

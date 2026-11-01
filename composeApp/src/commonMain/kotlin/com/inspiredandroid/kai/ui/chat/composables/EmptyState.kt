@@ -52,11 +52,11 @@ import androidx.compose.ui.unit.sp
 import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.BorderSoft
 import com.inspiredandroid.kai.ui.KaiTypography
-import com.inspiredandroid.kai.ui.QuickOptionGreen
+import com.inspiredandroid.kai.ui.SuccessGreen
 import com.inspiredandroid.kai.ui.SurfaceRaised
 import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.TextSecondary
-import com.inspiredandroid.kai.ui.UserBubbleBlue
+import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.chat.ChatShapes
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
 import com.inspiredandroid.kai.ui.components.LogoAnimation
@@ -154,7 +154,7 @@ private fun QuickStartCards(onQuickStart: (String) -> Unit) {
             prompt = "তুমি কে এবং তোমার মডেলের নাম কি?",
             icon = Icons.Default.Edit,
             isProminent = true,
-            accentColor = UserBubbleBlue,
+            accentColor = AccentPrimary,
         ),
         QuickStartItem(
             label = "Set Reminder",
@@ -162,7 +162,7 @@ private fun QuickStartCards(onQuickStart: (String) -> Unit) {
             prompt = "Set a reminder for me in 10 minutes",
             icon = Icons.Default.Build,
             isProminent = true,
-            accentColor = UserBubbleBlue,
+            accentColor = AccentPrimary,
         ),
         QuickStartItem(
             label = "Search Web",
@@ -170,7 +170,7 @@ private fun QuickStartCards(onQuickStart: (String) -> Unit) {
             prompt = "Search the web for latest AI news",
             icon = Icons.Default.Search,
             isProminent = false,
-            accentColor = QuickOptionGreen,
+            accentColor = SuccessGreen,
         ),
         QuickStartItem(
             label = "Code",
@@ -178,7 +178,7 @@ private fun QuickStartCards(onQuickStart: (String) -> Unit) {
             prompt = "একটা কোড লেখো",
             icon = Icons.Default.Code,
             isProminent = false,
-            accentColor = UserBubbleBlue,
+            accentColor = AccentPrimary,
         ),
     )
     Row(
@@ -206,7 +206,7 @@ private fun QuickStartCard(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
-    val cardColor = item.accentColor ?: UserBubbleBlue
+    val cardColor = item.accentColor ?: AccentPrimary
 
     val cardBg = MaterialTheme.colorScheme.surface
     val cardBorder = if (isHovered) {
@@ -243,7 +243,7 @@ private fun QuickStartCard(
                 Text(
                     text = item.label,
                     style = if (item.isProminent) KaiTypography.labelLarge.copy(fontWeight = FontWeight.Bold) else KaiTypography.labelLarge,
-                    color = if (item.accentColor == QuickOptionGreen) QuickOptionGreen else TextPrimary,
+                    color = if (item.accentColor == SuccessGreen) SuccessGreen else TextPrimary,
                 )
                 Text(
                     text = item.subtext,

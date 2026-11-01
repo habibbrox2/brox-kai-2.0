@@ -276,7 +276,7 @@ private fun SessionChipRow(viewModel: SandboxSessionViewModel) {
 
             val buttonColors = ButtonDefaults.buttonColors(
                 containerColor = if (isSelected) {
-                    com.inspiredandroid.kai.ui.AccentGlow
+                    com.inspiredandroid.kai.ui.AccentPrimary
                 } else {
                     com.inspiredandroid.kai.ui.CardFill
                 },
@@ -365,8 +365,8 @@ private fun SandboxSubTabSelector(
 
             val buttonColors = ButtonDefaults.buttonColors(
                 containerColor = when {
-                    isSelected -> com.inspiredandroid.kai.ui.AccentGlow
-                    isFocused -> com.inspiredandroid.kai.ui.AccentGlow.copy(alpha = 0.5f)
+                    isSelected -> com.inspiredandroid.kai.ui.AccentPrimary
+                    isFocused -> com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.5f)
                     else -> com.inspiredandroid.kai.ui.CardFill
                 },
                 contentColor = if (isSelected) {

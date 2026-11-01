@@ -306,8 +306,8 @@ private fun TabPill(
 
     val buttonColors = ButtonDefaults.buttonColors(
         containerColor = when {
-            selected -> com.inspiredandroid.kai.ui.AccentGlow
-            isFocused -> com.inspiredandroid.kai.ui.AccentGlow.copy(alpha = 0.5f)
+            selected -> com.inspiredandroid.kai.ui.AccentPrimary
+            isFocused -> com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.5f)
             else -> Color.Transparent
         },
         contentColor = contentColor,

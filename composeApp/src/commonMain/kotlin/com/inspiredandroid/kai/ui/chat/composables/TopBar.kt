@@ -42,7 +42,7 @@ import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.BorderSoft
 import com.inspiredandroid.kai.ui.KaiShapes
 import com.inspiredandroid.kai.ui.KaiTypography
-import com.inspiredandroid.kai.ui.QuickOptionGreen
+import com.inspiredandroid.kai.ui.SuccessGreen
 import com.inspiredandroid.kai.ui.TextPrimary
 import com.inspiredandroid.kai.ui.chat.ChatActions
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
@@ -175,10 +175,10 @@ internal fun TopBar(
                         Box(
                             modifier = Modifier
                                 .clip(KaiShapes.pill)
-                                .background(QuickOptionGreen.copy(alpha = 0.15f))
+                                .background(SuccessGreen.copy(alpha = 0.15f))
                                 .border(
                                     1.dp,
-                                    QuickOptionGreen.copy(alpha = 0.5f),
+                                    SuccessGreen.copy(alpha = 0.5f),
                                     KaiShapes.pill,
                                 )
                                 .padding(horizontal = 6.dp, vertical = 2.dp),
@@ -186,7 +186,7 @@ internal fun TopBar(
                             Text(
                                 text = "AI Agent",
                                 style = KaiTypography.labelSmall.copy(fontSize = 10.sp, fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold),
-                                color = QuickOptionGreen,
+                                color = SuccessGreen,
                             )
                         }
                     }

@@ -379,7 +379,7 @@ class AppSettings(internal val settings: Settings) {
             }
         }
         // Default to System theme when no theme mode is set
-        ThemeMode.System
+        return ThemeMode.System
     }
 
     // Daemon mode

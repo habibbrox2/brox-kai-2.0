@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.inspiredandroid.kai.ui.AccentGlow
+import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.AccentPrimary
 import com.inspiredandroid.kai.ui.BorderSoft
 import com.inspiredandroid.kai.ui.BorderStrong
@@ -57,7 +57,7 @@ object SettingsStatusColors {
     val error = DangerAlert
     val unknown = TextTertiary
     val attention = WarningAmber
-    val glow = AccentGlow
+    val glow = AccentPrimary
 }
 
 object SettingsSurfaces {

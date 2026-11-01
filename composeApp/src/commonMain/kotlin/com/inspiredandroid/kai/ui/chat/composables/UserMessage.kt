@@ -82,10 +82,10 @@ internal fun UserMessage(
                         spotColor = androidx.compose.ui.graphics.Color(0x26000000),
                     )
                     .clip(userBubbleShape)
-                    .background(com.inspiredandroid.kai.ui.UserBubbleBlue)
+                    .background(com.inspiredandroid.kai.ui.AccentPrimary)
                     .border(
                         width = 1.dp,
-                        color = com.inspiredandroid.kai.ui.UserBubbleBlue.copy(alpha = 0.7f),
+                        color = com.inspiredandroid.kai.ui.AccentPrimary.copy(alpha = 0.7f),
                         shape = userBubbleShape,
                     )
                     .padding(horizontal = 14.dp, vertical = 12.dp),
