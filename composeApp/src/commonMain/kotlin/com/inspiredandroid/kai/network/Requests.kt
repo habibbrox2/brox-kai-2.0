@@ -356,7 +356,7 @@ class Requests {
             val accountId = credentials.baseUrl.trim()
                 .substringAfter("/accounts/", missingDelimiterValue = credentials.baseUrl.trim())
                 .substringBefore("/")
-            if (!accountId.matches(Regex("[a-fA-F0-9]{32}"))) {
+            if (!isValidCloudflareAccountId(accountId)) {
                 return Result.failure(OpenAICompatibleGenericException("Enter a valid 32-character Cloudflare Account ID."))
             }
 
@@ -373,39 +373,17 @@ class Requests {
                 if (!response.status.isSuccess()) {
                     handleOpenAICompatibleError(service, credentials, response)
                 }
-                val envelope = anthropicJson.parseToJsonElement(response.bodyAsText()).jsonObject
-                if ((envelope["success"] as? JsonPrimitive)?.contentOrNull == "false") {
-                    val message = (envelope["errors"] as? JsonArray)
-                        ?.firstOrNull()
-                        ?.let { (it as? JsonObject)?.get("message") as? JsonPrimitive }
-                        ?.contentOrNull
-                    throw OpenAICompatibleGenericException(message ?: "Cloudflare model search failed.")
-                }
-                val models = envelope["result"] as? JsonArray
-                    ?: throw OpenAICompatibleGenericException("Cloudflare model search returned an invalid result.")
-                models.forEach { item ->
-                    val model = item as? JsonObject ?: return@forEach
-                    val id = sequenceOf("name", "id", "model_id", "model")
-                        .mapNotNull { key -> (model[key] as? JsonPrimitive)?.contentOrNull }
-                        .firstOrNull { it.isNotBlank() }
-                        ?: return@forEach
-                    val description = sequenceOf("description", "task")
-                        .mapNotNull { key -> (model[key] as? JsonPrimitive)?.contentOrNull }
-                        .firstOrNull { it.isNotBlank() }
-                    val owner = sequenceOf("source", "provider")
-                        .mapNotNull { key -> (model[key] as? JsonPrimitive)?.contentOrNull }
-                        .firstOrNull { it.isNotBlank() }
-                    allModels += OpenAICompatibleModelResponseDto.Model(
-                        id = id,
-                        name = id,
-                        owned_by = owner,
-                        description = description,
+                val parsedPage = try {
+                    parseCloudflareModelSearchPage(response.bodyAsText())
+                } catch (e: Exception) {
+                    throw OpenAICompatibleGenericException(
+                        e.message?.takeIf { it.isNotBlank() } ?: "Cloudflare model search returned invalid data.",
+                        e,
                     )
                 }
-                val resultInfo = envelope["result_info"] as? JsonObject
-                totalPages = (resultInfo?.get("total_pages") as? JsonPrimitive)
-                    ?.contentOrNull?.toIntOrNull()
-                    ?: if (models.size == perPage) page + 1 else page
+                allModels += parsedPage.models
+                totalPages = parsedPage.totalPages
+                    ?: if (parsedPage.models.size == perPage) page + 1 else page
                 page++
             }
             return Result.success(OpenAICompatibleModelResponseDto(data = allModels.distinctBy { it.id }))
