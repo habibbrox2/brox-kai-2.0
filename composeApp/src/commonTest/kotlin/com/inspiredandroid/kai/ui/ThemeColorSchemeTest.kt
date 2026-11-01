@@ -19,3 +19,4 @@ class ThemeColorSchemeTest {
         // Dark theme tokens updated for 2027 minimal design
         assertEquals(Color(0xFF0E0F12), Color(0xFF0E0F12)) // background is dark navy
     }
+}
