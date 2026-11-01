@@ -66,11 +66,14 @@ object McpManagementTools {
                 return mapOf("success" to false, "error" to "name and url are required")
             }
             val headers = args["headers"]?.toString()?.trim()?.let { raw ->
-                if (raw.isEmpty()) emptyMap()
-                else try {
-                    Json.decodeFromString<Map<String, String>>(raw)
-                } catch (e: Exception) {
-                    return mapOf("success" to false, "error" to "Invalid headers JSON: ${e.message}")
+                if (raw.isEmpty()) {
+                    emptyMap()
+                } else {
+                    try {
+                        Json.decodeFromString<Map<String, String>>(raw)
+                    } catch (e: Exception) {
+                        return mapOf("success" to false, "error" to "Invalid headers JSON: ${e.message}")
+                    }
                 }
             } ?: emptyMap()
 
