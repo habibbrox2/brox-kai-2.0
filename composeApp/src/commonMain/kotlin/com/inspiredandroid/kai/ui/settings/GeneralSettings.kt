@@ -141,14 +141,6 @@ internal fun ThemeModeSwitch(
         ThemeMode.System to stringResource(Res.string.settings_theme_system),
         ThemeMode.Light to stringResource(Res.string.settings_theme_light),
         ThemeMode.Dark to stringResource(Res.string.settings_theme_dark),
-        ThemeMode.Lilac to "Lilac",
-        ThemeMode.Dusk to "Dusk",
-        ThemeMode.Seafoam to "Seafoam",
-        ThemeMode.Graphite to "Graphite",
-        ThemeMode.Daybreak to "Daybreak",
-        ThemeMode.Sherbet to "Sherbet",
-        ThemeMode.Paper to "Paper",
-        ThemeMode.Carbon to "Carbon",
     )
 
     Column(modifier = Modifier.fillMaxWidth()) {

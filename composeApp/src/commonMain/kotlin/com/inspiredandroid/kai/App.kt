@@ -39,9 +39,6 @@ import com.inspiredandroid.kai.ui.DaybreakColorScheme
 import com.inspiredandroid.kai.ui.DuskColorScheme
 import com.inspiredandroid.kai.ui.GraphiteColorScheme
 import com.inspiredandroid.kai.ui.LightColorScheme
-import com.inspiredandroid.kai.ui.PaperColorScheme
-import com.inspiredandroid.kai.ui.SeafoamColorScheme
-import com.inspiredandroid.kai.ui.SherbetColorScheme
 import com.inspiredandroid.kai.ui.Theme
 import com.inspiredandroid.kai.ui.build.KaiBuildScreen
 import com.inspiredandroid.kai.ui.chat.ChatScreen
@@ -177,13 +174,6 @@ private fun AppContent(
         ThemeMode.System -> if (systemInDark) darkColorScheme else lightColorScheme
         ThemeMode.Light -> lightColorScheme
         ThemeMode.Dark -> darkColorScheme
-        ThemeMode.Dusk -> DuskColorScheme
-        ThemeMode.Seafoam -> SeafoamColorScheme
-        ThemeMode.Graphite -> GraphiteColorScheme
-        ThemeMode.Daybreak -> DaybreakColorScheme
-        ThemeMode.Sherbet -> SherbetColorScheme
-        ThemeMode.Paper -> PaperColorScheme
-        ThemeMode.Carbon -> CarbonColorScheme
     }
 
     val sandboxController = koinInject<SandboxController>()
