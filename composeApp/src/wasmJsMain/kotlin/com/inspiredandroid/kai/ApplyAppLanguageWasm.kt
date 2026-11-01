@@ -1,5 +1,5 @@
 package com.inspiredandroid.kai
 
 actual fun applyAppLanguage(languageCode: String) {
-    js("document.documentElement.lang = '$languageCode'")
+    // No-op on web; browser locale is managed by the user agent.
 }
