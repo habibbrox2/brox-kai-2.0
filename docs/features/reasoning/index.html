@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#reasoning-content-handling" class="md-skip">
+        <a href="#agent-activity-and-reasoning-data-architecture" class="md-skip">
           Skip to content
         </a>
       
@@ -712,10 +712,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#why-per-provider-handling" class="md-nav__link">
+  <a href="#1-terminology" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why per-provider handling
+        1. Terminology
       
     </span>
   </a>
@@ -723,10 +723,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#outgoing-assistant-message-behavior-matrix" class="md-nav__link">
+  <a href="#2-product-goal" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Outgoing assistant-message behavior matrix
+        2. Product goal
       
     </span>
   </a>
@@ -734,10 +734,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-kai-does-today" class="md-nav__link">
+  <a href="#3-activity-event-model" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What Kai does today
+        3. Activity event model
       
     </span>
   </a>
@@ -745,6 +745,90 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#4-data-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Data flow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-ui-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. UI behavior
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. UI behavior">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#collapsed-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Collapsed state
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expanded-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Expanded state
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#streaming-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Streaming behavior
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-privacy-and-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Privacy and security
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-provider-reasoning-compatibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Provider reasoning compatibility
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Provider reasoning compatibility">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#openai-responses-api" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -754,12 +838,17 @@
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#display-in-chat-ui" class="md-nav__link">
+  <a href="#8-existing-implementation-map" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Display in chat UI
+        8. Existing implementation map
       
     </span>
   </a>
@@ -767,21 +856,82 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#known-gaps" class="md-nav__link">
+  <a href="#9-migration-plan" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Known gaps
+        9. Migration plan
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Migration plan">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1 — Audit
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#key-files" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#step-2-typed-activity-state" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Key Files
+        Step 2 — Typed activity state
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-timeline-disclosure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3 — Timeline disclosure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-persistence-and-compatibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4 — Persistence and compatibility
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5 — Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-acceptance-criteria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Acceptance criteria
       
     </span>
   </a>
@@ -1110,10 +1260,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#why-per-provider-handling" class="md-nav__link">
+  <a href="#1-terminology" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why per-provider handling
+        1. Terminology
       
     </span>
   </a>
@@ -1121,10 +1271,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#outgoing-assistant-message-behavior-matrix" class="md-nav__link">
+  <a href="#2-product-goal" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Outgoing assistant-message behavior matrix
+        2. Product goal
       
     </span>
   </a>
@@ -1132,10 +1282,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-kai-does-today" class="md-nav__link">
+  <a href="#3-activity-event-model" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What Kai does today
+        3. Activity event model
       
     </span>
   </a>
@@ -1143,6 +1293,90 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#4-data-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Data flow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-ui-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. UI behavior
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. UI behavior">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#collapsed-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Collapsed state
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expanded-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Expanded state
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#streaming-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Streaming behavior
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-privacy-and-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Privacy and security
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-provider-reasoning-compatibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Provider reasoning compatibility
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Provider reasoning compatibility">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#openai-responses-api" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1152,12 +1386,17 @@
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#display-in-chat-ui" class="md-nav__link">
+  <a href="#8-existing-implementation-map" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Display in chat UI
+        8. Existing implementation map
       
     </span>
   </a>
@@ -1165,21 +1404,82 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#known-gaps" class="md-nav__link">
+  <a href="#9-migration-plan" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Known gaps
+        9. Migration plan
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Migration plan">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1 — Audit
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#key-files" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#step-2-typed-activity-state" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Key Files
+        Step 2 — Typed activity state
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-timeline-disclosure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3 — Timeline disclosure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-persistence-and-compatibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4 — Persistence and compatibility
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5 — Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-acceptance-criteria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Acceptance criteria
       
     </span>
   </a>
@@ -1203,229 +1503,275 @@
 
 
 
-<h1 id="reasoning-content-handling">Reasoning Content Handling</h1>
-<p><strong>Last verified:</strong> 2026-10-02</p>
-<p>Reasoning-capable models (DeepSeek R1, GLM thinking, Qwen thinking, Kimi thinking, Magistral, gpt-oss, etc.) return their chain-of-thought separately from the final answer. Kai handles reasoning along two axes: <strong>wire-side</strong> (whether to echo the trace back to the provider on the next request) and <strong>display-side</strong> (whether to show it to the user in the chat UI). When a turn also contains <code>tool_calls</code>, some providers require the chain-of-thought to be echoed back to preserve reasoning continuity across the tool round-trip — and others strictly reject the same field. This page documents what each provider does, what Kai sends, and where we trade fidelity for simplicity.</p>
-<h2 id="why-per-provider-handling">Why per-provider handling</h2>
-<p>OpenAI's chat-completions schema has no standardized place for prior-turn reasoning, so each provider invented their own. The result is three sources of variation:</p>
-<ul>
-<li><strong>Field name</strong> — <code>reasoning_content</code> (DeepSeek lineage), <code>reasoning</code> (OpenRouter/Cerebras lineage), <code>reasoning_details[]</code> (preserves thought signatures for Anthropic/Gemini via OpenRouter), or embedded <code>&lt;think&gt;...&lt;/think&gt;</code> tags inside <code>content</code> (MiniMax M2 native, older Magistral).</li>
-<li><strong>Whether echoing back is required</strong> — some providers reconstruct internal state from it (Z.AI Coding Plan, OpenCode Zen via DeepSeek route, Kimi <code>k2.6</code> with <code>thinking.keep="all"</code>); others accept it as a no-op; others reject any unknown field outright.</li>
-<li><strong>Paired flags</strong> — preservation sometimes requires an additional request flag (Z.AI <code>clear_thinking: false</code>, Fireworks <code>reasoning_history: "preserved"</code>).</li>
-</ul>
-<h2 id="outgoing-assistant-message-behavior-matrix">Outgoing assistant-message behavior matrix</h2>
-<p>Behavior of each provider when an <code>assistant</code>-role message with prior <code>tool_calls</code> carries a <code>reasoning_content</code> field.</p>
+<h1 id="agent-activity-and-reasoning-data-architecture">Agent Activity and Reasoning Data Architecture</h1>
+<p><strong>Status:</strong> Product and implementation contract<br />
+<strong>Applies to:</strong> Chat timeline, provider adapters, tool/MCP execution, and streaming UI</p>
+<h2 id="1-terminology">1. Terminology</h2>
+<p>Kai may receive several kinds of information during an assistant turn. They must not be conflated:</p>
 <table>
 <thead>
 <tr>
-<th>Provider</th>
-<th>Status</th>
-<th>Wire field expected</th>
-<th>Notes</th>
-<th>Source</th>
+<th>Data type</th>
+<th>Meaning</th>
+<th>User-facing policy</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Groq</td>
-<td><strong>Rejected</strong></td>
-<td>n/a — strip on send</td>
-<td>Strict schema validator: <code>400 ('messages.N': property 'reasoning_content' is unsupported)</code> on any unknown assistant-message field</td>
-<td><a href="https://console.groq.com/docs/reasoning">console.groq.com/docs/reasoning</a></td>
+<td>Agent activity event</td>
+<td>Observable operation such as MCP call, shell invocation, approval request, or tool result</td>
+<td>May be shown as a concise execution trace</td>
 </tr>
 <tr>
-<td>DeepSeek</td>
-<td><strong>Required</strong></td>
-<td><code>reasoning_content</code></td>
-<td>Thinking-mode models (deepseek-chat, deepseek-v3.2, deepseek-v4-pro) return 400 (<code>The reasoning_content in the thinking mode must be passed back to the API</code>) if the field is missing on a follow-up turn after tool_calls. The legacy <code>deepseek-reasoner</code> doesn't expose tools so the gate <code>if (toolCalls != null)</code> keeps it unaffected</td>
-<td><a href="https://api-docs.deepseek.com/guides/thinking_mode">api-docs.deepseek.com/guides/thinking_mode</a></td>
+<td>Provider reasoning summary</td>
+<td>Explicit summary field returned by a provider under its API contract</td>
+<td>Optional; display only when supported and approved</td>
 </tr>
 <tr>
-<td>Cerebras</td>
-<td><strong>Rejected (wrong field)</strong></td>
-<td><code>reasoning</code> (not <code>reasoning_content</code>)</td>
-<td>GLM-4.7 multi-step returns 400 when sent <code>reasoning_content</code>; expects <code>reasoning</code>. Kai sends neither (mode = <code>NONE</code>)</td>
-<td><a href="https://inference-docs.cerebras.ai/api-reference/chat-completions">inference-docs.cerebras.ai/api-reference/chat-completions</a></td>
+<td>Private chain-of-thought</td>
+<td>Hidden internal model deliberation or raw private reasoning tokens</td>
+<td>Do not expose as a step-by-step thought log</td>
 </tr>
 <tr>
-<td>1min.AI</td>
-<td><strong>Rejected</strong></td>
-<td>n/a — strip on send</td>
-<td>The <code>/openai/v1</code> adapter returns 400 for any unsupported request field rather than ignoring it</td>
-<td><a href="https://docs.1min.ai/docs/api/openai-compatible">docs.1min.ai/docs/api/openai-compatible</a></td>
+<td>Final answer</td>
+<td>User-facing response content</td>
+<td>Render normally</td>
 </tr>
 <tr>
-<td>Z.AI Coding Plan</td>
-<td><strong>Required</strong></td>
-<td><code>reasoning_content</code></td>
-<td>Preserved Thinking is on by default on <code>/api/coding/paas/v4</code>; dropping the field breaks reasoning coherence</td>
-<td><a href="https://docs.z.ai/guides/capabilities/thinking-mode">docs.z.ai/guides/capabilities/thinking-mode</a></td>
-</tr>
-<tr>
-<td>OpenCode Zen (DeepSeek route)</td>
-<td><strong>Required</strong></td>
-<td><code>reasoning_content</code></td>
-<td>Pass-through gateway. When routing to DeepSeek-V4 Pro thinking, once any assistant message carries reasoning, all subsequent assistant messages must</td>
-<td><a href="https://opencode.ai/docs/zen/">opencode.ai/docs/zen/</a></td>
-</tr>
-<tr>
-<td>Moonshot / Kimi</td>
-<td><strong>Required for <code>kimi-k2.6</code> with <code>thinking.keep="all"</code></strong></td>
-<td><code>reasoning_content</code></td>
-<td>Only that specific model + flag combination requires the echo. Other Kimi thinking models accept it as a no-op. Kai does not currently set <code>thinking.keep</code></td>
-<td><a href="https://platform.kimi.com/docs/api/chat">platform.kimi.com/docs/api/chat</a></td>
-</tr>
-<tr>
-<td>Fireworks AI</td>
-<td><strong>Accepted (documented)</strong></td>
-<td><code>reasoning_content</code></td>
-<td>Officially supported field on <code>ChatMessage</code>. Full preservation also requires <code>reasoning_history: "preserved"</code> on the request — Kai does not set this</td>
-<td><a href="https://docs.fireworks.ai/api-reference/post-chatcompletions">docs.fireworks.ai/api-reference/post-chatcompletions</a></td>
-</tr>
-<tr>
-<td>Z.AI standard</td>
-<td><strong>Accepted (documented, inert without flag)</strong></td>
-<td><code>reasoning_content</code></td>
-<td>Preserved Thinking is opt-in on <code>/api/paas/v4</code>; without <code>clear_thinking: false</code> (which Kai does not send) the echo is ignored</td>
-<td><a href="https://docs.z.ai/guides/capabilities/thinking-mode">docs.z.ai/guides/capabilities/thinking-mode</a></td>
-</tr>
-<tr>
-<td>OpenRouter</td>
-<td><strong>Accepted (alias)</strong></td>
-<td>Canonical <code>reasoning</code>; <code>reasoning_content</code> is a documented alias. Anthropic/Gemini-via-OR need <code>reasoning_details[]</code> with thought signatures, which Kai does not send</td>
-<td><a href="https://openrouter.ai/docs/guides/best-practices/reasoning-tokens">openrouter.ai/docs/guides/best-practices/reasoning-tokens</a></td>
-<td></td>
-</tr>
-<tr>
-<td>Kilo Gateway</td>
-<td><strong>Accepted (alias)</strong></td>
-<td>OpenRouter-compatible gateway: the canonical field is <code>reasoning</code>, <code>reasoning_content</code> is an accepted alias. Traces come back as <code>reasoning</code> with a <code>reasoning_details[]</code> array</td>
-<td><a href="https://kilo.ai/docs/gateway">kilo.ai/docs/gateway</a></td>
-<td></td>
-</tr>
-<tr>
-<td>Requesty</td>
-<td><strong>Accepted</strong></td>
-<td><code>reasoning_content</code></td>
-<td>Gateway accepted the field on a tool round-trip with <code>openai/gpt-4o-mini</code> and <code>deepseek/deepseek-chat</code> (live check). Whether it reaches the upstream vendor depends on the route; reasoning traces come back as <code>reasoning_content</code></td>
-<td><a href="https://docs.requesty.ai">docs.requesty.ai</a></td>
-</tr>
-<tr>
-<td>LongCat</td>
-<td><strong>Tolerated (undocumented)</strong></td>
-<td>Schema documents <code>role</code> + <code>content</code> only; field is passed through silently</td>
-<td><a href="https://longcat.chat/platform/docs/APIDocs.html">longcat.chat/platform/docs/APIDocs.html</a></td>
-<td></td>
-</tr>
-<tr>
-<td>Venice AI</td>
-<td><strong>Tolerated (undocumented)</strong></td>
-<td>Pass-through policy: "Request fields not listed may be passed through but are not validated"</td>
-<td><a href="https://docs.venice.ai">docs.venice.ai</a></td>
-<td></td>
-</tr>
-<tr>
-<td>MiniMax M2</td>
-<td><strong>Tolerated but wrong mechanism</strong></td>
-<td>Native mode expects <code>&lt;think&gt;...&lt;/think&gt;</code> inside <code>content</code>; split mode expects <code>reasoning_details</code>. Top-level <code>reasoning_content</code> is undocumented and likely ignored</td>
-<td><a href="https://platform.minimax.io/docs/guides/text-m2-function-call">platform.minimax.io/docs/guides/text-m2-function-call</a></td>
-<td></td>
-</tr>
-<tr>
-<td>xAI, NVIDIA, Mistral, Ollama Cloud, Together, HuggingFace, DeepInfra, AIHubMix, Public AI, AI Horde, Perplexity, OpenAI, Free, OpenAI-Compatible API</td>
-<td><strong>Accepted (silent ignore)</strong></td>
-<td>Either documented or behave as permissive OpenAI-compatible proxies that drop unknown fields</td>
-<td>(per-provider docs)</td>
-<td></td>
-</tr>
-<tr>
-<td>Anthropic, Gemini, LiteRT</td>
-<td>Out of scope</td>
-<td>These use entirely separate request DTOs (Anthropic Messages API, Gemini Generative Language API, on-device LiteRT). Reasoning is handled inside those code paths, not via <code>reasoning_content</code>.</td>
-<td>—</td>
-<td></td>
+<td>Tool arguments/output</td>
+<td>Data sent to or returned by a tool</td>
+<td>Show only sanitized, bounded, permission-appropriate details</td>
 </tr>
 </tbody>
 </table>
-<h2 id="what-kai-does-today">What Kai does today</h2>
-<p>Each service carries a reasoning request mode, either <code>NONE</code> or <code>REASONING_CONTENT</code>. When <code>REASONING_CONTENT</code> is set and the prior assistant turn carried <code>tool_calls</code>, Kai emits the field on the next request.</p>
-<p>Services currently set to <code>REASONING_CONTENT</code>: DeepSeek, OpenRouter, Requesty, LongCat, Venice, Moonshot, Z.AI, Z.AI Coding Plan, MiniMax, Fireworks, OpenCode, Kilo.</p>
-<p>All other services use the default <code>NONE</code> (the field is stripped on send). This is the safe default — any service we don't yet have evidence about will not regress.</p>
-<p>The chain-of-thought is kept on the in-memory chat message (and persisted with the conversation) regardless of the wire-side decision so the UI can render thinking traces independently of what gets transmitted on the next request. This applies to assistant turns received over the OpenAI-compatible path; the Anthropic and Gemini paths have their own thinking handling and do not currently populate this field. Capture happens going forward — conversations saved before the persistence support was added will not retroactively gain reasoning content on reload.</p>
-<h2 id="openai-responses-api">OpenAI Responses API</h2>
-<p>OpenAI's GPT-5.6 family (Sol, Terra, Luna) and every newer family are the one case where reasoning and tools cannot coexist on chat completions at all: the endpoint returns <code>400 Function tools with reasoning_effort are not supported for gpt-5.6-terra in /v1/chat/completions.</code> The documented chat-completions escape hatch is <code>reasoning_effort: "none"</code>, which turns the reasoning off. Kai instead routes those models to the Responses API, where the combination is supported -- see <a href="../multi-service/#openai-responses-api">multi-service.md</a>.</p>
-<p>On that path reasoning is not a message field but a separate <code>reasoning</code> output item, so none of the reasoning-request-mode matrix above applies. Kai reads the item's summary into the message's reasoning trace so the "Thinking" section works as usual, but does not echo reasoning items back on the next request: OpenAI recommends it, and rejects a replayed item whose following item was dropped by context trimming. The cost is that the model re-reasons across a tool round-trip instead of resuming; the benefit is that trimming can never turn a conversation into a hard 400.</p>
-<p>Reasoning summaries are only returned to accounts eligible for them, so for most users these turns display no thinking trace -- the same as OpenAI on chat completions today.</p>
-<h2 id="display-in-chat-ui">Display in chat UI</h2>
-<p>The chain-of-thought is always rendered when present. Each assistant bubble with reasoning content prepends a collapsible "Thinking" section above the answer: collapsed by default, the first line of the most recent reasoning segment shown as a preview; expanded reveals the full trace in a dim blockquote. Thinking-only turns (where the model returned reasoning but no answer, typically as a precursor to a tool call) surface as standalone reasoning bubbles while in flight; once the answer arrives, they're absorbed into the answer's grouped section so a multi-tool response shows a single "Thinking" disclosure rather than several.</p>
-<p>Reasoning is only visible on messages captured after persistence support landed, and only on the OpenAI-compatible path. Old conversations saved before persistence appear unchanged.</p>
-<h2 id="known-gaps">Known gaps</h2>
-<p>Documented here so future work has a starting point. None of these are bugs today; they are fidelity improvements:</p>
+<p>The UI should describe observable work, not claim to reveal the model's private internal thoughts. The preferred feature name is <strong>Activity</strong>, <strong>Agent Activity</strong>, or <strong>Execution trace</strong>, rather than “Show AI's thoughts”.</p>
+<h2 id="2-product-goal">2. Product goal</h2>
+<p>Give users confidence about what the agent is doing before and while it responds:</p>
 <ul>
-<li><strong>OpenRouter <code>reasoning_details[]</code></strong> — needed to preserve thought signatures for Anthropic and Gemini models routed via OpenRouter. Without them, those models lose continuity across tool calls.</li>
-<li><strong>MiniMax M2 native mode</strong> — should embed <code>&lt;think&gt;...&lt;/think&gt;</code> inside <code>content</code> rather than (or in addition to) sending a top-level field; currently the field is silently ignored.</li>
-<li><strong>MiniMax M2 split mode</strong> — alternative path uses <code>reasoning_details</code> instead.</li>
-<li><strong>Z.AI standard <code>clear_thinking: false</code></strong> — without this paired request flag, Preserved Thinking is off and our echo is a no-op.</li>
-<li><strong>Fireworks <code>reasoning_history: "preserved"</code></strong> — without this paired request flag, Fireworks does not actually preserve reasoning across turns.</li>
-<li><strong>Cerebras <code>reasoning</code> field</strong> — Cerebras uses <code>reasoning</code>, not <code>reasoning_content</code>. Mode is currently <code>NONE</code> because we have no <code>reasoning</code> field on the request DTO. Adding it would unlock GLM-4.7 multi-step on Cerebras.</li>
-<li><strong>Per-model dispatch</strong> — the reasoning request mode is per-service. Moonshot is set to <code>REASONING_CONTENT</code> because of Kimi <code>k2.6</code>, but the flag is inert for older Kimi thinking models. Per-model precision would tighten this.</li>
+<li>Which tool or MCP server was invoked?</li>
+<li>Is the operation waiting, running, completed, or failed?</li>
+<li>Did the operation require approval?</li>
+<li>What safe, useful result did it return?</li>
+<li>How long did it take, when reliable timing is available?</li>
 </ul>
-<p>Adding any of these means either adding new reasoning request modes, adding fields to the OpenAI-compatible request body, adding paired-flag plumbing on the request side, or moving to a per-model handler. None of these have been done because the current binary dispatch covers all known live-broken cases.</p>
-<h2 id="key-files">Key Files</h2>
+<p>A trace is an audit-friendly summary of runtime events. It is not a transcript of hidden reasoning.</p>
+<h2 id="3-activity-event-model">3. Activity event model</h2>
+<p>The runtime should expose a typed event stream. A conceptual event shape:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">data</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nc">AgentActivityEvent</span><span class="p">(</span>
+<span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">id</span><span class="p">:</span><span class="w"> </span><span class="kt">String</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">turnId</span><span class="p">:</span><span class="w"> </span><span class="kt">String</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">sequence</span><span class="p">:</span><span class="w"> </span><span class="kt">Long</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">kind</span><span class="p">:</span><span class="w"> </span><span class="n">ActivityKind</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">label</span><span class="p">:</span><span class="w"> </span><span class="kt">String</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">status</span><span class="p">:</span><span class="w"> </span><span class="n">ActivityStatus</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">startedAt</span><span class="p">:</span><span class="w"> </span><span class="kt">Long?</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">durationMs</span><span class="p">:</span><span class="w"> </span><span class="kt">Long?</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">toolName</span><span class="p">:</span><span class="w"> </span><span class="kt">String?</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">serverName</span><span class="p">:</span><span class="w"> </span><span class="kt">String?</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">safeSummary</span><span class="p">:</span><span class="w"> </span><span class="kt">String?</span><span class="p">,</span>
+<span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">safeOutputPreview</span><span class="p">:</span><span class="w"> </span><span class="kt">String?</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>This is a design contract, not a claim that the exact class currently exists. Adapt it to the existing runtime/event model before implementation.</p>
+<p>Suggested kinds:</p>
+<ul>
+<li><code>MODEL_STATUS</code>: thinking/streaming/waiting state without private content.</li>
+<li><code>TOOL_CALL</code>: native tool, MCP, or sandbox action.</li>
+<li><code>APPROVAL_REQUIRED</code>: user authorization needed.</li>
+<li><code>TOOL_RESULT</code>: success or failure.</li>
+<li><code>FALLBACK</code>: provider/model fallback.</li>
+<li><code>NOTICE</code>: bounded informational event.</li>
+</ul>
+<p>Suggested statuses:</p>
+<ul>
+<li><code>QUEUED</code></li>
+<li><code>RUNNING</code></li>
+<li><code>WAITING_FOR_APPROVAL</code></li>
+<li><code>SUCCEEDED</code></li>
+<li><code>FAILED</code></li>
+<li><code>CANCELLED</code></li>
+</ul>
+<p>Use stable IDs and monotonically increasing sequence numbers per turn. Streaming updates should update an existing event rather than append duplicate rows.</p>
+<h2 id="4-data-flow">4. Data flow</h2>
+<div class="highlight"><pre><span></span><code>Provider / Agent runtime
+        │
+        ├── assistant content ───────────────► Chat message
+        │
+        ├── tool-call request ───────────────► Tool policy + approval gate
+        │                                          │
+        │                                          ▼
+        │                                    MCP / native tool / sandbox
+        │                                          │
+        │                                          ▼
+        ├── activity lifecycle events ◄──── sanitized result/status
+        │
+        ▼
+ChatUiState / presentation state
+        │
+        ▼
+AgentActivityDisclosure in the assistant turn
+</code></pre></div>
+<p>Provider adapters remain responsible for provider-specific request/response formats. Runtime services remain responsible for tool execution and permissions. Composables only render immutable activity state and invoke typed user actions.</p>
+<h2 id="5-ui-behavior">5. UI behavior</h2>
+<h3 id="collapsed-state">Collapsed state</h3>
+<p>Show a compact disclosure above or adjacent to the assistant response:</p>
+<ul>
+<li>“Used Context7 · 1 tool”</li>
+<li>“Ran sandbox command · Completed”</li>
+<li>“Waiting for approval”</li>
+<li>“2 tools · 1 completed · 1 failed”</li>
+</ul>
+<p>The summary must be derived from actual events. Never infer that a tool ran from the model's prose.</p>
+<h3 id="expanded-state">Expanded state</h3>
+<p>Show an ordered timeline with:</p>
+<ul>
+<li>Tool/server name.</li>
+<li>Short sanitized action summary.</li>
+<li>Status and optional duration.</li>
+<li>Approval state.</li>
+<li>Bounded output preview or a link/action to inspect supported details.</li>
+<li>Clear error state and retry guidance where retry is safe.</li>
+</ul>
+<p>Do not dump complete environment variables, credentials, file contents, raw request headers, or unrestricted shell output into the chat timeline.</p>
+<h3 id="streaming-behavior">Streaming behavior</h3>
+<ul>
+<li>Create an activity item when the runtime begins the operation.</li>
+<li>Update it on progress/status changes.</li>
+<li>Complete it with a sanitized result.</li>
+<li>Keep the disclosure associated with its assistant turn.</li>
+<li>Preserve stable order during concurrent tool calls.</li>
+<li>Allow users to collapse the panel without cancelling the underlying operation.</li>
+<li>Cancellation must call the runtime's explicit cancellation action, not merely hide the UI.</li>
+</ul>
+<h2 id="6-privacy-and-security">6. Privacy and security</h2>
+<ul>
+<li>Treat tool names, arguments, outputs, and provider metadata as untrusted.</li>
+<li>Redact API keys, access tokens, passwords, cookies, authorization headers, and known secret patterns before presentation or persistence.</li>
+<li>Apply allowlisted summaries per tool type; do not assume arbitrary tool output is safe to display.</li>
+<li>Bound output previews by bytes/characters and provide explicit expansion only where policy permits.</li>
+<li>Do not expose hidden chain-of-thought, raw internal deliberation, or private reasoning token streams.</li>
+<li>A provider reasoning summary is not automatically safe: validate its source, format, size, and product eligibility before display.</li>
+<li>Keep user approval separate from the trace; a trace item cannot silently grant permission.</li>
+<li>Ensure logs do not leak data across conversations or users.</li>
+<li>Apply retention policy consistently to persisted activity events.</li>
+</ul>
+<h2 id="7-provider-reasoning-compatibility">7. Provider reasoning compatibility</h2>
+<p>Provider-specific reasoning fields are a transport concern, not a UI contract. Some OpenAI-compatible providers use fields such as <code>reasoning_content</code>, <code>reasoning</code>, or <code>reasoning_details</code>; other providers use distinct APIs or do not support reasoning metadata.</p>
+<p>Current code has historically used a per-service request mode to decide whether <code>reasoning_content</code> is echoed on tool round-trips. The exact provider matrix is volatile and must be revalidated against current vendor documentation and integration tests before changing it.</p>
+<p>Rules:</p>
+<ol>
+<li>Default to omitting unknown reasoning fields from outgoing requests.</li>
+<li>Echo provider-specific fields only where the provider/model contract requires or documents it.</li>
+<li>Keep provider DTO handling inside provider/network layers.</li>
+<li>Do not make UI rendering depend on the outgoing request mode.</li>
+<li>Preserve backward compatibility when reading older conversation records.</li>
+<li>Do not assume a provider's raw reasoning payload is a user-facing summary.</li>
+<li>Do not replay opaque provider signatures or reasoning metadata unless the API explicitly requires it.</li>
+</ol>
+<h3 id="openai-responses-api">OpenAI Responses API</h3>
+<p>The Responses API uses typed output items, including a distinct reasoning item/summary where available. Treat these summaries as optional provider metadata. Do not reconstruct or expose hidden reasoning from non-summary payloads. Follow the API's documented item-continuity rules when sending subsequent requests; do not blindly replay incomplete item sequences after context trimming.</p>
+<h2 id="8-existing-implementation-map">8. Existing implementation map</h2>
+<p>The repository has existing reasoning-related handling. Re-check these files on the implementation branch before changing behavior:</p>
 <table>
 <thead>
 <tr>
 <th>File</th>
-<th>Purpose</th>
+<th>Known responsibility</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>composeApp/src/commonMain/.../data/Service.kt</code></td>
-<td><code>ReasoningRequestMode</code> enum + per-service mode assignment</td>
+<td>Per-service reasoning request mode</td>
 </tr>
 <tr>
 <td><code>composeApp/src/commonMain/.../ui/chat/ChatUiState.kt</code></td>
-<td><code>History.toGroqMessageDto()</code> — gates emission of <code>reasoning_content</code> based on mode</td>
+<td>Message conversion and outgoing reasoning-field gate</td>
 </tr>
 <tr>
 <td><code>composeApp/src/commonMain/.../data/providers/OpenAIMessages.kt</code></td>
-<td>Builds the OpenAI-compatible message list and passes the service's reasoning mode into the DTO mapper</td>
+<td>OpenAI-compatible message construction</td>
 </tr>
 <tr>
 <td><code>composeApp/src/commonMain/.../data/RemoteDataRepository.kt</code></td>
-<td>Stores the received reasoning trace on assistant turns (chat-completions and Responses paths)</td>
+<td>Response handling and conversation persistence</td>
 </tr>
 <tr>
 <td><code>composeApp/src/commonMain/.../network/dtos/openaicompatible/OpenAICompatibleChatRequestDto.kt</code></td>
-<td>Request DTO with <code>@SerialName("reasoning_content")</code> on assistant messages</td>
+<td>Outgoing message DTO</td>
 </tr>
 <tr>
 <td><code>composeApp/src/commonMain/.../network/dtos/openaicompatible/OpenAICompatibleChatResponseDto.kt</code></td>
-<td>Response DTO; reads <code>reasoning_content</code> and <code>reasoning</code> and normalizes to <code>effectiveReasoning</code></td>
-</tr>
-<tr>
-<td><code>composeApp/src/commonTest/.../ui/chat/ToGroqMessageDtoReasoningTest.kt</code></td>
-<td>Guards the per-mode emission behavior</td>
+<td>Incoming reasoning metadata normalization</td>
 </tr>
 <tr>
 <td><code>composeApp/src/commonMain/.../network/dtos/openairesponses/OpenAIResponsesResponseDto.kt</code></td>
-<td>Reads the <code>reasoning</code> output item's summary on the OpenAI Responses path</td>
+<td>Responses API reasoning output parsing</td>
 </tr>
 <tr>
 <td><code>composeApp/src/commonMain/.../data/Conversation.kt</code></td>
-<td><code>Conversation.Message.reasoningContent</code> — persisted reasoning trace for round-tripping across app restarts</td>
+<td>Persisted message data</td>
 </tr>
 <tr>
 <td><code>composeApp/src/commonMain/.../ui/chat/composables/BotMessage.kt</code></td>
-<td>Renders the dim-blockquote reasoning section above the answer when <code>reasoningContent</code> is supplied</td>
+<td>Assistant response presentation</td>
 </tr>
 <tr>
 <td><code>composeApp/src/commonMain/.../ui/chat/ChatScreen.kt</code></td>
-<td>Groups all reasoning segments in a response under the answer-bearing assistant message; renders standalone thinking-only bubbles for in-flight turns</td>
+<td>Turn grouping and timeline coordination</td>
 </tr>
 </tbody>
 </table>
+<p>The map describes previously observed responsibilities; verify exact symbols and current behavior before implementation.</p>
+<h2 id="9-migration-plan">9. Migration plan</h2>
+<h3 id="step-1-audit">Step 1 — Audit</h3>
+<ul>
+<li>Inventory current tool-call lifecycle callbacks and streaming state.</li>
+<li>Identify where MCP/native/sandbox events are emitted and where they are lost.</li>
+<li>Audit persisted message schema and migration defaults.</li>
+<li>Verify current reasoning display behavior and provider-specific DTO gates.</li>
+<li>Record secret-redaction coverage.</li>
+</ul>
+<h3 id="step-2-typed-activity-state">Step 2 — Typed activity state</h3>
+<ul>
+<li>Reuse an existing runtime event model if available.</li>
+<li>Otherwise introduce a typed event model with stable IDs, turn IDs, sequence numbers, and lifecycle status.</li>
+<li>Keep event collection outside composables.</li>
+<li>Add bounded, sanitized presentation summaries.</li>
+</ul>
+<h3 id="step-3-timeline-disclosure">Step 3 — Timeline disclosure</h3>
+<ul>
+<li>Add collapsed activity summary and expanded ordered event list.</li>
+<li>Support running, waiting-for-approval, success, failure, and cancellation.</li>
+<li>Keep the response readable when activity is collapsed.</li>
+<li>Add semantics and keyboard/touch support.</li>
+</ul>
+<h3 id="step-4-persistence-and-compatibility">Step 4 — Persistence and compatibility</h3>
+<ul>
+<li>Decide whether activity events are persisted or reconstructed from existing tool-call messages.</li>
+<li>If persisted, use optional/defaulted fields and explicit serialization tests.</li>
+<li>Avoid storing sensitive raw tool output.</li>
+<li>Keep old conversations readable.</li>
+</ul>
+<h3 id="step-5-validation">Step 5 — Validation</h3>
+<ul>
+<li>Test concurrent MCP calls and out-of-order completions.</li>
+<li>Test cancellation, approval, retry, provider fallback, and streaming interruption.</li>
+<li>Test redaction with representative secrets.</li>
+<li>Verify no private reasoning text appears in the activity disclosure.</li>
+<li>Test compact and expanded layouts and screen-reader semantics.</li>
+</ul>
+<h2 id="10-acceptance-criteria">10. Acceptance criteria</h2>
+<ul>
+<li>The user can identify real tool/MCP/sandbox activity without reading private model deliberation.</li>
+<li>Events are associated with the correct assistant turn and remain correctly ordered.</li>
+<li>Running/completed/failed/approval states are accurate.</li>
+<li>Secrets and unrestricted tool output are not exposed.</li>
+<li>Provider-specific reasoning transport behavior remains isolated and regression-tested.</li>
+<li>Existing conversation persistence and historical messages remain compatible.</li>
+<li>Hiding the disclosure does not cancel runtime work.</li>
+<li>Cancellation and approval actions are explicit runtime operations.</li>
+</ul>
 
 
 
