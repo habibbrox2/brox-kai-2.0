@@ -1,139 +1,243 @@
-# Brox Kai v2.0 — Chat UI Upgrade Plan
+# Brox Kai 2.0 — Chat UI Upgrade Plan
 
-## Objective
+**Status:** Proposed implementation baseline  
+**Design direction:** 2027 AI Agent Workspace  
+**Target platforms:** Android, Desktop, Web (Compose Multiplatform)
 
-Upgrade the existing Compose Multiplatform chat interface into a clearer, more responsive workspace for conversations, AI streaming, tools, and Kai Build. The visual direction uses Midnight Navy surfaces with restrained Cyan and Electric Blue accents.
+## 1. Objective
 
-The plan preserves the current provider API, persistence layer, and `ChatActions` contract during the first UI migration.
+Evolve the existing chat-first interface into a responsive AI Agent Workspace with a compact agent HUD, a multimodal composer, readable execution activity, schema-driven generative UI, and a dockable coding workspace.
 
-## Current structure
+The redesign must preserve existing provider integrations, conversation persistence, ChatViewModel/ChatActions ownership, MCP and native tool execution, sandbox boundaries, attachments, speech output, interactive mode, and Kai Build/editor workflows.
 
-The main UI is in `composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/chat/`:
+This is a presentation and interaction migration first. Backend capabilities must be integrated only where the corresponding runtime contract already exists or is separately implemented and tested. Never ship decorative controls that imply unavailable functionality.
 
-- `ChatScreen.kt` owns the current chat, interactive mode, sandbox visibility, timeline, composer, banners, and overlays.
-- `ChatUiState` exposes immutable conversation, loading, service, file, and notification state.
-- `ChatViewModel` remains the owner of business actions and provider interactions.
-- `QuestionInput`, `BotMessage`, `UserMessage`, `TopBar`, and `EmptyState` already provide useful component boundaries.
-- Screenshot tests cover several chat states across phone, tablet, and desktop targets.
+## 2. Existing architecture and constraints
 
-## Target experience
+The current UI is Kotlin Multiplatform + Compose, not a React application. The shared implementation lives under:
 
-### Chat shell
+`composeApp/src/commonMain/kotlin/com/inspiredandroid/kai/ui/chat/`
 
-- Use Midnight Navy as the dark workspace foundation, with Cyan and Electric Blue reserved for primary actions, active states, and AI activity.
-- Keep the conversation readable in a centered column of roughly 720–800dp.
-- On expanded windows, show a conversation rail, primary chat timeline, and an optional tool or sandbox panel.
-- On compact windows, open conversation history and tools in a bottom sheet or full-screen overlay.
-- Keep the top bar focused on new conversation, history, model/service selection, workspace controls, and settings.
+Known responsibilities:
 
-### Empty conversation state
+- `ChatScreen.kt`: connects chat state/actions and coordinates timeline, composer, overlays, interactive mode, and sandbox visibility.
+- `ChatUiState`: immutable presentation of conversation, loading, service, file, and notification state.
+- `ChatViewModel` and `ChatActions`: own business actions and provider/runtime interactions.
+- `TopBar`, `QuestionInput`, `BotMessage`, `UserMessage`, `EmptyState`, and `ChatTimeline`: existing presentation boundaries.
+- `ChatShell`: adaptive layout for compact and expanded windows.
+- `kai-ui`: existing JSON-based interactive UI format and Compose renderer.
+- Existing screenshot tests cover multiple chat states and device/window sizes.
 
-- Retain the Brox Kai loading mark as the visual anchor.
-- Add quick-start cards for Write, Code, Research, and Build.
-- Surface recent conversations and commonly used workflows when data is available.
-- Make Chat, Build, Design, and Tools easy to enter from one place.
-- Explain provider limitations only where they affect an action, such as unavailable interactive mode for an on-device model.
+Before implementation, re-check these paths on the selected base commit. Treat this section as an architecture map, not permission to move business logic into composables.
 
-### Conversation timeline
+## 3. Experience principles
 
-- Render user messages as compact Electric Blue bubbles with attachment previews.
-- Render assistant messages in a wider, high-readability content surface with deliberate markdown and code-block spacing.
-- Represent thinking, tool execution, fallback, errors, and streaming as distinct status cards rather than ordinary message text.
-- Add a streaming cursor or progress row with a clear Cancel action.
-- Keep Copy and Retry actions; add Share through a platform-appropriate UI action.
-- Reveal message actions on hover for desktop and through long press or an overflow control for compact touch layouts.
+1. **Chat-first:** the conversation remains the primary workspace and route.
+2. **Agent-aware, not noisy:** status is visible at a glance; detailed activity is available on demand.
+3. **Readable over decorative:** content hierarchy, contrast, and predictable scrolling take priority over blur and glow.
+4. **Progressive disclosure:** advanced controls live in compact menus, sheets, or docked panels.
+5. **Responsive by design:** compact phones, tablets, desktop, and web use one shared adaptive policy.
+6. **Capability honesty:** show voice, file, MCP, sandbox, and terminal actions only when available in the active platform/runtime.
+7. **Safe generative UI:** model output is untrusted data; render only supported, validated component schemas.
+8. **Accessible motion:** every animation has a reduced-motion/static alternative.
 
-### Composer
+## 4. Visual system
 
-- Keep a stable bottom composer with multi-line text, attachment tray, slash-command results, and the selected service.
-- Clearly distinguish Send from Stop while a response is streaming.
-- Provide a visible desktop drop zone while files are dragged over the conversation.
-- Ensure the composer remains above the mobile keyboard and does not obscure the latest message.
-- Preserve draft text, selected files, and service selection per conversation where appropriate.
+### Palette and surfaces
 
-## Target Compose structure
+Initial design tokens (subject to contrast and screenshot validation):
+
+| Token | Value | Usage |
+|---|---|---|
+| `background` | `#090A0F` | OLED/deep workspace background |
+| `surface` | `rgba(255,255,255,0.04)` | Subtle elevated surface |
+| `surfaceElevated` | `#171A23` | Cards, sheets, panels |
+| `borderSubtle` | `rgba(255,255,255,0.08)` | Glass surface outline |
+| `accentCyan` | `#00D7E8` | Primary action and active state |
+| `accentViolet` | `#8A63F6` | Agent/tool activity |
+| `success` | semantic green token | Connected/completed |
+| `warning` | semantic amber token | Waiting/attention |
+| `danger` | semantic red token | Failure/destructive action |
+
+Use semantic theme tokens rather than scattering literal colors. Light theme remains supported. OLED black is an explicit theme/surface choice, not a forced replacement for all dark surfaces.
+
+### Shape, typography, and motion
+
+- Compact controls: 12–16dp radius; cards and sheets: 18–24dp radius.
+- Use the existing bundled/platform-safe typography first; introduce Plus Jakarta Sans/Inter Display or JetBrains Mono only after licensing, packaging, and cross-platform fallback are checked.
+- Terminal output uses a monospace typeface.
+- Motion uses short, interruptible transitions; avoid perpetual animation except a restrained active-state pulse.
+- Glass effects must degrade gracefully where blur is unsupported or expensive. Prefer translucent surfaces and borders over a blur dependency.
+
+## 5. Core screen specifications
+
+### 5.1 Agent HUD header
+
+Replace the oversized floating header and vertical “AI Agent” badge with a compact adaptive HUD.
+
+- **Leading:** history/sidebar toggle and compact Brox Kai brand.
+- **Center:** current agent state: Idle, Thinking, Running tool, Waiting, Connected, or Error.
+- **Trailing:** available workspace/terminal toggle and Settings.
+- Use a small dot/orb plus concise status text; never use a tall vertical badge.
+- Tool status may show a short safe label such as “Calling Context7” or “Running command”.
+- On narrow screens, collapse secondary actions into an overflow menu.
+- The header must not consume the status-bar/system-inset area or overlap content.
+
+### 5.2 Home / empty conversation
+
+- Keep the Brox Kai identity mark as the visual anchor.
+- Use a concise welcome headline and a compact, horizontally scrollable row of contextual quick-action chips.
+- Suggested chips: Resume RPG, Ask a question, Run sandbox check, Daily reminders. Render only actions backed by current state/capabilities.
+- Avoid large fixed quick-action cards that push the composer below the fold.
+- Keep the composer visible above the keyboard and system navigation area.
+
+### 5.3 Conversation timeline
+
+- Keep user messages compact and right-aligned.
+- Render assistant content in a readable, width-constrained response column; avoid nested oversized cards around every markdown block.
+- Dynamic UI blocks may own their own visual surface, but must align to the same content column and avoid horizontal overflow.
+- Separate answer content from status/activity rows.
+- Preserve streaming, cancellation, retry, copy, share, and speech actions where supported.
+- Add a consistent message action bar with touch-friendly hit targets.
+- Preserve scroll anchoring: streaming updates should not unexpectedly pull the user away when they have scrolled upward.
+- Long code, tables, images, and dynamic widgets must be independently scrollable only when necessary.
+
+### 5.4 Agent activity / execution trace
+
+Provide a collapsible, user-visible activity disclosure associated with the relevant assistant turn.
+
+Examples:
+- “Used Context7”
+- “Called MCP: filesystem”
+- “Ran sandbox command”
+- “Waiting for tool result”
+- “Tool completed” / “Tool failed”
+
+Each activity item may expose sanitized arguments, duration, status, and bounded output where the runtime permits. Redact secrets, credentials, private file contents, and sensitive command arguments. Do not expose hidden chain-of-thought or private internal reasoning. A provider-supplied reasoning summary, if any, must be treated as a separate optional data type and shown only when the provider contract and product policy allow it; it is not a substitute for execution logs.
+
+### 5.5 Universal action composer
+
+The bottom composer becomes a compact capsule with capability-aware controls:
+
+- **Add (+):** camera, gallery, and file picker where supported.
+- **Draft field:** multiline text, clear focus and selection behavior.
+- **Slash (/):** searchable commands, skills, and MCP tool shortcuts that the active runtime actually exposes.
+- **Voice:** show only when a working speech-to-text/voice input path is available on the current target.
+- **Send/Stop:** mutually exclusive, explicit states.
+- Show attachment previews with remove/retry affordances.
+- Preserve draft and selected attachments when opening/closing sheets or workspace panels.
+- Desktop: Enter sends; Shift+Enter inserts a newline, unless user-configurable behavior already exists.
+- Android: IME action and keyboard insets must be correct.
+
+### 5.6 Terminal and workspace
+
+- Provide a dockable bottom sheet on compact screens and a split panel on expanded screens.
+- Keep terminal process execution and sandbox permissions in existing runtime/platform layers.
+- Offer “Open in terminal” only for commands/scripts that are safe and available to hand off.
+- Use deep OLED terminal surface, monospace text, selectable output, copy action, and syntax highlighting where already supported.
+- Clearly distinguish shell availability, sandbox state, and execution permissions.
+- Do not imply that Android, Web, and Desktop have identical shell capabilities.
+
+### 5.7 Settings and service management
+
+- Use compact horizontally scrollable category navigation on narrow screens and a rail/sidebar on expanded screens.
+- Keep selected category visible and provide clear focus/selection states.
+- Service cards should prioritize provider/model, connection status, and relevant diagnostics. Show latency and token usage only when measured by the runtime; never fabricate metrics.
+- Toggles must use shared semantic components and accessible labels.
+- Avoid adding a second navigation system that duplicates the app sidebar.
+
+## 6. Compose component boundaries
+
+Keep shared UI in `commonMain`. Suggested presentation boundaries (adapt to existing packages rather than duplicating them):
 
 ```text
-ChatScreen
+ui/chat/
+├── ChatScreen
 ├── ChatShell
-│   ├── ChatHeader
-│   ├── ConversationRail
+├── agenthud/
+│   ├── AgentHud
+│   ├── AgentStatusIndicator
+│   └── AgentActivityDisclosure
+├── timeline/
 │   ├── ChatTimeline
-│   │   ├── UserMessageCard
-│   │   ├── AssistantMessageCard
-│   │   ├── ToolActivityCard
-│   │   └── StreamingResponseRow
-│   ├── ChatComposer
-│   └── ChatOverlays
-│       ├── HistorySheet
-│       ├── SandboxPanel
-│       └── SnackbarHost
+│   ├── UserMessage
+│   ├── BotMessage
+│   └── MessageActionRow
+├── composer/
+│   ├── UniversalComposer
+│   ├── AttachmentTray
+│   └── SlashCommandSheet
+├── workspace/
+│   ├── WorkspaceHost
+│   ├── TerminalDock
+│   └── EditorPanel
+└── components/
+    ├── GlassSurface
+    ├── StatusPill
+    └── QuickActionChip
 ```
 
-`ChatScreen` should remain the route that connects `ChatViewModel` to the UI. Shared presentation components should live in `commonMain`; platform-specific sharing and system integration should stay in their platform source sets.
+These are logical boundaries, not a mandate to move every existing file. Prefer incremental extraction with no duplicate state owners.
 
-## State model
+## 7. State and runtime contracts
 
-Keep business state in `ChatUiState` and `ChatActions`. Introduce a focused presentation state holder for UI-only concerns:
+- `ChatViewModel` remains the owner of conversation and runtime actions.
+- `ChatUiState` exposes immutable state required by the UI.
+- Composables render state and invoke typed callbacks; they do not call providers, execute shell commands, or persist messages.
+- Add UI-only state for expanded activity disclosure, active dock, composer menu, and local animation only when it cannot be derived from existing state.
+- Tool activity must come from actual runtime events, not inferred from assistant prose.
+- Keep execution event IDs stable so streaming updates update the same row instead of duplicating it.
+- Keep event payloads bounded and redact secrets before they reach presentation or persistence layers.
 
-- active pane or overlay;
-- composer draft and selection;
-- scroll-to-latest affordance;
-- current message action menu;
-- drag-over state;
-- local animation state.
+## 8. Migration phases
 
-Do not move provider calls, message persistence, text-to-speech orchestration, or tool execution into composables.
+### Phase 1 — Foundation and theme
+1. Audit current theme tokens, component usage, and screenshot fixtures.
+2. Add semantic OLED/glass tokens and reusable surface/status primitives.
+3. Verify light, dark, and OLED themes, contrast, large font scale, and reduced motion.
+4. Capture baseline and updated screenshots.
 
-## Implementation phases
+### Phase 2 — Core shell and composer
+1. Redesign the top bar as adaptive Agent HUD.
+2. Replace oversized empty-state cards with contextual quick chips.
+3. Refactor composer into capability-aware attachment, slash, voice, draft, and send/stop regions.
+4. Preserve draft, keyboard, and attachment behavior.
 
-### Phase 1 — Foundations
+### Phase 3 — Generative UI and activity
+1. Stabilize the existing kai-ui schema and renderer.
+2. Add safe component registry/versioning and validation where needed.
+3. Add runtime-backed activity trace disclosure.
+4. Improve game/recipe/data widget layouts and response actions.
 
-1. Define shared tokens for page surfaces, elevated surfaces, borders, status colors, spacing, and message shapes.
-2. Add reusable components for action buttons, status pills, message action menus, and panel headings.
-3. Create previews or screenshot fixtures for dark, light, and OLED themes.
+### Phase 4 — Terminal and settings
+1. Add dock/bottom-sheet workspace presentation around existing terminal/editor capabilities.
+2. Add safe command handoff.
+3. Refine settings navigation and service diagnostics.
+4. Test platform capability differences.
 
-### Phase 2 — Responsive shell
+### Phase 5 — Quality and rollout
+1. Run unit, serialization, screenshot, and UI regression tests.
+2. Build Android, Desktop, and Web targets supported by the current project.
+3. Validate accessibility, performance, process lifecycle, and keyboard/IME behavior.
+4. Document known platform gaps and prepare a reviewable PR.
 
-1. Split the regular chat area out of `ChatScreen.kt` into `ChatShell`, `ChatHeader`, `ChatTimeline`, `ChatComposer`, and overlays.
-2. Centralize window-width decisions so compact, medium, and expanded layouts use one adaptive policy.
-3. Implement the desktop conversation rail and optional sandbox/tool panel.
-4. Preserve history sheet behavior on compact screens.
+## 9. Acceptance criteria
 
-### Phase 3 — Timeline and AI states
+- No vertical AI Agent badge or oversized legacy header remains.
+- Header status is accurate and reflects runtime state.
+- Composer controls are capability-backed and preserve draft/attachments.
+- Timeline alignment is stable during streaming and manual scrolling.
+- Activity trace reports actual tool events and never leaks secrets or hidden reasoning.
+- Dynamic UI remains schema-validated and safe for untrusted model output.
+- Terminal docking does not change sandbox permissions or process ownership.
+- Settings work on compact and expanded layouts without tab overflow.
+- Existing providers, persistence, MCP, sandbox, interactive mode, and editor behavior remain functional.
+- Android/Desktop/Web builds and applicable tests pass.
 
-1. Refresh user and assistant message cards.
-2. Add dedicated visual states for streaming, tool execution, reasoning, fallback, retry, and errors.
-3. Add Copy, Retry, Share, and speech actions in a consistent message action row.
-4. Ensure long markdown, code, tables, attachments, and dynamic UI blocks remain readable.
+## 10. Non-goals
 
-### Phase 4 — Composer and entry states
-
-1. Refresh the composer with selected-model context, attachment handling, and clear Send/Stop behavior.
-2. Add quick-start cards to the empty state.
-3. Improve slash-command discovery and attachment removal affordances.
-4. Preserve keyboard shortcuts: Enter sends on desktop, Shift+Enter creates a new line.
-
-### Phase 5 — Accessibility and quality
-
-1. Add content descriptions for all icon-only actions, including Send, Stop, Attach, and Share.
-2. Verify a minimum 48dp touch target and visible keyboard focus state.
-3. Check contrast in light, dark, and OLED themes.
-4. Validate large font scale, mobile keyboard behavior, compact windows, and expanded desktop layouts.
-5. Extend screenshot coverage for empty, streaming, error, attachments, tool execution, and expanded-panel states.
-
-## Acceptance criteria
-
-- The same conversation can be used comfortably on phone, tablet, desktop, and web layouts.
-- The timeline makes user, assistant, streaming, tool, and error states immediately distinguishable.
-- The composer never loses the draft when panels are toggled or the layout adapts.
-- Interactive mode, sandbox, Kai Build, text-to-speech, attachments, and existing provider behavior continue to work.
-- Existing screenshot tests are retained and new visual states are covered.
-- No provider, persistence, or tool business logic is moved into composables.
-
-## Risks and controls
-
-- `ChatScreen.kt` currently coordinates several concerns; split it in small, behavior-preserving steps.
-- Share behavior requires platform-specific integration, so introduce it behind a shared UI callback.
-- Desktop panel changes can affect compact layouts; test each shell state across the existing screenshot matrix.
-- `rememberSaveable` behavior differs across Compose targets; persist only UI state that has a suitable cross-platform strategy.
+- Replacing Compose with React/TypeScript.
+- Rewriting provider APIs or conversation persistence as part of a visual phase.
+- Executing arbitrary model-generated code in the UI process.
+- Displaying private chain-of-thought as a user-facing “thought log”.
+- Showing fake latency, token usage, voice, camera, or terminal controls.
