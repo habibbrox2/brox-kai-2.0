@@ -1,3 +1,17 @@
+## Brox Kai v2.0 — 2027 Premium AI Agent UI Migration refinements
+
+### Changed
+- Added a compact Agent HUD layout for narrow chat workspaces; secondary actions move into an overflow menu while provider/model selection remains reachable.
+- Standardized primary chat controls, provider/model picker rows, and assistant message actions on 48dp minimum touch targets.
+- Replaced hardcoded Premium Dark welcome-state colors and settings status colors with shared semantic design tokens.
+- Reduced-motion mode now renders static agent orbs without starting infinite pulse animations.
+
+### Tests
+- Added a compact HUD breakpoint regression test at 720dp.
+- Retained existing premium-dark home, conversation, settings, and sandbox screenshot fixtures.
+
+---
+
 ## Brox Kai v2.0 — One Chat Interface (Interactive UI Merged)
 
 ### Added
