@@ -99,6 +99,7 @@ import com.inspiredandroid.kai.ui.chat.composables.EmptyState
 import com.inspiredandroid.kai.ui.chat.composables.ErrorMessage
 import com.inspiredandroid.kai.ui.chat.composables.HeartbeatBanner
 import com.inspiredandroid.kai.ui.chat.composables.PendingSmsBanners
+import com.inspiredandroid.kai.ui.chat.composables.premiumChatBackdrop
 import com.inspiredandroid.kai.ui.chat.composables.QuestionInput
 import com.inspiredandroid.kai.ui.chat.composables.TopBar
 import com.inspiredandroid.kai.ui.chat.composables.UserMessage
@@ -493,6 +494,10 @@ private fun ChatModeScreen(
                                     EmptyState(
                                         modifier = Modifier.fillMaxWidth().weight(1f).widthIn(max = 820.dp),
                                         isUsingSharedKey = uiState.showPrivacyInfo,
+                                        isGenerating = uiState.isLoading,
+                                        isShellExecuting = isShellExecuting,
+                                        isSpeaking = uiState.isSpeaking,
+                                        isSandboxAvailable = isSandboxAvailable,
                                         onQuickStart = { prompt -> uiState.actions.ask(prompt) },
                                     )
                                 } else {
@@ -582,16 +587,8 @@ private fun ChatModeScreen(
                         }
                     }
                 },
-                // Use subtle neural minimal gradient background
                 modifier = Modifier
-                    .background(
-                        brush = androidx.compose.ui.graphics.Brush.verticalGradient(
-                            colors = listOf(
-                                MaterialTheme.colorScheme.surface,
-                                Color(0xFF1E293B),
-                            ),
-                        ),
-                    )
+                    .premiumChatBackdrop()
                     .navigationBarsPadding()
                     .statusBarsPadding()
                     .imePadding(),

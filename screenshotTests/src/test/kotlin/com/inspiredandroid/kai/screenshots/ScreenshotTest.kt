@@ -79,11 +79,12 @@ class ScreenshotTest {
     }
 
     @Test
-    fun chatEmptyState_light() {
-        paparazzi.snap(LightColorScheme) {
+    fun chatEmptyState_premiumDark() {
+        paparazzi.snap(DarkColorScheme) {
             ChatScreenContent(
                 uiState = ScreenshotTestData.chatEmptyState,
                 FakeTextToSpeechInstance(),
+                isSandboxAvailable = true,
             )
         }
     }

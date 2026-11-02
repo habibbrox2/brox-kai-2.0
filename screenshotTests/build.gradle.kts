@@ -103,7 +103,7 @@ tasks.register("updateScreenshots") {
             buildList<Pair<String, java.io.File>> {
                 // Fastlane-style phone screenshots from ScreenshotTest → screenshots/
                 mapOf(
-                    "ScreenshotTest_chatEmptyState_light" to "mobile-1.png",
+                    "ScreenshotTest_chatEmptyState_premiumDark" to "mobile-1.png",
                     "ScreenshotTest_chatWithMessages_dark" to "mobile-2.png",
                     "ScreenshotTest_chatWithDynamicUi_light" to "mobile-3.png",
                     "ScreenshotTest_settingsFree_dark" to "mobile-4.png",

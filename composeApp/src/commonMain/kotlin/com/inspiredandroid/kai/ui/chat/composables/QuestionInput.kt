@@ -369,7 +369,7 @@ fun QuestionInput(
 
         val focusRequester = remember { FocusRequester() }
         val maxComposerHeight = 240.dp
-        val composerShape = RoundedCornerShape(DesignTokens.RadiusCard)
+        val composerShape = RoundedCornerShape(28.dp)
 
         Box(
             modifier = Modifier
@@ -381,9 +381,15 @@ fun QuestionInput(
                     .fillMaxWidth()
                     .defaultMinSize(minHeight = 56.dp)
                     .heightIn(min = 56.dp, max = maxComposerHeight)
+                    .shadow(
+                        elevation = 12.dp,
+                        shape = composerShape,
+                        ambientColor = DesignTokens.PrimaryCyan.copy(alpha = 0.14f),
+                        spotColor = DesignTokens.AgentViolet.copy(alpha = 0.20f),
+                    )
                     .clip(composerShape)
-                    .background(DesignTokens.SurfaceElevated, composerShape)
-                    .border(BorderStroke(1.dp, DesignTokens.BorderSubtle), composerShape),
+                    .background(DesignTokens.SurfaceDark.copy(alpha = 0.94f), composerShape)
+                    .border(BorderStroke(1.dp, DesignTokens.PrimaryCyan.copy(alpha = 0.48f)), composerShape),
             ) {
                 TextField(
                     value = textState,

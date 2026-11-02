@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.inspiredandroid.kai.BackIcon
 import com.inspiredandroid.kai.data.ServiceEntry
+import com.inspiredandroid.kai.prefersReducedMotion
 import com.inspiredandroid.kai.ui.KaiTypography
 import com.inspiredandroid.kai.ui.chat.ChatActions
 import com.inspiredandroid.kai.ui.chat.ChatSpacing
@@ -86,8 +87,8 @@ internal fun AgentHud(
     onGoBack: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
-    val hudBackground = DesignTokens.SurfaceElevated
-    val hudBorder = BorderStroke(1.dp, DesignTokens.BorderSubtle)
+    val hudBackground = DesignTokens.SurfaceDark.copy(alpha = 0.94f)
+    val hudBorder = BorderStroke(1.dp, DesignTokens.PrimaryCyan.copy(alpha = 0.48f))
     val hudShape = RoundedCornerShape(DesignTokens.RadiusHud)
 
     Box(
@@ -168,7 +169,7 @@ internal fun AgentHud(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.weight(1f, fill = false).padding(horizontal = 4.dp),
+                    modifier = Modifier.weight(1f).padding(horizontal = 10.dp),
                 ) {
                     AgentStatusOrb(
                         isGenerating = isGenerating,
@@ -177,6 +178,19 @@ internal fun AgentHud(
                     )
 
                     Spacer(Modifier.width(8.dp))
+
+                    Text(
+                        text = agentStatusLabel(
+                            isGenerating = isGenerating,
+                            isShellExecuting = isShellExecuting,
+                            isSpeaking = isSpeaking,
+                        ),
+                        style = KaiTypography.titleSmall,
+                        color = DesignTokens.PrimaryText,
+                        maxLines = 1,
+                    )
+
+                    Spacer(Modifier.width(6.dp))
 
                     if (services.isNotEmpty()) {
                         ServiceSelector(
@@ -253,10 +267,11 @@ fun AgentStatusOrb(
     isSpeaking: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val infiniteTransition = rememberInfiniteTransition()
+    val reducedMotion = prefersReducedMotion()
+    val infiniteTransition = rememberInfiniteTransition(label = "hudStatus")
     val pulseScale by infiniteTransition.animateFloat(
         initialValue = 0.82f,
-        targetValue = 1.25f,
+        targetValue = if (reducedMotion) 0.82f else 1.25f,
         animationSpec = infiniteRepeatable(
             animation = tween(
                 durationMillis = if (isGenerating || isShellExecuting) 650 else 1800,
@@ -264,6 +279,7 @@ fun AgentStatusOrb(
             ),
             repeatMode = RepeatMode.Reverse,
         ),
+        label = "hudStatusPulse",
     )
 
     val orbColor = when {
@@ -292,4 +308,15 @@ fun AgentStatusOrb(
                 .background(orbColor),
         )
     }
+}
+
+private fun agentStatusLabel(
+    isGenerating: Boolean,
+    isShellExecuting: Boolean,
+    isSpeaking: Boolean,
+): String = when {
+    isShellExecuting -> "Running"
+    isGenerating -> "Thinking"
+    isSpeaking -> "Speaking"
+    else -> "Idle"
 }

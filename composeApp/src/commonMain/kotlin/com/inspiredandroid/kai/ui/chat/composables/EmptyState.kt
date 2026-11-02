@@ -1,11 +1,5 @@
 package com.inspiredandroid.kai.ui.chat.composables
 
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -26,13 +20,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Terminal
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -42,7 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.LinkAnnotation
@@ -59,10 +50,8 @@ import com.inspiredandroid.kai.ui.chat.ChatSpacing
 import com.inspiredandroid.kai.ui.handCursor
 import com.inspiredandroid.kai.ui.theme.DesignTokens
 import kai.composeapp.generated.resources.Res
-import kai.composeapp.generated.resources.logo
 import kai.composeapp.generated.resources.privacy_agree_prefix
 import kai.composeapp.generated.resources.privacy_policy
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -76,6 +65,10 @@ import org.jetbrains.compose.resources.stringResource
 internal fun EmptyState(
     modifier: Modifier,
     isUsingSharedKey: Boolean,
+    isGenerating: Boolean,
+    isShellExecuting: Boolean,
+    isSpeaking: Boolean,
+    isSandboxAvailable: Boolean,
     onQuickStart: ((String) -> Unit)? = null,
 ) {
     Column(
@@ -83,8 +76,14 @@ internal fun EmptyState(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        // ─── Ambient Glow Brand Presentation ───
-        BroxKaiHeroBrand()
+        AgentOrb(
+            state = when {
+                isShellExecuting -> AgentPresentationState.Executing
+                isGenerating -> AgentPresentationState.Generating
+                isSpeaking -> AgentPresentationState.Speaking
+                else -> AgentPresentationState.Idle
+            },
+        )
 
         Spacer(Modifier.height(ChatSpacing.lg))
 
@@ -93,7 +92,7 @@ internal fun EmptyState(
             modifier = Modifier.padding(horizontal = 16.dp),
             style = KaiTypography.displaySmall,
             textAlign = TextAlign.Center,
-            color = DesignTokens.PrimaryText,
+            color = Color(0xFFF5F7FF),
             fontWeight = FontWeight.Bold,
             letterSpacing = 0.5.sp,
         )
@@ -101,16 +100,19 @@ internal fun EmptyState(
         Spacer(Modifier.height(ChatSpacing.xs))
 
         Text(
-            text = "Premium AI Agent Workspace • প্রস্তুত আপনার সহায়তায়",
+            text = "How can I help you today?",
             modifier = Modifier.padding(horizontal = 16.dp),
             style = KaiTypography.titleMedium,
             textAlign = TextAlign.Center,
-            color = DesignTokens.SecondaryText,
+            color = Color(0xFFB5C3EC),
         )
 
         if (onQuickStart != null) {
             Spacer(Modifier.height(ChatSpacing.xl))
-            QuickStartCards(onQuickStart = onQuickStart)
+            QuickStartCards(
+                isSandboxAvailable = isSandboxAvailable,
+                onQuickStart = onQuickStart,
+            )
         }
 
         if (isUsingSharedKey) {
@@ -143,105 +145,49 @@ internal fun EmptyState(
     }
 }
 
-/**
- * BK Monogram with smooth ambient radial aura glow.
- */
-@Composable
-private fun BroxKaiHeroBrand() {
-    val infiniteTransition = rememberInfiniteTransition()
-    val glowScale by infiniteTransition.animateFloat(
-        initialValue = 0.92f,
-        targetValue = 1.08f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 2400, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse,
-        ),
-    )
-
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.size(120.dp),
-    ) {
-        // Radial ambient glow
-        Box(
-            modifier = Modifier
-                .size(108.dp * glowScale)
-                .clip(CircleShape)
-                .background(
-                    Brush.radialGradient(
-                        colors = listOf(
-                            DesignTokens.BrandCyan.copy(alpha = 0.25f),
-                            DesignTokens.AgentViolet.copy(alpha = 0.12f),
-                            Color.Transparent,
-                        ),
-                    ),
-                ),
-        )
-
-        // Monogram Icon Box
-        Box(
-            modifier = Modifier
-                .size(76.dp)
-                .clip(RoundedCornerShape(DesignTokens.RadiusCard))
-                .background(DesignTokens.SurfaceElevated)
-                .border(BorderStroke(1.dp, DesignTokens.BorderSubtle), RoundedCornerShape(DesignTokens.RadiusCard)),
-            contentAlignment = Alignment.Center,
-        ) {
-            Icon(
-                painter = painterResource(Res.drawable.logo),
-                contentDescription = "Brox Kai Logo",
-                tint = Color.Unspecified,
-                modifier = Modifier.size(54.dp),
-            )
-        }
-    }
-}
-
 private data class QuickStartItem(
     val label: String,
-    val subtext: String,
     val prompt: String,
     val icon: ImageVector,
-    val isProminent: Boolean = false,
-    val accentColor: Color? = null,
+    val accentColor: Color,
 )
 
 @Composable
-private fun QuickStartCards(onQuickStart: (String) -> Unit) {
+private fun QuickStartCards(
+    isSandboxAvailable: Boolean,
+    onQuickStart: (String) -> Unit,
+) {
     val items = listOf(
         QuickStartItem(
-            label = "Ask a Question",
-            subtext = "প্রশ্ন জিজ্ঞাসা করো",
+            label = "New Chat",
             prompt = "তুমি কে এবং তোমার মডেলের নাম কি?",
             icon = Icons.Default.Edit,
-            isProminent = true,
             accentColor = DesignTokens.PrimaryCyan,
         ),
         QuickStartItem(
-            label = "Resume Project / RPG",
-            subtext = "প্রজেক্ট চালনা করো",
+            label = "Resume Project",
             prompt = "Continue with my current project and summarize progress",
             icon = Icons.Default.Code,
-            isProminent = true,
             accentColor = DesignTokens.AgentViolet,
         ),
         QuickStartItem(
-            label = "Sandbox Check",
-            subtext = "স্যান্ডবক্স কমান্ড রান করো",
-            prompt = "Check sandbox environment and available tools",
-            icon = Icons.Default.Terminal,
-            isProminent = false,
-            accentColor = DesignTokens.BrandCyan,
-        ),
-        QuickStartItem(
             label = "Daily Reminders",
-            subtext = "রিমাইন্ডার ও কাজ",
             prompt = "Set a reminder for me in 15 minutes",
             icon = Icons.Default.Build,
-            isProminent = false,
             accentColor = DesignTokens.Success,
         ),
-    )
+    ) + if (isSandboxAvailable) {
+        listOf(
+            QuickStartItem(
+                label = "Run Sandbox",
+                prompt = "Check sandbox environment and available tools",
+                icon = Icons.Default.Terminal,
+                accentColor = DesignTokens.BrandCyan,
+            ),
+        )
+    } else {
+        emptyList()
+    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -253,7 +199,7 @@ private fun QuickStartCards(onQuickStart: (String) -> Unit) {
             QuickStartCard(
                 item = item,
                 onClick = { onQuickStart(item.prompt) },
-                modifier = Modifier.widthIn(min = 200.dp, max = 260.dp),
+                modifier = Modifier.widthIn(min = 156.dp, max = 220.dp),
             )
         }
     }
@@ -268,21 +214,18 @@ private fun QuickStartCard(
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
     val cardAccent = item.accentColor ?: DesignTokens.PrimaryCyan
-    val cardBg = DesignTokens.SurfaceElevated
-    val cardShape = RoundedCornerShape(DesignTokens.RadiusCard)
+    val cardBg = Color(0xD6111D3D)
+    val cardShape = RoundedCornerShape(DesignTokens.RadiusPill)
 
     val cardBorder = if (isHovered) {
         BorderStroke(1.dp, cardAccent)
     } else {
-        BorderStroke(1.dp, DesignTokens.BorderSubtle)
+        BorderStroke(1.dp, DesignTokens.BorderSoft)
     }
-
-    val cardPadding = if (item.isProminent) 16.dp else ChatSpacing.md
-    val minHeight = if (item.isProminent) 76.dp else 60.dp
 
     Box(
         modifier = modifier
-            .defaultMinSize(minHeight = minHeight)
+            .defaultMinSize(minHeight = 56.dp)
             .handCursor()
             .hoverable(interactionSource)
             .clickable(onClick = onClick)
@@ -291,7 +234,7 @@ private fun QuickStartCard(
             .border(cardBorder, cardShape),
     ) {
         Row(
-            modifier = Modifier.padding(cardPadding),
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(ChatSpacing.sm),
         ) {
@@ -299,20 +242,13 @@ private fun QuickStartCard(
                 imageVector = item.icon,
                 contentDescription = item.label,
                 tint = if (isHovered) cardAccent else cardAccent.copy(alpha = 0.85f),
-                modifier = Modifier.size(if (item.isProminent) 24.dp else 20.dp),
+                modifier = Modifier.size(24.dp),
             )
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text(
-                    text = item.label,
-                    style = if (item.isProminent) KaiTypography.labelLarge.copy(fontWeight = FontWeight.Bold) else KaiTypography.labelLarge,
-                    color = DesignTokens.PrimaryText,
-                )
-                Text(
-                    text = item.subtext,
-                    style = KaiTypography.bodySmall,
-                    color = DesignTokens.SecondaryText,
-                )
-            }
+            Text(
+                text = item.label,
+                style = KaiTypography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
+                color = DesignTokens.PrimaryText,
+            )
         }
     }
 }
