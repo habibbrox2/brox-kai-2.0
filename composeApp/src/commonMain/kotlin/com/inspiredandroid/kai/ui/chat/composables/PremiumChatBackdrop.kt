@@ -10,6 +10,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -28,7 +29,6 @@ import com.inspiredandroid.kai.ui.theme.DesignTokens
 import kai.composeapp.generated.resources.Res
 import kai.composeapp.generated.resources.logo
 import org.jetbrains.compose.resources.painterResource
-import androidx.compose.material3.Icon
 
 /** Presentation state only; chat runtime state continues to be owned by ChatUiState. */
 internal enum class AgentPresentationState {
