@@ -419,20 +419,24 @@ fun AgentStatusOrb(
     isSpeaking: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val reducedMotion = prefersReducedMotion()
-    val infiniteTransition = rememberInfiniteTransition(label = "hudStatus")
-    val pulseScale by infiniteTransition.animateFloat(
-        initialValue = 0.82f,
-        targetValue = if (reducedMotion) 0.82f else 1.25f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = if (isGenerating || isShellExecuting) 650 else 1800,
-                easing = FastOutSlowInEasing,
+    val pulseScale = if (prefersReducedMotion()) {
+        0.82f
+    } else {
+        val infiniteTransition = rememberInfiniteTransition(label = "hudStatus")
+        val animatedPulseScale by infiniteTransition.animateFloat(
+            initialValue = 0.82f,
+            targetValue = 1.25f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(
+                    durationMillis = if (isGenerating || isShellExecuting) 650 else 1800,
+                    easing = FastOutSlowInEasing,
+                ),
+                repeatMode = RepeatMode.Reverse,
             ),
-            repeatMode = RepeatMode.Reverse,
-        ),
-        label = "hudStatusPulse",
-    )
+            label = "hudStatusPulse",
+        )
+        animatedPulseScale
+    }
 
     val orbColor = when {
         isShellExecuting -> DesignTokens.Warning
