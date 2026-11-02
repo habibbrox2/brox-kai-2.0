@@ -46,7 +46,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.inspiredandroid.kai.BackIcon
 import com.inspiredandroid.kai.data.ServiceEntry
 import com.inspiredandroid.kai.prefersReducedMotion
