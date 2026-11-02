@@ -154,6 +154,7 @@ private fun AgentActivityRow(activity: AgentActivity) {
                             details.error?.takeIf { it.isNotBlank() }?.let { ActivityCodePreview("Error", it, DesignTokens.Error) }
                             details.result?.takeIf { it.isNotBlank() }?.let { ActivityCodePreview("Result", it) }
                         }
+
                         is ActivityDetails.ShellCommand -> {
                             ActivityCodePreview("Command", details.command)
                             details.workingDirectory?.takeIf { it.isNotBlank() }?.let {
@@ -165,17 +166,21 @@ private fun AgentActivityRow(activity: AgentActivity) {
                                 Text("Exit code · $it", style = KaiTypography.labelSmall, color = if (it == 0) DesignTokens.Success else DesignTokens.Error)
                             }
                         }
+
                         is ActivityDetails.FileOperation -> {
                             Text("${details.operation} · ${safeActivityPreview(details.path, 240)}", style = KaiTypography.labelSmall.copy(fontWeight = FontWeight.Medium), color = DesignTokens.BrandCyan)
                             details.changeSummary?.takeIf { it.isNotBlank() }?.let { ActivityCodePreview("Result", it) }
                             details.oldContent?.takeIf { it.isNotBlank() }?.let { ActivityCodePreview("Before", it, DesignTokens.Error) }
                             details.newContent?.takeIf { it.isNotBlank() }?.let { ActivityCodePreview("After", it, DesignTokens.Success) }
                         }
+
                         is ActivityDetails.Generic -> details.content?.let { ActivityCodePreview("Details", it) }
+
                         is ActivityDetails.Skill -> {
                             Text(details.skillName, style = KaiTypography.labelSmall, color = DesignTokens.PrimaryText)
                             details.description?.let { Text(safeActivityPreview(it, 500), style = KaiTypography.labelSmall, color = DesignTokens.SecondaryText) }
                         }
+
                         is ActivityDetails.Permission -> {
                             Text("${details.action} · ${details.target}", style = KaiTypography.labelSmall, color = DesignTokens.SecondaryText)
                         }

@@ -252,37 +252,37 @@ fun ChatTimeline(
 
                         History.Role.TOOL -> {
                             if ((history.toolCallId ?: history.id) !in mappedActivityIds) {
-                            val isShell = history.toolName == "execute_shell_command"
-                            if (isShell) {
-                                val matchingToolCall = timelineData.findShellToolCall(history.toolCallId)
-                                val shellDetails = if (matchingToolCall != null) {
-                                    val parsedCmd = ActivityMapper.parseShellCommand(matchingToolCall.arguments)
-                                    ActivityMapper.parseShellResult(parsedCmd, history.content)
+                                val isShell = history.toolName == "execute_shell_command"
+                                if (isShell) {
+                                    val matchingToolCall = timelineData.findShellToolCall(history.toolCallId)
+                                    val shellDetails = if (matchingToolCall != null) {
+                                        val parsedCmd = ActivityMapper.parseShellCommand(matchingToolCall.arguments)
+                                        ActivityMapper.parseShellResult(parsedCmd, history.content)
+                                    } else {
+                                        ActivityMapper.parseShellResult(
+                                            ActivityDetails.ShellCommand(command = "execute_shell_command"),
+                                            history.content,
+                                        )
+                                    }
+                                    ShellExecutionCard(
+                                        command = shellDetails.command.ifEmpty { "execute_shell_command" },
+                                        workingDirectory = shellDetails.workingDirectory,
+                                        stdout = shellDetails.stdout,
+                                        stderr = shellDetails.stderr,
+                                        exitCode = shellDetails.exitCode,
+                                        isRunning = false,
+                                    )
                                 } else {
-                                    ActivityMapper.parseShellResult(
-                                        ActivityDetails.ShellCommand(command = "execute_shell_command"),
-                                        history.content,
+                                    val matchingToolCall = history.toolCallId?.let(timelineData.toolCallsById::get)
+                                    val isError = history.content.contains("\"success\":false") || history.content.contains("\"error\"")
+                                    ToolExecutionCard(
+                                        toolName = history.toolName ?: "tool",
+                                        arguments = matchingToolCall?.arguments,
+                                        result = history.content,
+                                        isRunning = false,
+                                        isError = isError,
                                     )
                                 }
-                                ShellExecutionCard(
-                                    command = shellDetails.command.ifEmpty { "execute_shell_command" },
-                                    workingDirectory = shellDetails.workingDirectory,
-                                    stdout = shellDetails.stdout,
-                                    stderr = shellDetails.stderr,
-                                    exitCode = shellDetails.exitCode,
-                                    isRunning = false,
-                                )
-                            } else {
-                                val matchingToolCall = history.toolCallId?.let(timelineData.toolCallsById::get)
-                                val isError = history.content.contains("\"success\":false") || history.content.contains("\"error\"")
-                                ToolExecutionCard(
-                                    toolName = history.toolName ?: "tool",
-                                    arguments = matchingToolCall?.arguments,
-                                    result = history.content,
-                                    isRunning = false,
-                                    isError = isError,
-                                )
-                            }
                             }
                         }
 

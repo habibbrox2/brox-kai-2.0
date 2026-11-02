@@ -17,7 +17,8 @@ object ActivityMapper {
         for (entry in history) {
             when (entry.role) {
                 History.Role.USER,
-                History.Role.TOOL_CONFIRMATION -> Unit
+                History.Role.TOOL_CONFIRMATION,
+                -> Unit
 
                 History.Role.ASSISTANT -> {
                     val calls = entry.toolCalls.orEmpty()
@@ -89,10 +90,13 @@ object ActivityMapper {
         val type = activityType(toolName)
         val details = when (type) {
             ActivityType.SHELL_COMMAND -> parseShellCommand(arguments)
+
             ActivityType.FILE_READ,
             ActivityType.FILE_WRITE,
             ActivityType.FILE_EDIT,
-            ActivityType.FILE_DELETE -> parseFileOperation(toolName, arguments)
+            ActivityType.FILE_DELETE,
+            -> parseFileOperation(toolName, arguments)
+
             else -> ActivityDetails.ToolCall(toolName = toolName, arguments = arguments)
         }
         return AgentActivity(id = id, runId = runId, type = type, title = activityTitle(type, toolName), status = ActivityStatus.PENDING, details = details)
@@ -128,8 +132,7 @@ object ActivityMapper {
         else -> false
     }
 
-    private fun isFailure(content: String): Boolean =
-        content.contains("\"success\":false") || content.contains("\"error\"") || content.contains("tool_error", ignoreCase = true)
+    private fun isFailure(content: String): Boolean = content.contains("\"success\":false") || content.contains("\"error\"") || content.contains("tool_error", ignoreCase = true)
 
     private fun withResult(details: ActivityDetails, result: String, failed: Boolean): ActivityDetails = when (details) {
         is ActivityDetails.ToolCall -> details.copy(result = result, error = if (failed) result else null)
