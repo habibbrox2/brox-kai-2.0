@@ -1,6 +1,6 @@
 # Brox Kai 2.0 — Chat UI Upgrade Plan
 
-**Status:** Proposed implementation baseline  
+**Status:** Core chat workspace migration is present; responsive HUD and accessibility regression work is in progress.  
 **Design direction:** 2027 AI Agent Workspace  
 **Target platforms:** Android, Desktop, Web (Compose Multiplatform)
 

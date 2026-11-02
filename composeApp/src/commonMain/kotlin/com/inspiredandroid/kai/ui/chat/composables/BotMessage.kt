@@ -73,7 +73,6 @@ import kai.composeapp.generated.resources.ic_copy
 import kai.composeapp.generated.resources.logo
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import nl.marc_apps.tts.TextToSpeechInstance
@@ -161,20 +160,9 @@ internal fun BotMessage(
                     }
                 }
 
-                // ChatGPT-style Collapsible Thinking Process
-                val nonBlankSegments = remember(reasoningSegments) {
-                    reasoningSegments.filter { it.isNotBlank() }.toImmutableList()
-                }
-                if (nonBlankSegments.isNotEmpty()) {
-                    ReasoningBlockquote(
-                        segments = nonBlankSegments,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
-
                 // Markdown Message Body
                 if (message.isNotEmpty()) {
-                    val answerTopPadding = if (nonBlankSegments.isNotEmpty()) 8.dp else 2.dp
+                    val answerTopPadding = 2.dp
                     CompositionLocalProvider(
                         androidx.compose.material3.LocalContentColor provides botTextColor,
                     ) {
@@ -186,7 +174,7 @@ internal fun BotMessage(
                                 frozen = effectiveFrozen,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(top = answerTopPadding, end = if (message.isNotEmpty() && frozen == null) 24.dp else 0.dp),
+                                    .padding(top = answerTopPadding, end = if (message.isNotEmpty() && frozen == null) 52.dp else 0.dp),
                             )
                         }
                     }
@@ -209,7 +197,7 @@ internal fun BotMessage(
                     },
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .size(28.dp)
+                        .size(48.dp)
                         .handCursor(),
                 ) {
                     Icon(
@@ -227,7 +215,7 @@ internal fun BotMessage(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .padding(4.dp)
-                        .size(28.dp)
+                        .size(48.dp)
                         .clip(CircleShape)
                         .background(com.inspiredandroid.kai.ui.theme.DesignTokens.SurfaceRaised)
                         .border(androidx.compose.foundation.BorderStroke(1.dp, com.inspiredandroid.kai.ui.theme.DesignTokens.BorderSubtle), CircleShape)

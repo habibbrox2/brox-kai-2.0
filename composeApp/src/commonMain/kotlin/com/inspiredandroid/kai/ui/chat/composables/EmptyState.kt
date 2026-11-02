@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -92,7 +93,7 @@ internal fun EmptyState(
             modifier = Modifier.padding(horizontal = 16.dp),
             style = KaiTypography.displaySmall,
             textAlign = TextAlign.Center,
-            color = Color(0xFFF5F7FF),
+            color = DesignTokens.PrimaryText,
             fontWeight = FontWeight.Bold,
             letterSpacing = 0.5.sp,
         )
@@ -104,7 +105,7 @@ internal fun EmptyState(
             modifier = Modifier.padding(horizontal = 16.dp),
             style = KaiTypography.titleMedium,
             textAlign = TextAlign.Center,
-            color = Color(0xFFB5C3EC),
+            color = DesignTokens.SecondaryText,
         )
 
         if (onQuickStart != null) {
@@ -213,8 +214,8 @@ private fun QuickStartCard(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
-    val cardAccent = item.accentColor ?: DesignTokens.PrimaryCyan
-    val cardBg = Color(0xD6111D3D)
+    val cardAccent = item.accentColor
+    val cardBg = DesignTokens.SurfaceRaised
     val cardShape = RoundedCornerShape(DesignTokens.RadiusPill)
 
     val cardBorder = if (isHovered) {
@@ -228,7 +229,7 @@ private fun QuickStartCard(
             .defaultMinSize(minHeight = 56.dp)
             .handCursor()
             .hoverable(interactionSource)
-            .clickable(onClick = onClick)
+            .clickable(role = Role.Button, onClick = onClick)
             .clip(cardShape)
             .background(cardBg, cardShape)
             .border(cardBorder, cardShape),

@@ -144,8 +144,12 @@ fun ChatTimeline(
     }
     val frozenByAssistantId = timelineData.frozenByAssistantId
     val userIdByAssistantId = timelineData.userIdByAssistantId
-    val reasoningSegmentsByAssistantId = timelineData.reasoningSegmentsByAssistantId
-    val suppressedThinkingIds = timelineData.suppressedThinkingIds
+    val agentActivitiesByRunId = remember(uiState.history) {
+        ActivityMapper.historyToActivities(uiState.history).groupBy { it.runId }
+    }
+    val mappedActivityIds = remember(agentActivitiesByRunId) {
+        agentActivitiesByRunId.values.flatten().map { it.id }.toSet()
+    }
     val executingToolsState = rememberTimelineExecutingTools(uiState.history)
 
     val fallbackStatusText = uiState.fallbackStatus?.let { status ->
@@ -196,6 +200,9 @@ fun ChatTimeline(
                         }
 
                         History.Role.ASSISTANT -> {
+                            agentActivitiesByRunId[history.id]?.let { activities ->
+                                AgentActivityDisclosure(activities = activities)
+                            }
                             if (history.content.isNotEmpty() && !history.isThinking) {
                                 val isLastAssistant = history.id == lastAssistantId
                                 val frozen = frozenByAssistantId[history.id]
@@ -218,7 +225,6 @@ fun ChatTimeline(
                                     } else {
                                         null
                                     },
-                                    reasoningSegments = reasoningSegmentsByAssistantId[history.id] ?: persistentListOf(),
                                     isFirstMessage = history.id == firstAssistantId,
                                 )
                                 if (history.fallbackServiceName != null) {
@@ -229,69 +235,54 @@ fun ChatTimeline(
                                         modifier = Modifier.padding(start = 16.dp, bottom = 8.dp),
                                     )
                                 }
-                            } else if (history.isThinking &&
-                                history.content.isNotEmpty() &&
-                                history.id !in suppressedThinkingIds
-                            ) {
-                                BotMessage(
-                                    message = "",
-                                    textToSpeech = null,
-                                    isSpeaking = false,
-                                    setIsSpeaking = {},
-                                    reasoningSegments = reasoningSegmentsByAssistantId[history.id]
-                                        ?: persistentListOf(history.content),
-                                    isFirstMessage = history.id == firstAssistantId,
-                                )
                             }
                         }
 
                         History.Role.TOOL_EXECUTING -> {
-                            val isShell = history.content == "execute_shell_command" || history.toolName == "execute_shell_command"
-                            if (isShell) {
-                                val cmd = history.toolName.takeUnless { it == "execute_shell_command" } ?: history.content
-                                ShellExecutionCard(
-                                    command = cmd,
-                                    isRunning = true,
-                                )
-                            } else {
-                                ToolExecutionCard(
-                                    toolName = history.toolName ?: history.content,
-                                    isRunning = true,
-                                )
+                            if ((history.toolCallId ?: history.id) !in mappedActivityIds) {
+                                val isShell = history.content == "execute_shell_command" || history.toolName == "execute_shell_command"
+                                if (isShell) {
+                                    val cmd = history.toolName.takeUnless { it == "execute_shell_command" } ?: history.content
+                                    ShellExecutionCard(command = cmd, isRunning = true)
+                                } else {
+                                    ToolExecutionCard(toolName = history.toolName ?: history.content, isRunning = true)
+                                }
                             }
                         }
 
                         History.Role.TOOL -> {
-                            val isShell = history.toolName == "execute_shell_command"
-                            if (isShell) {
-                                val matchingToolCall = timelineData.findShellToolCall(history.toolCallId)
-                                val shellDetails = if (matchingToolCall != null) {
-                                    val parsedCmd = ActivityMapper.parseShellCommand(matchingToolCall.arguments)
-                                    ActivityMapper.parseShellResult(parsedCmd, history.content)
+                            if ((history.toolCallId ?: history.id) !in mappedActivityIds) {
+                                val isShell = history.toolName == "execute_shell_command"
+                                if (isShell) {
+                                    val matchingToolCall = timelineData.findShellToolCall(history.toolCallId)
+                                    val shellDetails = if (matchingToolCall != null) {
+                                        val parsedCmd = ActivityMapper.parseShellCommand(matchingToolCall.arguments)
+                                        ActivityMapper.parseShellResult(parsedCmd, history.content)
+                                    } else {
+                                        ActivityMapper.parseShellResult(
+                                            ActivityDetails.ShellCommand(command = "execute_shell_command"),
+                                            history.content,
+                                        )
+                                    }
+                                    ShellExecutionCard(
+                                        command = shellDetails.command.ifEmpty { "execute_shell_command" },
+                                        workingDirectory = shellDetails.workingDirectory,
+                                        stdout = shellDetails.stdout,
+                                        stderr = shellDetails.stderr,
+                                        exitCode = shellDetails.exitCode,
+                                        isRunning = false,
+                                    )
                                 } else {
-                                    ActivityMapper.parseShellResult(
-                                        ActivityDetails.ShellCommand(command = "execute_shell_command"),
-                                        history.content,
+                                    val matchingToolCall = history.toolCallId?.let(timelineData.toolCallsById::get)
+                                    val isError = history.content.contains("\"success\":false") || history.content.contains("\"error\"")
+                                    ToolExecutionCard(
+                                        toolName = history.toolName ?: "tool",
+                                        arguments = matchingToolCall?.arguments,
+                                        result = history.content,
+                                        isRunning = false,
+                                        isError = isError,
                                     )
                                 }
-                                ShellExecutionCard(
-                                    command = shellDetails.command.ifEmpty { "execute_shell_command" },
-                                    workingDirectory = shellDetails.workingDirectory,
-                                    stdout = shellDetails.stdout,
-                                    stderr = shellDetails.stderr,
-                                    exitCode = shellDetails.exitCode,
-                                    isRunning = false,
-                                )
-                            } else {
-                                val matchingToolCall = history.toolCallId?.let(timelineData.toolCallsById::get)
-                                val isError = history.content.contains("\"success\":false") || history.content.contains("\"error\"")
-                                ToolExecutionCard(
-                                    toolName = history.toolName ?: "tool",
-                                    arguments = matchingToolCall?.arguments,
-                                    result = history.content,
-                                    isRunning = false,
-                                    isError = isError,
-                                )
                             }
                         }
 

@@ -202,7 +202,7 @@ private fun DashboardHeader(
                     onClick = onNavigateBack,
                     modifier = Modifier
                         .handCursor()
-                        .size(44.dp),
+                        .size(48.dp),
                 ) {
                     Icon(
                         imageVector = BackIcon,

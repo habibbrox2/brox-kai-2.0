@@ -175,7 +175,7 @@ internal fun ServiceSelector(
 
             Box(
                 modifier = Modifier
-                    .size(42.dp)
+                    .size(48.dp)
                     .clip(CircleShape)
                     .background(circleBg, CircleShape)
                     .border(BorderStroke(1.dp, circleBorder), CircleShape)
@@ -254,7 +254,7 @@ internal fun ServiceSelector(
                                 )
                                 androidx.compose.material3.IconButton(
                                     onClick = { expanded = false },
-                                    modifier = Modifier.size(28.dp).handCursor(),
+                                    modifier = Modifier.size(48.dp).handCursor(),
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Close,
@@ -383,7 +383,8 @@ private fun ModelMenuItem(
             .background(rowBackground)
             .clickable(onClick = onClick)
             .handCursor()
-            .padding(horizontal = 10.dp, vertical = 6.dp)
+            .heightIn(min = 48.dp)
+            .padding(horizontal = 10.dp, vertical = 8.dp)
             .widthIn(min = 180.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -426,7 +427,8 @@ private fun ServiceMenuItem(
             .background(rowBackground)
             .clickable(onClick = onClick)
             .handCursor()
-            .padding(horizontal = 10.dp, vertical = 6.dp)
+            .heightIn(min = 48.dp)
+            .padding(horizontal = 10.dp, vertical = 8.dp)
             .widthIn(min = 180.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
