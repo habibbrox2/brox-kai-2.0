@@ -60,8 +60,8 @@ class ActivityMapperTest {
         val activity = ActivityMapper.historyToActivities(history).single()
 
         assertEquals(ActivityStatus.FAILED, activity.status)
-        assertIs<ActivityDetails.ToolCall>(activity.details)
-        assertTrue(activity.details.error.orEmpty().contains("unavailable"))
+        val details = assertIs<ActivityDetails.ToolCall>(activity.details)
+        assertTrue(details.error.orEmpty().contains("unavailable"))
     }
 
     @Test
