@@ -427,7 +427,8 @@ private fun ServiceMenuItem(
             .background(rowBackground)
             .clickable(onClick = onClick)
             .handCursor()
-            .padding(horizontal = 10.dp, vertical = 6.dp)
+            .heightIn(min = 48.dp)
+            .padding(horizontal = 10.dp, vertical = 8.dp)
             .widthIn(min = 180.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
