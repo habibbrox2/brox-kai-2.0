@@ -1,3 +1,17 @@
+## Brox Kai v2.0 — Premium Agent Conversation Experience
+
+### Added
+- Added a turn-scoped Agent Activity disclosure for observable tool, MCP, terminal, and file-operation activity.
+- Correlated concurrent tool execution and completion by stable tool-call IDs, with legacy name matching only when IDs are absent.
+- Added expandable, bounded activity details with secret-pattern redaction and explicit lifecycle status.
+- Kept tool approval cards as separate permission gates; collapsing activity never changes runtime execution.
+- Removed provider reasoning payloads from visible conversation messages; the timeline presents observable execution rather than private model deliberation.
+
+### Tests
+- Added regression coverage for concurrent same-name tool calls, out-of-order completion, failed tool results, and shell command mapping.
+
+---
+
 ## Brox Kai v2.0 — 2027 Premium AI Agent UI Migration refinements
 
 ### Changed

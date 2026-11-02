@@ -73,7 +73,6 @@ import kai.composeapp.generated.resources.ic_copy
 import kai.composeapp.generated.resources.logo
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import nl.marc_apps.tts.TextToSpeechInstance
@@ -161,20 +160,9 @@ internal fun BotMessage(
                     }
                 }
 
-                // ChatGPT-style Collapsible Thinking Process
-                val nonBlankSegments = remember(reasoningSegments) {
-                    reasoningSegments.filter { it.isNotBlank() }.toImmutableList()
-                }
-                if (nonBlankSegments.isNotEmpty()) {
-                    ReasoningBlockquote(
-                        segments = nonBlankSegments,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
-
                 // Markdown Message Body
                 if (message.isNotEmpty()) {
-                    val answerTopPadding = if (nonBlankSegments.isNotEmpty()) 8.dp else 2.dp
+                    val answerTopPadding = 2.dp
                     CompositionLocalProvider(
                         androidx.compose.material3.LocalContentColor provides botTextColor,
                     ) {
