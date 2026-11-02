@@ -186,7 +186,7 @@ internal fun BotMessage(
                                 frozen = effectiveFrozen,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(top = answerTopPadding, end = if (message.isNotEmpty() && frozen == null) 24.dp else 0.dp),
+                                    .padding(top = answerTopPadding, end = if (message.isNotEmpty() && frozen == null) 52.dp else 0.dp),
                             )
                         }
                     }
@@ -209,7 +209,7 @@ internal fun BotMessage(
                     },
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .size(28.dp)
+                        .size(48.dp)
                         .handCursor(),
                 ) {
                     Icon(
@@ -227,7 +227,7 @@ internal fun BotMessage(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .padding(4.dp)
-                        .size(28.dp)
+                        .size(48.dp)
                         .clip(CircleShape)
                         .background(com.inspiredandroid.kai.ui.theme.DesignTokens.SurfaceRaised)
                         .border(androidx.compose.foundation.BorderStroke(1.dp, com.inspiredandroid.kai.ui.theme.DesignTokens.BorderSubtle), CircleShape)
