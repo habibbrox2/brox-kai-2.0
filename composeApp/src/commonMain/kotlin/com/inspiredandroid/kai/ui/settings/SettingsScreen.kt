@@ -132,10 +132,10 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
-internal val StatusColorConnected = Color(0xFF4CAF50)
-internal val StatusColorChecking = Color(0xFFFF9800)
-internal val StatusColorError = Color(0xFFF44336)
-internal val StatusColorUnknown = Color(0xFF9E9E9E)
+internal val StatusColorConnected = SettingsStatusColors.connected
+internal val StatusColorChecking = SettingsStatusColors.checking
+internal val StatusColorError = SettingsStatusColors.error
+internal val StatusColorUnknown = SettingsStatusColors.unknown
 
 @Composable
 fun SettingsScreen(
