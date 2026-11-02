@@ -1,13 +1,13 @@
 package com.inspiredandroid.kai.ui.chat
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import com.inspiredandroid.kai.ui.chat.composables.isCompactAgentHud
 import com.inspiredandroid.kai.ui.theme.DesignTokens
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import androidx.compose.ui.unit.dp
 
 class AgentHudStateTest {
 
@@ -45,6 +45,7 @@ class AgentHudStateTest {
         val color = resolveOrbColor(isGenerating = false, isShellExecuting = false, isSpeaking = true)
         assertEquals(DesignTokens.PrimaryCyan, color)
     }
+
     @Test
     fun `agent HUD switches to compact layout below 720dp`() {
         assertTrue(isCompactAgentHud(719.dp))
