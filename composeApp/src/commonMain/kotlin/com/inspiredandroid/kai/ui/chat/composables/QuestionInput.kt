@@ -173,7 +173,7 @@ internal fun TrailingIcon(
 
     Box(
         modifier = modifier
-            .size(42.dp)
+            .size(48.dp)
             .graphicsLayer {
                 scaleX = pressScale
                 scaleY = pressScale
@@ -217,7 +217,7 @@ internal fun CircleIconButton(
 ) {
     Box(
         modifier = modifier
-            .size(44.dp)
+            .size(48.dp)
             .clip(CircleShape)
             .clickable { onClick() }
             .handCursor(),
